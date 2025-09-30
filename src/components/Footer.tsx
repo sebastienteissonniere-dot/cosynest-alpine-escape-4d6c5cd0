@@ -1,7 +1,9 @@
 import { Instagram, Facebook, Mail } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { t } = useLanguage();
 
   return (
     <footer className="bg-foreground text-background py-12">
@@ -10,12 +12,12 @@ const Footer = () => {
           <div>
             <h3 className="text-2xl font-serif font-bold mb-4">Cosynest</h3>
             <p className="text-background/80 leading-relaxed">
-              Votre chalet de luxe à Vars pour des vacances inoubliables dans les Alpes.
+              {t("footer.description")}
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-lg">Contact</h4>
+            <h4 className="font-semibold mb-4 text-lg">{t("footer.contact")}</h4>
             <ul className="space-y-2 text-background/80">
               <li>Vars 05560, Hautes-Alpes</li>
               <li>contact@cosynest.com</li>
@@ -24,7 +26,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-lg">Suivez-nous</h4>
+            <h4 className="font-semibold mb-4 text-lg">{t("footer.followUs")}</h4>
             <div className="flex gap-4">
               <a
                 href="#"
@@ -52,7 +54,7 @@ const Footer = () => {
         </div>
 
         <div className="pt-8 border-t border-background/20 text-center text-background/60 text-sm">
-          <p>© {currentYear} Cosynest SARL. Tous droits réservés.</p>
+          <p>© {currentYear} Cosynest SARL. {t("footer.rights")}</p>
         </div>
       </div>
     </footer>

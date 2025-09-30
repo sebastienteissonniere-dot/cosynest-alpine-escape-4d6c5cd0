@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import heroImage from "@/assets/hero-chalet.jpg";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Hero = () => {
+  const { t } = useLanguage();
+  
   const scrollToExperience = () => {
     const element = document.getElementById("experience");
     if (element) {
@@ -25,23 +28,23 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-primary-foreground mb-6 animate-fade-in">
-          Votre refuge de luxe
+          {t("hero.title")}
           <br />
-          dans les Alpes
+          {t("hero.subtitle")}
         </h1>
         <p className="text-xl sm:text-2xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto font-light">
-          Découvrez l'expérience Cosynest à Vars : le parfait équilibre entre confort absolu et nature préservée
+          {t("hero.description")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button size="lg" className="text-lg px-8 py-6 shadow-luxury">
-            Réserver votre séjour
+            {t("hero.bookStay")}
           </Button>
           <Button
             variant="outline"
             size="lg"
             className="text-lg px-8 py-6 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20"
           >
-            Découvrir le chalet
+            {t("hero.discover")}
           </Button>
         </div>
       </div>
@@ -50,7 +53,7 @@ const Hero = () => {
       <button
         onClick={scrollToExperience}
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-primary-foreground/70 hover:text-primary-foreground transition-smooth animate-bounce"
-        aria-label="Défiler vers le bas"
+        aria-label={t("hero.scrollDown")}
       >
         <ChevronDown className="h-8 w-8" />
       </button>

@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Globe } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -27,28 +29,36 @@ const Navigation = () => {
               onClick={() => scrollToSection("experience")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
-              L'Expérience
+              {t("nav.experience")}
             </button>
             <button
               onClick={() => scrollToSection("chalet")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
-              Le Chalet
+              {t("nav.chalet")}
             </button>
             <button
               onClick={() => scrollToSection("services")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
-              Services
+              {t("nav.services")}
             </button>
             <button
               onClick={() => scrollToSection("contact")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
-              Contact
+              {t("nav.contact")}
+            </button>
+            <button
+              onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
+              className="flex items-center gap-2 text-foreground hover:text-primary transition-smooth font-medium"
+              aria-label="Change language"
+            >
+              <Globe className="h-4 w-4" />
+              {language === "fr" ? "EN" : "FR"}
             </button>
             <Button variant="default" size="lg">
-              Réserver
+              {t("nav.book")}
             </Button>
           </div>
 
@@ -71,28 +81,35 @@ const Navigation = () => {
               onClick={() => scrollToSection("experience")}
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
-              L'Expérience
+              {t("nav.experience")}
             </button>
             <button
               onClick={() => scrollToSection("chalet")}
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
-              Le Chalet
+              {t("nav.chalet")}
             </button>
             <button
               onClick={() => scrollToSection("services")}
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
-              Services
+              {t("nav.services")}
             </button>
             <button
               onClick={() => scrollToSection("contact")}
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
-              Contact
+              {t("nav.contact")}
+            </button>
+            <button
+              onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
+              className="flex items-center gap-2 w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              <Globe className="h-4 w-4" />
+              {language === "fr" ? "EN" : "FR"}
             </button>
             <Button variant="default" size="lg" className="w-full">
-              Réserver
+              {t("nav.book")}
             </Button>
           </div>
         )}

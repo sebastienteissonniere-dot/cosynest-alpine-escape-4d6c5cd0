@@ -1,31 +1,33 @@
 import { MapPin, Users, Bed, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-const features = [
-  {
-    icon: MapPin,
-    label: "Localisation",
-    value: "Vars 05560, Hautes-Alpes",
-  },
-  {
-    icon: Users,
-    label: "Capacité",
-    value: "Jusqu'à 10 personnes",
-  },
-  {
-    icon: Bed,
-    label: "Chambres",
-    value: "5 suites avec SDB privative",
-  },
-  {
-    icon: Calendar,
-    label: "Disponibilité",
-    value: "Été & Hiver",
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ChaletInfo = () => {
+  const { t } = useLanguage();
+  
+  const features = [
+    {
+      icon: MapPin,
+      label: t("chalet.location.label"),
+      value: t("chalet.location.value"),
+    },
+    {
+      icon: Users,
+      label: t("chalet.capacity.label"),
+      value: t("chalet.capacity.value"),
+    },
+    {
+      icon: Bed,
+      label: t("chalet.bedrooms.label"),
+      value: t("chalet.bedrooms.value"),
+    },
+    {
+      icon: Calendar,
+      label: t("chalet.availability.label"),
+      value: t("chalet.availability.value"),
+    },
+  ];
   return (
     <section id="chalet" className="py-20 bg-secondary">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,16 +35,16 @@ const ChaletInfo = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl sm:text-5xl font-serif font-bold text-foreground mb-6">
-                Le Chalet Cosynest
+                {t("chalet.title")}
               </h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Niché au cœur de Vars, station prisée des Alpes du Sud, Cosynest vous accueille dans un écrin de luxe et de modernité. Notre chalet allie design contemporain et chaleur alpine pour créer une atmosphère unique où confort rime avec élégance.
+                {t("chalet.description1")}
               </p>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Que vous soyez passionné de ski ou amateur de randonnées estivales, Cosynest est le point de départ idéal pour explorer les sommets. Profitez d'un cadre exceptionnel où chaque saison révèle sa magie.
+                {t("chalet.description2")}
               </p>
               <Button size="lg" className="shadow-medium">
-                Contactez-nous
+                {t("chalet.contactUs")}
               </Button>
             </div>
 

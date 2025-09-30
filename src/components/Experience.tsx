@@ -3,38 +3,40 @@ import { Card, CardContent } from "@/components/ui/card";
 import suiteImage from "@/assets/suite.jpg";
 import spaImage from "@/assets/spa.jpg";
 import livingImage from "@/assets/living.jpg";
-
-const experiences = [
-  {
-    icon: Bed,
-    title: "Suites spacieuses",
-    description: "Chambres élégantes avec salle de bain privative, literie premium et vue sur les montagnes",
-    image: suiteImage,
-  },
-  {
-    icon: Dumbbell,
-    title: "Espace bien-être",
-    description: "Salle de sport équipée et sauna privatif pour votre détente après une journée de ski",
-    image: spaImage,
-  },
-  {
-    icon: Flame,
-    title: "Espace de vie",
-    description: "Grand salon avec cheminée centrale et cuisine ouverte tout équipée pour des moments conviviaux",
-    image: livingImage,
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Experience = () => {
+  const { t } = useLanguage();
+  
+  const experiences = [
+    {
+      icon: Bed,
+      title: t("experience.suites.title"),
+      description: t("experience.suites.description"),
+      image: suiteImage,
+    },
+    {
+      icon: Dumbbell,
+      title: t("experience.wellness.title"),
+      description: t("experience.wellness.description"),
+      image: spaImage,
+    },
+    {
+      icon: Flame,
+      title: t("experience.living.title"),
+      description: t("experience.living.description"),
+      image: livingImage,
+    },
+  ];
   return (
     <section id="experience" className="py-20 bg-secondary">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-serif font-bold text-foreground mb-4">
-            L'Expérience Cosynest
+            {t("experience.title")}
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Un chalet pensé pour votre confort, où chaque détail compte pour créer des souvenirs inoubliables
+            {t("experience.subtitle")}
           </p>
         </div>
 
@@ -79,7 +81,7 @@ const Experience = () => {
           <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-accent/10 border border-accent/20">
             <Coffee className="h-5 w-5 text-accent" />
             <p className="text-accent font-medium">
-              Pour skieurs et non-skieurs : une expérience cocooning et relaxante
+              {t("experience.cocooning")}
             </p>
           </div>
         </div>
