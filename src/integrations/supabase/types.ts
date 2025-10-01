@@ -14,7 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      reservations: {
+        Row: {
+          check_in: string
+          check_out: string
+          created_at: string
+          currency: string | null
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          lodgify_id: string | null
+          notes: string | null
+          number_of_guests: number
+          property_id: string
+          source: string
+          status: string
+          total_amount: number | null
+          updated_at: string
+        }
+        Insert: {
+          check_in: string
+          check_out: string
+          created_at?: string
+          currency?: string | null
+          guest_email?: string | null
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          lodgify_id?: string | null
+          notes?: string | null
+          number_of_guests: number
+          property_id: string
+          source?: string
+          status?: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Update: {
+          check_in?: string
+          check_out?: string
+          created_at?: string
+          currency?: string | null
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          lodgify_id?: string | null
+          notes?: string | null
+          number_of_guests?: number
+          property_id?: string
+          source?: string
+          status?: string
+          total_amount?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sync_logs: {
+        Row: {
+          completed_at: string | null
+          details: Json | null
+          error: string | null
+          id: string
+          message: string | null
+          started_at: string
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          details?: Json | null
+          error?: string | null
+          id?: string
+          message?: string | null
+          started_at?: string
+          status: string
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          details?: Json | null
+          error?: string | null
+          id?: string
+          message?: string | null
+          started_at?: string
+          status?: string
+          sync_type?: string
+        }
+        Relationships: []
+      }
+      sync_status: {
+        Row: {
+          config: Json | null
+          id: string
+          is_enabled: boolean | null
+          last_sync_at: string | null
+          next_sync_at: string | null
+          service: string
+          status: string
+        }
+        Insert: {
+          config?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          last_sync_at?: string | null
+          next_sync_at?: string | null
+          service: string
+          status?: string
+        }
+        Update: {
+          config?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          last_sync_at?: string | null
+          next_sync_at?: string | null
+          service?: string
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
