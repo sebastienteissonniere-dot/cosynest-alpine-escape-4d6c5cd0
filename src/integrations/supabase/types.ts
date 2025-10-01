@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       reservations: {
         Row: {
+          channel_booking_id: string | null
+          channel_property_id: string | null
           check_in: string
           check_out: string
           created_at: string
@@ -24,7 +26,6 @@ export type Database = {
           guest_name: string
           guest_phone: string | null
           id: string
-          lodgify_id: string | null
           notes: string | null
           number_of_guests: number
           property_id: string
@@ -34,6 +35,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          channel_booking_id?: string | null
+          channel_property_id?: string | null
           check_in: string
           check_out: string
           created_at?: string
@@ -42,7 +45,6 @@ export type Database = {
           guest_name: string
           guest_phone?: string | null
           id?: string
-          lodgify_id?: string | null
           notes?: string | null
           number_of_guests: number
           property_id: string
@@ -52,6 +54,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          channel_booking_id?: string | null
+          channel_property_id?: string | null
           check_in?: string
           check_out?: string
           created_at?: string
@@ -60,7 +64,6 @@ export type Database = {
           guest_name?: string
           guest_phone?: string | null
           id?: string
-          lodgify_id?: string | null
           notes?: string | null
           number_of_guests?: number
           property_id?: string
