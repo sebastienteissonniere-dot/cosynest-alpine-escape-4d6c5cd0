@@ -106,7 +106,7 @@ const translations = {
       },
       capacity: {
         label: "Capacité",
-        value: "Jusqu'à 10 personnes",
+        value: "Jusqu'à 12 personnes",
       },
       bedrooms: {
         label: "Chambres",
@@ -196,7 +196,7 @@ const translations = {
       },
       capacity: {
         label: "Capacity",
-        value: "Up to 10 people",
+        value: "Up to 12 people",
       },
       bedrooms: {
         label: "Bedrooms",
