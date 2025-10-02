@@ -65,7 +65,7 @@ const ChaletInfo = () => {
                           <p className="text-sm text-muted-foreground font-medium mb-1">
                             {feature.label}
                           </p>
-                          <p className="text-lg text-foreground font-semibold">
+                          <p className="text-lg text-foreground font-semibold whitespace-pre-line">
                             {feature.value}
                           </p>
                         </div>
