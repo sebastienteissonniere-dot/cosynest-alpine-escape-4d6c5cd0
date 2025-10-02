@@ -98,7 +98,7 @@ const translations = {
     },
     chalet: {
       title: "Le Chalet Cosynest",
-      description1: "Niché au cœur de Vars, station prisée des Alpes du Sud, Cosynest vous accueille dans un écrin de luxe et de modernité. Notre chalet allie design contemporain et chaleur alpine pour créer une atmosphère unique où confort rime avec élégance.",
+      description1: "Niché au cœur de Vars 2000, station prisée des Alpes du Sud, Cosynest vous accueille dans un écrin de luxe et de modernité. Notre chalet allie design contemporain et chaleur alpine pour créer une atmosphère unique où confort rime avec élégance.",
       description2: "Que vous soyez passionné de ski ou amateur de randonnées estivales, Cosynest est le point de départ idéal pour explorer les sommets. Profitez d'un cadre exceptionnel où chaque saison révèle sa magie.",
       location: {
         label: "Localisation",
@@ -188,7 +188,7 @@ const translations = {
     },
     chalet: {
       title: "The Cosynest Chalet",
-      description1: "Nestled in the heart of Vars, a popular resort in the Southern Alps, Cosynest welcomes you in a setting of luxury and modernity. Our chalet combines contemporary design and alpine warmth to create a unique atmosphere where comfort rhymes with elegance.",
+      description1: "Nestled in the heart of Vars 2000, a popular resort in the Southern Alps, Cosynest welcomes you in a setting of luxury and modernity. Our chalet combines contemporary design and alpine warmth to create a unique atmosphere where comfort rhymes with elegance.",
       description2: "Whether you are a ski enthusiast or summer hiker, Cosynest is the ideal starting point to explore the peaks. Enjoy an exceptional setting where each season reveals its magic.",
       location: {
         label: "Location",
