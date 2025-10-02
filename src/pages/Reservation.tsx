@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChevronLeft } from "lucide-react";
-import { format } from "date-fns";
+import { ChevronLeft, AlertCircle } from "lucide-react";
+import { format, differenceInDays, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Reservation = () => {
   const { t, language } = useLanguage();
@@ -17,10 +18,16 @@ const Reservation = () => {
   const [checkOut, setCheckOut] = useState<Date>();
   const [guests, setGuests] = useState(2);
 
+  const MIN_NIGHTS = 2;
+
+  const numberOfNights = checkIn && checkOut ? differenceInDays(checkOut, checkIn) : 0;
+  const isValidStay = numberOfNights >= MIN_NIGHTS;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidStay) return;
     // Handle reservation submission
-    console.log({ checkIn, checkOut, guests });
+    console.log({ checkIn, checkOut, guests, nights: numberOfNights });
   };
 
   return (
@@ -88,12 +95,35 @@ const Reservation = () => {
                     mode="single"
                     selected={checkOut}
                     onSelect={setCheckOut}
-                    disabled={(date) => date < (checkIn || new Date())}
+                    disabled={(date) => !checkIn || date <= addDays(checkIn, MIN_NIGHTS - 1)}
                     className="rounded-md border"
                   />
                 </CardContent>
               </Card>
             </div>
+
+            {/* Minimum Stay Alert */}
+            {checkIn && checkOut && !isValidStay && (
+              <Alert variant="destructive" className="mt-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {language === "fr"
+                    ? `Séjour minimum de ${MIN_NIGHTS} nuits requis. Actuellement: ${numberOfNights} nuit${numberOfNights > 1 ? "s" : ""}.`
+                    : `Minimum stay of ${MIN_NIGHTS} nights required. Currently: ${numberOfNights} night${numberOfNights > 1 ? "s" : ""}.`}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Stay Duration Info */}
+            {checkIn && checkOut && isValidStay && (
+              <Alert className="mt-6">
+                <AlertDescription>
+                  {language === "fr"
+                    ? `Durée du séjour: ${numberOfNights} nuit${numberOfNights > 1 ? "s" : ""}`
+                    : `Stay duration: ${numberOfNights} night${numberOfNights > 1 ? "s" : ""}`}
+                </AlertDescription>
+              </Alert>
+            )}
 
             {/* Guest Count */}
             <Card className="mt-8">
@@ -123,7 +153,7 @@ const Reservation = () => {
               <Button
                 type="submit"
                 size="lg"
-                disabled={!checkIn || !checkOut}
+                disabled={!checkIn || !checkOut || !isValidStay}
                 className="px-12"
               >
                 {language === "fr" ? "Confirmer la réservation" : "Confirm Reservation"}
