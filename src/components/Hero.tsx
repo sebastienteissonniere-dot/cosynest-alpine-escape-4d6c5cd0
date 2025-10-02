@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-chalet.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Hero = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   
   const scrollToExperience = () => {
     const element = document.getElementById("experience");
@@ -36,7 +38,11 @@ const Hero = () => {
           {t("hero.description")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button size="lg" className="text-lg px-8 py-6 shadow-luxury">
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6 shadow-luxury"
+            onClick={() => navigate("/reservation")}
+          >
             {t("hero.bookStay")}
           </Button>
           <Button
