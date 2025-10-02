@@ -110,7 +110,7 @@ const translations = {
       },
       bedrooms: {
         label: "Chambres",
-        value: "5 suites avec SDB privative",
+        value: "4 suites avec SDB privative et 1 dortoir avec SDB privative",
       },
       availability: {
         label: "Disponibilité",
@@ -200,7 +200,7 @@ const translations = {
       },
       bedrooms: {
         label: "Bedrooms",
-        value: "5 suites with private bathroom",
+        value: "4 suites with private bathroom and 1 dormitory with private bathroom",
       },
       availability: {
         label: "Availability",
