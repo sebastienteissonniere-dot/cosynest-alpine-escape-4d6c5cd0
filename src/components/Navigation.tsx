@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Menu, Globe } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
 
   const scrollToSection = (id: string) => {
@@ -57,7 +59,11 @@ const Navigation = () => {
               <Globe className="h-4 w-4" />
               {language === "fr" ? "EN" : "FR"}
             </button>
-            <Button variant="default" size="lg">
+            <Button 
+              variant="default" 
+              size="lg"
+              onClick={() => navigate("/reservation")}
+            >
               {t("nav.book")}
             </Button>
           </div>
@@ -108,7 +114,15 @@ const Navigation = () => {
               <Globe className="h-4 w-4" />
               {language === "fr" ? "EN" : "FR"}
             </button>
-            <Button variant="default" size="lg" className="w-full">
+            <Button 
+              variant="default" 
+              size="lg" 
+              className="w-full"
+              onClick={() => {
+                navigate("/reservation");
+                setIsOpen(false);
+              }}
+            >
               {t("nav.book")}
             </Button>
           </div>
