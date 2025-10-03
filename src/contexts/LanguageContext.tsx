@@ -55,7 +55,7 @@ const translations = {
     hero: {
       title: "Votre refuge de luxe",
       subtitle: "dans les Alpes",
-      description: "Découvrez l'expérience Cosynest à Vars : le parfait équilibre entre confort absolu et nature préservée",
+      description: "Découvrez l'expérience Cosynest à Vars 2000 : le parfait équilibre entre confort absolu et nature préservée",
       bookStay: "Réserver votre séjour",
       discover: "Découvrir le chalet",
       scrollDown: "Défiler vers le bas",
@@ -145,7 +145,7 @@ const translations = {
     hero: {
       title: "Your luxury retreat",
       subtitle: "in the Alps",
-      description: "Discover the Cosynest experience in Vars: the perfect balance between absolute comfort and preserved nature",
+      description: "Discover the Cosynest experience in Vars 2000: the perfect balance between absolute comfort and preserved nature",
       bookStay: "Book your stay",
       discover: "Discover the chalet",
       scrollDown: "Scroll down",
