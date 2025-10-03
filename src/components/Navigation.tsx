@@ -34,7 +34,7 @@ const Navigation = () => {
               {t("nav.experience")}
             </button>
             <button
-              onClick={() => scrollToSection("chalet")}
+              onClick={() => navigate("/chalet")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
               {t("nav.chalet")}
@@ -90,7 +90,10 @@ const Navigation = () => {
               {t("nav.experience")}
             </button>
             <button
-              onClick={() => scrollToSection("chalet")}
+              onClick={() => {
+                navigate("/chalet");
+                setIsOpen(false);
+              }}
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
               {t("nav.chalet")}
