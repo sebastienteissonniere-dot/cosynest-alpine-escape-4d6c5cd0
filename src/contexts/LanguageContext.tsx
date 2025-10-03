@@ -48,6 +48,7 @@ const translations = {
     nav: {
       experience: "L'Expérience",
       chalet: "Le Chalet",
+      weather: "Météo Vars",
       services: "Services",
       contact: "Contact",
       book: "Réserver",
@@ -151,6 +152,7 @@ const translations = {
     nav: {
       experience: "The Experience",
       chalet: "The Chalet",
+      weather: "Weather Vars",
       services: "Services",
       contact: "Contact",
       book: "Book",

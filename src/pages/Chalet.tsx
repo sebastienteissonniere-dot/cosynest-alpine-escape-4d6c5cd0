@@ -1,7 +1,6 @@
 import Navigation from "@/components/Navigation";
 import Experience from "@/components/Experience";
 import ChaletInfo from "@/components/ChaletInfo";
-import WeatherSnow from "@/components/WeatherSnow";
 import Services from "@/components/Services";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -13,7 +12,6 @@ const Chalet = () => {
       <div className="pt-20">
         <Experience />
         <ChaletInfo />
-        <WeatherSnow />
         <Services />
         <Contact />
       </div>
