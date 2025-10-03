@@ -45,16 +45,16 @@ const Navigation = () => {
               {t("nav.chalet")}
             </button>
             <button
-              onClick={() => navigate("/weather")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.weather")}
-            </button>
-            <button
               onClick={() => scrollToSection("services")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
               {t("nav.services")}
+            </button>
+            <button
+              onClick={() => navigate("/weather")}
+              className="text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              {t("nav.weather")}
             </button>
             <button
               onClick={() => scrollToSection("contact")}
@@ -110,6 +110,12 @@ const Navigation = () => {
               {t("nav.chalet")}
             </button>
             <button
+              onClick={() => scrollToSection("services")}
+              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              {t("nav.services")}
+            </button>
+            <button
               onClick={() => {
                 navigate("/weather");
                 setIsOpen(false);
@@ -117,12 +123,6 @@ const Navigation = () => {
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
               {t("nav.weather")}
-            </button>
-            <button
-              onClick={() => scrollToSection("services")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.services")}
             </button>
             <button
               onClick={() => scrollToSection("contact")}
