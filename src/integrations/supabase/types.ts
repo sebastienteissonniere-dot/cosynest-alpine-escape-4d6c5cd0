@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      booking_exceptions: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          is_active: boolean | null
+          reason: string | null
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          start_date?: string
+        }
+        Relationships: []
+      }
+      booking_settings: {
+        Row: {
+          allow_with_surcharge: boolean | null
+          apply_on_overlap: boolean | null
+          auto_detect_zone: boolean | null
+          created_at: string
+          data_source: string | null
+          id: string
+          school_zone: string
+          surcharge_percentage: number | null
+          updated_at: string
+        }
+        Insert: {
+          allow_with_surcharge?: boolean | null
+          apply_on_overlap?: boolean | null
+          auto_detect_zone?: boolean | null
+          created_at?: string
+          data_source?: string | null
+          id?: string
+          school_zone?: string
+          surcharge_percentage?: number | null
+          updated_at?: string
+        }
+        Update: {
+          allow_with_surcharge?: boolean | null
+          apply_on_overlap?: boolean | null
+          auto_detect_zone?: boolean | null
+          created_at?: string
+          data_source?: string | null
+          id?: string
+          school_zone?: string
+          surcharge_percentage?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reservations: {
         Row: {
           channel_booking_id: string | null
@@ -71,6 +134,42 @@ export type Database = {
           status?: string
           total_amount?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      school_holidays: {
+        Row: {
+          academic_year: string
+          created_at: string
+          description: string
+          end_date: string
+          holiday_type: string
+          id: string
+          start_date: string
+          updated_at: string
+          zone: string
+        }
+        Insert: {
+          academic_year: string
+          created_at?: string
+          description: string
+          end_date: string
+          holiday_type: string
+          id?: string
+          start_date: string
+          updated_at?: string
+          zone: string
+        }
+        Update: {
+          academic_year?: string
+          created_at?: string
+          description?: string
+          end_date?: string
+          holiday_type?: string
+          id?: string
+          start_date?: string
+          updated_at?: string
+          zone?: string
         }
         Relationships: []
       }
