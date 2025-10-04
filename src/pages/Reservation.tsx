@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChevronLeft, AlertCircle } from "lucide-react";
+import { ChevronLeft, AlertCircle, Info } from "lucide-react";
 import { format, differenceInDays, addDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useSchoolHolidays, useBookingSettings } from "@/hooks/useSchoolHolidays";
+import { validateBooking, getDisabledDates } from "@/utils/bookingValidation";
 
 const Reservation = () => {
   const { t, language } = useLanguage();
@@ -17,15 +19,42 @@ const Reservation = () => {
   const [checkIn, setCheckIn] = useState<Date>();
   const [checkOut, setCheckOut] = useState<Date>();
   const [guests, setGuests] = useState(2);
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const { data: holidays, isLoading: holidaysLoading } = useSchoolHolidays();
+  const { data: settings, isLoading: settingsLoading } = useBookingSettings();
 
   const MIN_NIGHTS = 2;
 
   const numberOfNights = checkIn && checkOut ? differenceInDays(checkOut, checkIn) : 0;
   const isValidStay = numberOfNights >= MIN_NIGHTS;
 
+  // Calculate disabled dates based on school holidays
+  useEffect(() => {
+    if (holidays && settings) {
+      const disabled = getDisabledDates(holidays, settings);
+      setDisabledDates(disabled);
+    }
+  }, [holidays, settings]);
+
+  // Validate booking when dates change
+  useEffect(() => {
+    if (checkIn && checkOut && holidays && settings) {
+      const validation = validateBooking(checkIn, checkOut, holidays, settings);
+      if (!validation.ok) {
+        setValidationError(validation.reason || null);
+      } else {
+        setValidationError(null);
+      }
+    } else {
+      setValidationError(null);
+    }
+  }, [checkIn, checkOut, holidays, settings]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidStay) return;
+    if (!isValidStay || validationError) return;
     // Handle reservation submission
     console.log({ checkIn, checkOut, guests, nights: numberOfNights });
   };
@@ -53,6 +82,36 @@ const Reservation = () => {
             {language === "fr" ? "Réservez votre séjour" : "Book Your Stay"}
           </h1>
 
+          {/* School holidays info banner */}
+          {settings && (
+            <Alert className="mb-6">
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                {language === "fr" ? (
+                  <>
+                    <strong>Règles pendant les vacances scolaires (hors été):</strong>
+                    <br />
+                    • Arrivée et départ le samedi uniquement
+                    <br />
+                    • Séjour minimum de 7 nuits
+                    <br />
+                    Zone scolaire appliquée: <strong>{settings.school_zone}</strong>
+                  </>
+                ) : (
+                  <>
+                    <strong>Rules during school holidays (except summer):</strong>
+                    <br />
+                    • Check-in and check-out on Saturday only
+                    <br />
+                    • Minimum stay of 7 nights
+                    <br />
+                    School zone applied: <strong>{settings.school_zone}</strong>
+                  </>
+                )}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid md:grid-cols-2 gap-8">
               {/* Check-in Calendar */}
@@ -72,7 +131,13 @@ const Reservation = () => {
                     mode="single"
                     selected={checkIn}
                     onSelect={setCheckIn}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) => {
+                      if (date < new Date()) return true;
+                      // Check if date is in disabled dates
+                      return disabledDates.some(
+                        (d) => d.toDateString() === date.toDateString()
+                      );
+                    }}
                     className="rounded-md border"
                   />
                 </CardContent>
@@ -102,8 +167,16 @@ const Reservation = () => {
               </Card>
             </div>
 
+            {/* Validation Errors */}
+            {validationError && (
+              <Alert variant="destructive" className="mt-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{validationError}</AlertDescription>
+              </Alert>
+            )}
+
             {/* Minimum Stay Alert */}
-            {checkIn && checkOut && !isValidStay && (
+            {checkIn && checkOut && !isValidStay && !validationError && (
               <Alert variant="destructive" className="mt-6">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
@@ -115,7 +188,7 @@ const Reservation = () => {
             )}
 
             {/* Stay Duration Info */}
-            {checkIn && checkOut && isValidStay && (
+            {checkIn && checkOut && isValidStay && !validationError && (
               <Alert className="mt-6">
                 <AlertDescription>
                   {language === "fr"
@@ -153,7 +226,7 @@ const Reservation = () => {
               <Button
                 type="submit"
                 size="lg"
-                disabled={!checkIn || !checkOut || !isValidStay}
+                disabled={!checkIn || !checkOut || !isValidStay || !!validationError || holidaysLoading || settingsLoading}
                 className="px-12"
               >
                 {language === "fr" ? "Confirmer la réservation" : "Confirm Reservation"}
