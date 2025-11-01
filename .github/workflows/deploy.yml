@@ -1,0 +1,55 @@
+name: Déploiement du site Cosynest (Lovable) sur Infomaniak
+
+# Déclenchement : Le workflow s'exécute automatiquement lors d'un 'push' sur la branche 'main' ou 'master'
+on:
+  push:
+    branches:
+      - main
+      - master 
+  
+# Définition des tâches (jobs)
+jobs:
+  build-and-deploy:
+    # Exécution sur un environnement Ubuntu
+    runs-on: ubuntu-latest
+    
+    # Les étapes (steps) du processus
+    steps:
+      # Étape 1 : Récupérer le code depuis GitHub
+      - name: 1. Checkout du code
+        uses: actions/checkout@v4
+      
+      # Étape 2 : Configurer l'environnement Node.js
+      - name: 2. Configuration de Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Utilisation d'une version stable de Node.js, nécessaire pour le build Vite
+          node-version: '20' 
+      
+      # Étape 3 : Installer les dépendances et Compiler (Build) le projet
+      - name: 3. Installation des dépendances et compilation
+        run: |
+          npm install
+          npm run build
+        
+      # Étape 4 : Déploiement des fichiers compilés vers Infomaniak via FTP/SFTP
+      # Cette action utilise les Secrets GitHub définis précédemment
+      - name: 4. Déploiement FTP vers Infomaniak
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          # Récupération des secrets pour la connexion au serveur
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          
+          # Le chemin cible sur votre hébergement Infomaniak
+          # (Exemple : /sites/cosynest.com/www/ ou tout autre répertoire racine de votre site)
+          server-dir: ${{ secrets.FTP_PATH }} 
+          
+          # Le dossier local à téléverser (résultat du 'npm run build', généralement 'dist')
+          local-dir: './dist/' 
+          
+          # Paramètres recommandés pour le déploiement
+          state-name: .ftp-deploy-state
+          log-level: verbose
+          
