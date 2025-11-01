@@ -20,7 +20,7 @@ const Footer = () => {
             <h4 className="font-semibold mb-4 text-lg">{t("footer.contact")}</h4>
             <ul className="space-y-2 text-background/80">
               <li>Vars 05560, Hautes-Alpes</li>
-              <li>contact@cosynest.com</li>
+              <li>contact@chaletcosynest.fr</li>
               <li>+33 (0)X XX XX XX XX</li>
             </ul>
           </div>
@@ -43,7 +43,7 @@ const Footer = () => {
                 <Facebook className="h-5 w-5" />
               </a>
               <a
-                href="mailto:contact@cosynest.com"
+                href="mailto:contact@chaletcosynest.fr"
                 className="p-2 rounded-full bg-background/10 hover:bg-background/20 transition-smooth"
                 aria-label="Email"
               >

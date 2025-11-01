@@ -25,7 +25,7 @@ const Contact = () => {
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">{t("contact.email")}</h3>
                 <p className="text-muted-foreground text-sm">
-                  contact@cosynest.com
+                  contact@chaletcosynest.fr
                 </p>
               </CardContent>
             </Card>
