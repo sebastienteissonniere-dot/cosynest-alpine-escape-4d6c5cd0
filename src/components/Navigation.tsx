@@ -92,8 +92,16 @@ const Navigation = () => {
             </Button>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          {/* Mobile menu button and language switcher */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
+              className="flex items-center gap-2 text-foreground hover:text-primary transition-smooth font-medium px-3 py-2"
+              aria-label="Change language"
+            >
+              <Globe className="h-4 w-4" />
+              {language === "fr" ? "EN" : "FR"}
+            </button>
             <Button
               variant="ghost"
               size="icon"
@@ -143,14 +151,7 @@ const Navigation = () => {
             >
               {t("nav.contact")}
             </button>
-            <button
-              onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
-              className="flex items-center gap-2 w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              <Globe className="h-4 w-4" />
-              {language === "fr" ? "EN" : "FR"}
-            </button>
-            <Button 
+            <Button
               variant="default" 
               size="lg" 
               className="w-full"
