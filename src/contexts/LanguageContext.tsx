@@ -54,7 +54,7 @@ const translations = {
       book: "Réserver",
     },
     hero: {
-      title: "Votre refuge",
+      title: "Votre refuge de luxe",
       subtitle: "dans les Alpes",
       description: "Découvrez l'expérience Cosynest à Vars 2000 : le parfait équilibre entre confort absolu et nature préservée",
       bookStay: "Réserver votre séjour",
@@ -158,7 +158,7 @@ const translations = {
       book: "Book",
     },
     hero: {
-      title: "Your retreat",
+      title: "Your luxury retreat",
       subtitle: "in the Alps",
       description: "Discover the Cosynest experience in Vars 2000: the perfect balance between absolute comfort and preserved nature",
       bookStay: "Book your stay",
