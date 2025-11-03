@@ -31,13 +31,13 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-border/50 shadow-soft">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[hsl(25,35%,25%)] backdrop-blur-lg border-b border-[hsl(25,35%,35%)]/30 shadow-luxury">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex-shrink-0">
             <button 
               onClick={() => navigate("/")}
-              className="text-2xl font-serif font-bold text-primary hover:opacity-80 transition-smooth"
+              className="text-2xl font-serif font-bold text-[hsl(35,45%,85%)] hover:opacity-80 transition-smooth"
             >
               Cosynest
             </button>
@@ -47,37 +47,37 @@ const Navigation = () => {
           <div className="hidden md:flex items-center space-x-8">
             <button
               onClick={() => scrollToSection("experience")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
+              className="text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.experience")}
             </button>
             <button
               onClick={() => navigate("/chalet")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
+              className="text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.chalet")}
             </button>
             <button
               onClick={() => scrollToSection("services")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
+              className="text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.services")}
             </button>
             <button
               onClick={() => navigate("/weather")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
+              className="text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.weather")}
             </button>
             <button
               onClick={() => scrollToSection("contact")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
+              className="text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.contact")}
             </button>
             <button
               onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
-              className="flex items-center gap-2 text-foreground hover:text-primary transition-smooth font-medium"
+              className="flex items-center gap-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
               aria-label="Change language"
             >
               <Globe className="h-4 w-4" />
@@ -96,7 +96,7 @@ const Navigation = () => {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
-              className="flex items-center gap-2 text-foreground hover:text-primary transition-smooth font-medium px-3 py-2"
+              className="flex items-center gap-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium px-3 py-2"
               aria-label="Change language"
             >
               <Globe className="h-4 w-4" />
@@ -117,7 +117,7 @@ const Navigation = () => {
           <div className="md:hidden pb-6 space-y-4">
             <button
               onClick={() => scrollToSection("experience")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+              className="block w-full text-left py-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.experience")}
             </button>
@@ -126,13 +126,13 @@ const Navigation = () => {
                 navigate("/chalet");
                 setIsOpen(false);
               }}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+              className="block w-full text-left py-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.chalet")}
             </button>
             <button
               onClick={() => scrollToSection("services")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+              className="block w-full text-left py-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.services")}
             </button>
@@ -141,13 +141,13 @@ const Navigation = () => {
                 navigate("/weather");
                 setIsOpen(false);
               }}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+              className="block w-full text-left py-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.weather")}
             </button>
             <button
               onClick={() => scrollToSection("contact")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+              className="block w-full text-left py-2 text-[hsl(35,40%,80%)] hover:text-[hsl(35,50%,70%)] transition-smooth font-medium"
             >
               {t("nav.contact")}
             </button>
