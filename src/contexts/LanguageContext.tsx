@@ -91,6 +91,7 @@ const translations = {
         products: "Produits d'accueil premium",
         concierge: "Conciergerie disponible",
         wifi: "Connexion Wi-Fi haut débit",
+        evCharger: "Borne de recharge véhicule électrique à disposition",
       },
       commitment: {
         title: "Notre engagement qualité",
@@ -195,6 +196,7 @@ const translations = {
         products: "Premium welcome products",
         concierge: "Concierge service available",
         wifi: "High-speed Wi-Fi connection",
+        evCharger: "Electric vehicle charging station available",
       },
       commitment: {
         title: "Our quality commitment",

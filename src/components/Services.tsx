@@ -14,6 +14,7 @@ const Services = () => {
     t("services.items.products"),
     t("services.items.concierge"),
     t("services.items.wifi"),
+    t("services.items.evCharger"),
   ];
   return (
     <section id="services" className="py-20 bg-background">
