@@ -143,14 +143,25 @@ const WeatherSnow = () => {
               <CardDescription>Snow-Forecast Vars</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="aspect-video w-full rounded-lg overflow-hidden bg-accent/10">
-                <iframe
-                  src="https://www.snow-forecast.com/resorts/Vars/6day/mid"
-                  className="w-full h-full"
-                  title="Snow Forecast Vars"
-                  loading="lazy"
-                />
-              </div>
+              <Button
+                variant="outline"
+                className="w-full h-auto py-6 flex-col items-center hover:shadow-md transition-smooth"
+                asChild
+              >
+                <a
+                  href="https://www.snow-forecast.com/resorts/Vars/6day/mid"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Mountain className="h-8 w-8 mb-3 text-primary" />
+                  <span className="font-semibold text-lg mb-2">
+                    {t("weather.viewSnowForecast")}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    Prévisions détaillées sur 6 jours
+                  </span>
+                </a>
+              </Button>
             </CardContent>
           </Card>
         </div>
