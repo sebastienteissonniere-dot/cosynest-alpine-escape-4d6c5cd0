@@ -11,17 +11,26 @@ interface WeatherData {
   weatherCode: number;
 }
 
+interface SnowForecast {
+  date: string;
+  snowfall: number;
+  snowDepth: number;
+  temperature: number;
+}
+
 const WeatherSnow = () => {
   const { t } = useLanguage();
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [snowForecast, setSnowForecast] = useState<SnowForecast[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchWeather = async () => {
       try {
+        // Fetch current weather and 7-day snow forecast
         const response = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=44.62&longitude=6.68&current_weather=true&hourly=temperature_2m,precipitation,wind_speed_10m"
+          "https://api.open-meteo.com/v1/forecast?latitude=44.62&longitude=6.68&current_weather=true&hourly=temperature_2m,precipitation,wind_speed_10m&daily=snowfall_sum,snow_depth_max,temperature_2m_max,temperature_2m_min&timezone=Europe/Paris"
         );
         const data = await response.json();
         
@@ -33,6 +42,18 @@ const WeatherSnow = () => {
             weatherCode: data.current_weather.weathercode,
           });
         }
+
+        // Process snow forecast for next 7 days
+        if (data.daily) {
+          const forecasts: SnowForecast[] = data.daily.time.slice(0, 7).map((date: string, index: number) => ({
+            date,
+            snowfall: data.daily.snowfall_sum[index] || 0,
+            snowDepth: data.daily.snow_depth_max[index] || 0,
+            temperature: data.daily.temperature_2m_max[index] || 0,
+          }));
+          setSnowForecast(forecasts);
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error("Error fetching weather:", err);
@@ -140,28 +161,62 @@ const WeatherSnow = () => {
                 <Mountain className="h-6 w-6 text-primary" />
                 {t("weather.snowReport")}
               </CardTitle>
-              <CardDescription>Snow-Forecast Vars</CardDescription>
+              <CardDescription>{t("weather.snowForecastSubtitle")}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button
-                variant="outline"
-                className="w-full h-auto py-6 flex-col items-center hover:shadow-md transition-smooth"
-                asChild
-              >
-                <a
-                  href="https://www.snow-forecast.com/resorts/Vars/6day/mid"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Mountain className="h-8 w-8 mb-3 text-primary" />
-                  <span className="font-semibold text-lg mb-2">
-                    {t("weather.viewSnowForecast")}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    Prévisions détaillées sur 6 jours
-                  </span>
-                </a>
-              </Button>
+              {loading && (
+                <div className="text-center py-8 text-muted-foreground">
+                  {t("weather.loading")}
+                </div>
+              )}
+              
+              {error && (
+                <div className="text-center py-8 text-destructive">
+                  {t("weather.error")}
+                </div>
+              )}
+
+              {snowForecast.length > 0 && !loading && !error && (
+                <div className="space-y-3">
+                  {snowForecast.map((forecast, index) => {
+                    const date = new Date(forecast.date);
+                    const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
+                    const dayMonth = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+                    
+                    return (
+                      <div 
+                        key={index} 
+                        className="flex items-center justify-between p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-smooth"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="text-left min-w-[80px]">
+                            <div className="font-semibold text-foreground capitalize">{dayName}</div>
+                            <div className="text-sm text-muted-foreground">{dayMonth}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CloudSnow className="h-5 w-5 text-primary" />
+                            <span className="font-bold text-lg text-primary">
+                              {forecast.snowfall > 0 ? `${forecast.snowfall} cm` : '-'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <div className="text-sm text-muted-foreground">{t("weather.snowDepth")}</div>
+                            <div className="font-semibold text-foreground">
+                              {forecast.snowDepth > 0 ? `${forecast.snowDepth} cm` : '-'}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm text-muted-foreground">{t("weather.temp")}</div>
+                            <div className="font-semibold text-foreground">{forecast.temperature}°C</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
