@@ -28,24 +28,24 @@ const WeatherSnow = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        // Fetch current weather and 7-day snow forecast
+        // Fetch current weather and 4-day snow forecast using Météo France AROME model
         const response = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=44.62&longitude=6.68&current_weather=true&hourly=temperature_2m,precipitation,wind_speed_10m&daily=snowfall_sum,snow_depth_max,temperature_2m_max,temperature_2m_min&timezone=Europe/Paris"
+          "https://api.open-meteo.com/v1/meteofrance?latitude=44.62&longitude=6.68&current=temperature_2m,precipitation,wind_speed_10m,weather_code&hourly=temperature_2m,precipitation,wind_speed_10m&daily=snowfall_sum,snow_depth_max,temperature_2m_max,temperature_2m_min&timezone=Europe/Paris&models=arome_seamless"
         );
         const data = await response.json();
         
-        if (data.current_weather) {
+        if (data.current) {
           setWeather({
-            temperature: data.current_weather.temperature,
-            windSpeed: data.current_weather.windspeed,
-            precipitation: data.hourly.precipitation[0] || 0,
-            weatherCode: data.current_weather.weathercode,
+            temperature: data.current.temperature_2m,
+            windSpeed: data.current.wind_speed_10m,
+            precipitation: data.current.precipitation || 0,
+            weatherCode: data.current.weather_code,
           });
         }
 
-        // Process snow forecast for next 7 days
+        // Process snow forecast for next 4 days (AROME model)
         if (data.daily) {
-          const forecasts: SnowForecast[] = data.daily.time.slice(0, 7).map((date: string, index: number) => ({
+          const forecasts: SnowForecast[] = data.daily.time.slice(0, 4).map((date: string, index: number) => ({
             date,
             snowfall: data.daily.snowfall_sum[index] || 0,
             snowDepth: data.daily.snow_depth_max[index] || 0,
@@ -161,7 +161,7 @@ const WeatherSnow = () => {
                 <Mountain className="h-6 w-6 text-primary" />
                 {t("weather.snowReport")}
               </CardTitle>
-              <CardDescription>{t("weather.snowForecastSubtitle")}</CardDescription>
+              <CardDescription>{t("weather.snowForecastSubtitle")} - Modèle AROME (Météo France)</CardDescription>
             </CardHeader>
             <CardContent>
               {loading && (
