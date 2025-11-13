@@ -32,7 +32,7 @@ const WeatherSnow = () => {
   const [stationObs, setStationObs] = useState<StationObservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [selectedWebcam, setSelectedWebcam] = useState<{ name: string; imageUrl: string } | null>(null);
+  const [selectedWebcam, setSelectedWebcam] = useState<{ name: string; url: string } | null>(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -89,19 +89,19 @@ const WeatherSnow = () => {
   const webcams = [
     {
       name: "Speed Master",
-      imageUrl: "https://www.skaping.com/vars/speed-master/image",
+      url: "https://www.skaping.com/vars/speed-master",
     },
     {
       name: "Mayt",
-      imageUrl: "https://www.skaping.com/vars/mayt/image",
+      url: "https://www.skaping.com/vars/mayt",
     },
     {
       name: "Col de Crévoux",
-      imageUrl: "https://www.skaping.com/vars/col-de-crevoux/image",
+      url: "https://www.skaping.com/vars/col-de-crevoux",
     },
     {
       name: "Peynier",
-      imageUrl: "https://www.skaping.com/vars/peynier/image",
+      url: "https://www.skaping.com/vars/peynier",
     },
   ];
 
@@ -340,15 +340,16 @@ const WeatherSnow = () => {
 
         {/* Webcam Dialog */}
         <Dialog open={!!selectedWebcam} onOpenChange={(open) => !open && setSelectedWebcam(null)}>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-6xl h-[90vh]">
             <DialogHeader>
               <DialogTitle>{selectedWebcam?.name}</DialogTitle>
             </DialogHeader>
-            <div className="relative w-full aspect-video">
-              <img
-                src={selectedWebcam?.imageUrl}
-                alt={selectedWebcam?.name}
-                className="w-full h-full object-contain rounded-lg"
+            <div className="relative w-full h-full">
+              <iframe
+                src={selectedWebcam?.url}
+                className="w-full h-full rounded-lg border-0"
+                title={selectedWebcam?.name}
+                allow="fullscreen"
               />
             </div>
           </DialogContent>
