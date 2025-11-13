@@ -4,6 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CloudSnow, Droplets, Wind, Thermometer, Camera, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import webcamSpeedMaster from "@/assets/webcam-speed-master.jpg";
+import webcamMayt from "@/assets/webcam-mayt.jpg";
+import webcamColDeCrevoux from "@/assets/webcam-col-de-crevoux.jpg";
+import webcamPeynier from "@/assets/webcam-peynier.jpg";
 
 interface WeatherData {
   temperature: number;
@@ -32,7 +36,7 @@ const WeatherSnow = () => {
   const [stationObs, setStationObs] = useState<StationObservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [selectedWebcam, setSelectedWebcam] = useState<{ name: string; url: string } | null>(null);
+  const [selectedWebcam, setSelectedWebcam] = useState<{ name: string; url: string; image: string } | null>(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -90,18 +94,22 @@ const WeatherSnow = () => {
     {
       name: "Speed Master",
       url: "https://www.skaping.com/vars/speed-master",
+      image: webcamSpeedMaster,
     },
     {
       name: "Mayt",
       url: "https://www.skaping.com/vars/mayt",
+      image: webcamMayt,
     },
     {
       name: "Col de Crévoux",
       url: "https://www.skaping.com/vars/col-de-crevoux",
+      image: webcamColDeCrevoux,
     },
     {
       name: "Peynier",
       url: "https://www.skaping.com/vars/peynier",
+      image: webcamPeynier,
     },
   ];
 
@@ -340,17 +348,23 @@ const WeatherSnow = () => {
 
         {/* Webcam Dialog */}
         <Dialog open={!!selectedWebcam} onOpenChange={(open) => !open && setSelectedWebcam(null)}>
-          <DialogContent className="max-w-6xl h-[90vh]">
-            <DialogHeader>
-              <DialogTitle>{selectedWebcam?.name}</DialogTitle>
-            </DialogHeader>
-            <div className="relative w-full h-full">
-              <iframe
-                src={selectedWebcam?.url}
-                className="w-full h-full rounded-lg border-0"
-                title={selectedWebcam?.name}
-                allow="fullscreen"
-              />
+          <DialogContent className="max-w-6xl h-[90vh] p-0 overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-center blur-sm opacity-50"
+              style={{ backgroundImage: `url(${selectedWebcam?.image})` }}
+            />
+            <div className="relative z-10 flex flex-col h-full">
+              <DialogHeader className="px-6 pt-6 pb-4 bg-background/80 backdrop-blur-sm">
+                <DialogTitle>{selectedWebcam?.name}</DialogTitle>
+              </DialogHeader>
+              <div className="flex-1 px-6 pb-6">
+                <iframe
+                  src={selectedWebcam?.url}
+                  className="w-full h-full rounded-lg border-2 border-border/50 shadow-2xl"
+                  title={selectedWebcam?.name}
+                  allow="fullscreen"
+                />
+              </div>
             </div>
           </DialogContent>
         </Dialog>
