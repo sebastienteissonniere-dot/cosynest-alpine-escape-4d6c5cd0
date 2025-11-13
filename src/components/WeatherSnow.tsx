@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CloudSnow, Droplets, Wind, Thermometer, Camera, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface WeatherData {
   temperature: number;
@@ -31,6 +32,7 @@ const WeatherSnow = () => {
   const [stationObs, setStationObs] = useState<StationObservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedWebcam, setSelectedWebcam] = useState<{ name: string; imageUrl: string } | null>(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -86,16 +88,20 @@ const WeatherSnow = () => {
 
   const webcams = [
     {
-      name: "Vars Office du Tourisme",
-      url: "https://www.vars.com/hiver/webcams.html",
+      name: "Speed Master",
+      imageUrl: "https://www.skaping.com/vars/speed-master/image",
     },
     {
-      name: "Bergfex Vars",
-      url: "https://www.bergfex.fr/vars/webcams/",
+      name: "Mayt",
+      imageUrl: "https://www.skaping.com/vars/mayt/image",
     },
     {
-      name: "OnTheSnow Vars",
-      url: "https://www.onthesnow.fr/vars/webcams",
+      name: "Col de Crévoux",
+      imageUrl: "https://www.skaping.com/vars/col-de-crevoux/image",
+    },
+    {
+      name: "Peynier",
+      imageUrl: "https://www.skaping.com/vars/peynier/image",
     },
   ];
 
@@ -313,31 +319,40 @@ const WeatherSnow = () => {
             <CardDescription>Vue en direct depuis Vars</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {webcams.map((webcam, index) => (
                 <Button
                   key={index}
                   variant="outline"
                   className="h-auto py-4 flex-col items-start hover:shadow-md transition-smooth"
-                  asChild
+                  onClick={() => setSelectedWebcam(webcam)}
                 >
-                  <a
-                    href={webcam.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    <Camera className="h-5 w-5 mb-2" />
-                    <span className="font-semibold">{webcam.name}</span>
-                    <span className="text-xs text-muted-foreground mt-1">
-                      {t("weather.viewWebcam")}
-                    </span>
-                  </a>
+                  <Camera className="h-5 w-5 mb-2" />
+                  <span className="font-semibold">{webcam.name}</span>
+                  <span className="text-xs text-muted-foreground mt-1">
+                    Voir la webcam
+                  </span>
                 </Button>
               ))}
             </div>
           </CardContent>
         </Card>
+
+        {/* Webcam Dialog */}
+        <Dialog open={!!selectedWebcam} onOpenChange={(open) => !open && setSelectedWebcam(null)}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>{selectedWebcam?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="relative w-full aspect-video">
+              <img
+                src={selectedWebcam?.imageUrl}
+                alt={selectedWebcam?.name}
+                className="w-full h-full object-contain rounded-lg"
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
