@@ -18,10 +18,17 @@ interface SnowForecast {
   temperature: number;
 }
 
+interface StationObservation {
+  snowDepth: number;
+  temperature: number;
+  lastUpdate: string;
+}
+
 const WeatherSnow = () => {
   const { t } = useLanguage();
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [snowForecast, setSnowForecast] = useState<SnowForecast[]>([]);
+  const [stationObs, setStationObs] = useState<StationObservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -30,7 +37,7 @@ const WeatherSnow = () => {
       try {
         // Fetch current weather and 4-day snow forecast using Météo France AROME model
         const response = await fetch(
-          "https://api.open-meteo.com/v1/meteofrance?latitude=44.62&longitude=6.68&current=temperature_2m,precipitation,wind_speed_10m,weather_code&hourly=temperature_2m,precipitation,wind_speed_10m&daily=snowfall_sum,snow_depth_max,temperature_2m_max,temperature_2m_min&timezone=Europe/Paris&models=arome_seamless"
+          "https://api.open-meteo.com/v1/meteofrance?latitude=44.62&longitude=6.68&current=temperature_2m,precipitation,wind_speed_10m,weather_code,snowfall,snow_depth&hourly=temperature_2m,precipitation,wind_speed_10m,snowfall,snow_depth&daily=snowfall_sum,snow_depth_max,temperature_2m_max,temperature_2m_min&timezone=Europe/Paris&models=arome_seamless"
         );
         const data = await response.json();
         
@@ -40,6 +47,15 @@ const WeatherSnow = () => {
             windSpeed: data.current.wind_speed_10m,
             precipitation: data.current.precipitation || 0,
             weatherCode: data.current.weather_code,
+          });
+        }
+
+        // Station observation data (current snow depth from AROME)
+        if (data.current) {
+          setStationObs({
+            snowDepth: data.current.snow_depth || 0,
+            temperature: data.current.temperature_2m,
+            lastUpdate: new Date().toISOString(),
           });
         }
 
@@ -94,6 +110,72 @@ const WeatherSnow = () => {
             {t("weather.subtitle")}
           </p>
         </div>
+
+        {/* Station Observation Card */}
+        {stationObs && (
+          <Card className="border-border/50 shadow-luxury mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mountain className="h-6 w-6 text-primary" />
+                {t("weather.stationObservation") || "Observations Station Vars (07929)"}
+              </CardTitle>
+              <CardDescription>
+                Données en temps réel - Dernière mise à jour: {new Date(stationObs.lastUpdate).toLocaleTimeString('fr-FR')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="flex flex-col items-center p-6 bg-primary/10 rounded-lg border-2 border-primary/20">
+                  <CloudSnow className="h-10 w-10 text-primary mb-3" />
+                  <span className="text-sm text-muted-foreground mb-2">
+                    {t("weather.currentSnowDepth") || "Hauteur de neige actuelle"}
+                  </span>
+                  <span className="text-4xl font-bold text-primary">
+                    {stationObs.snowDepth > 0 ? `${Math.round(stationObs.snowDepth)} cm` : '-'}
+                  </span>
+                </div>
+
+                <div className="flex flex-col items-center p-6 bg-accent/10 rounded-lg">
+                  <Thermometer className="h-10 w-10 text-primary mb-3" />
+                  <span className="text-sm text-muted-foreground mb-2">
+                    {t("weather.temperature")}
+                  </span>
+                  <span className="text-4xl font-bold text-foreground">
+                    {stationObs.temperature}°C
+                  </span>
+                </div>
+              </div>
+
+              {/* Comparison with forecast */}
+              {snowForecast.length > 0 && (
+                <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <Mountain className="h-5 w-5 text-primary" />
+                    {t("weather.comparison") || "Comparaison avec les prévisions"}
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Hauteur actuelle:</span>
+                      <span className="font-semibold">{stationObs.snowDepth > 0 ? `${Math.round(stationObs.snowDepth)} cm` : '-'}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Prévision maximum (4 jours):</span>
+                      <span className="font-semibold">
+                        {Math.max(...snowForecast.map(f => f.snowDepth))} cm
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Chutes prévues (4 jours):</span>
+                      <span className="font-semibold text-primary">
+                        {snowForecast.reduce((sum, f) => sum + f.snowfall, 0).toFixed(0)} cm
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Current Weather Card */}
