@@ -329,18 +329,28 @@ const WeatherSnow = () => {
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {webcams.map((webcam, index) => (
-                <Button
+                <div
                   key={index}
-                  variant="outline"
-                  className="h-auto py-4 flex-col items-start hover:shadow-md transition-smooth"
+                  className="group cursor-pointer overflow-hidden rounded-lg border border-border/50 hover:shadow-lg transition-smooth"
                   onClick={() => setSelectedWebcam(webcam)}
                 >
-                  <Camera className="h-5 w-5 mb-2" />
-                  <span className="font-semibold">{webcam.name}</span>
-                  <span className="text-xs text-muted-foreground mt-1">
-                    Voir la webcam
-                  </span>
-                </Button>
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={webcam.image}
+                      alt={webcam.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+                    />
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-smooth flex items-center justify-center">
+                      <Camera className="h-10 w-10 text-white" />
+                    </div>
+                  </div>
+                  <div className="p-3 bg-background">
+                    <span className="font-semibold text-foreground">{webcam.name}</span>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Cliquez pour voir la webcam
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           </CardContent>
@@ -348,23 +358,17 @@ const WeatherSnow = () => {
 
         {/* Webcam Dialog */}
         <Dialog open={!!selectedWebcam} onOpenChange={(open) => !open && setSelectedWebcam(null)}>
-          <DialogContent className="max-w-6xl h-[90vh] p-0 overflow-hidden">
-            <div 
-              className="absolute inset-0 bg-cover bg-center blur-sm opacity-50"
-              style={{ backgroundImage: `url(${selectedWebcam?.image})` }}
-            />
-            <div className="relative z-10 flex flex-col h-full">
-              <DialogHeader className="px-6 pt-6 pb-4 bg-background/80 backdrop-blur-sm">
-                <DialogTitle>{selectedWebcam?.name}</DialogTitle>
-              </DialogHeader>
-              <div className="flex-1 px-6 pb-6">
-                <iframe
-                  src={selectedWebcam?.url}
-                  className="w-full h-full rounded-lg border-2 border-border/50 shadow-2xl"
-                  title={selectedWebcam?.name}
-                  allow="fullscreen"
-                />
-              </div>
+          <DialogContent className="max-w-6xl h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>{selectedWebcam?.name}</DialogTitle>
+            </DialogHeader>
+            <div className="relative w-full h-full">
+              <iframe
+                src={selectedWebcam?.url}
+                className="w-full h-full rounded-lg border-0"
+                title={selectedWebcam?.name}
+                allow="fullscreen"
+              />
             </div>
           </DialogContent>
         </Dialog>
