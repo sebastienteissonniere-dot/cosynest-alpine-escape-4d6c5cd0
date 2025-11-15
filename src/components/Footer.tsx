@@ -19,9 +19,10 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4 text-lg">{t("footer.contact")}</h4>
             <ul className="space-y-2 text-background/80">
-              <li>Vars 05560, Hautes-Alpes</li>
+              <li>Chalet CosyNest N°16</li>
+              <li>Hameau des rennes, Fontbonne</li>
+              <li>05560 Vars, France</li>
               <li>contact@chaletcosynest.fr</li>
-              <li>+33 (0)X XX XX XX XX</li>
             </ul>
           </div>
 
