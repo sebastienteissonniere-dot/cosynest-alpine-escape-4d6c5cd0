@@ -1,4 +1,4 @@
-import { Mail, Phone, Instagram } from "lucide-react";
+import { Mail, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -17,7 +17,7 @@ const Contact = () => {
             {t("contact.subtitle")}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
             <Card className="hover:shadow-medium transition-smooth border-border/50">
               <CardContent className="p-8 text-center">
                 <div className="inline-flex p-4 rounded-full bg-accent/10 mb-4">
@@ -26,18 +26,6 @@ const Contact = () => {
                 <h3 className="font-semibold text-foreground mb-2">{t("contact.email")}</h3>
                 <p className="text-muted-foreground text-sm">
                   contact@chaletcosynest.fr
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-medium transition-smooth border-border/50">
-              <CardContent className="p-8 text-center">
-                <div className="inline-flex p-4 rounded-full bg-accent/10 mb-4">
-                  <Phone className="h-6 w-6 text-accent" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{t("contact.phone")}</h3>
-                <p className="text-muted-foreground text-sm">
-                  +33 (0)X XX XX XX XX
                 </p>
               </CardContent>
             </Card>
