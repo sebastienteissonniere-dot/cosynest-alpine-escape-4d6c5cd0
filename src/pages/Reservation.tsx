@@ -83,8 +83,6 @@ const Reservation = () => {
                     • Arrivée et départ le samedi uniquement
                     <br />
                     • Séjour minimum de 7 nuits
-                    <br />
-                    Zone scolaire appliquée: <strong>{settings.school_zone}</strong>
                   </>
                 ) : (
                   <>
@@ -93,8 +91,6 @@ const Reservation = () => {
                     • Check-in and check-out on Saturday only
                     <br />
                     • Minimum stay of 7 nights
-                    <br />
-                    School zone applied: <strong>{settings.school_zone}</strong>
                   </>
                 )}
               </AlertDescription>
