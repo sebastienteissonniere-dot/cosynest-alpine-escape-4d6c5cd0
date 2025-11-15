@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Mail } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
@@ -35,13 +35,6 @@ const Footer = () => {
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="p-2 rounded-full bg-background/10 hover:bg-background/20 transition-smooth"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
               </a>
               <a
                 href="mailto:contact@chaletcosynest.fr"
