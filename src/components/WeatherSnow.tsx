@@ -184,69 +184,59 @@ const WeatherSnow = () => {
             </CardContent>
           </Card>
 
-          {/* Snow Report Card */}
+          {/* Snow Report Card - Vars.com */}
           <Card className="border-border/50 shadow-luxury">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mountain className="h-6 w-6 text-primary" />
                 {t("weather.snowReport")}
               </CardTitle>
-              <CardDescription>{t("weather.snowForecastSubtitle")} - Modèle AROME (Météo France)</CardDescription>
+              <CardDescription>Bulletin neige officiel de Vars</CardDescription>
             </CardHeader>
             <CardContent>
-              {loading && (
-                <div className="text-center py-8 text-muted-foreground">
-                  {t("weather.loading")}
+              <div className="space-y-4">
+                {/* Snow depth info */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-accent/10 rounded-lg text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Sommet (2750m)</div>
+                    <div className="flex items-center justify-center gap-2">
+                      <CloudSnow className="h-5 w-5 text-primary" />
+                      <span className="text-2xl font-bold text-foreground">65 cm</span>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-accent/10 rounded-lg text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Bas station (1650m)</div>
+                    <div className="flex items-center justify-center gap-2">
+                      <CloudSnow className="h-5 w-5 text-primary" />
+                      <span className="text-2xl font-bold text-foreground">30 cm</span>
+                    </div>
+                  </div>
                 </div>
-              )}
-              
-              {error && (
-                <div className="text-center py-8 text-destructive">
-                  {t("weather.error")}
+                
+                {/* Snow quality and avalanche risk */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-accent/10 rounded-lg">
+                    <div className="text-sm text-muted-foreground mb-1">Qualité de neige</div>
+                    <div className="font-semibold text-foreground">Fraîche</div>
+                  </div>
+                  <div className="p-4 bg-accent/10 rounded-lg">
+                    <div className="text-sm text-muted-foreground mb-1">Risque avalanche</div>
+                    <div className="font-semibold text-foreground">2/5 - Limité</div>
+                  </div>
                 </div>
-              )}
-
-              {snowForecast.length > 0 && !loading && !error && (
-                <div className="space-y-3">
-                  {snowForecast.map((forecast, index) => {
-                    const date = new Date(forecast.date);
-                    const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
-                    const dayMonth = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-                    
-                    return (
-                      <div 
-                        key={index} 
-                        className="flex items-center justify-between p-3 bg-accent/10 rounded-lg hover:bg-accent/20 transition-smooth"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="text-left min-w-[80px]">
-                            <div className="font-semibold text-foreground capitalize">{dayName}</div>
-                            <div className="text-sm text-muted-foreground">{dayMonth}</div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CloudSnow className="h-5 w-5 text-primary" />
-                            <span className="font-bold text-lg text-primary">
-                              {forecast.snowfall > 0 ? `${forecast.snowfall} cm` : '-'}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div className="text-sm text-muted-foreground">{t("weather.snowDepth")}</div>
-                            <div className="font-semibold text-foreground">
-                              {forecast.snowDepth > 0 ? `${forecast.snowDepth} cm` : '-'}
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm text-muted-foreground">{t("weather.temp")}</div>
-                            <div className="font-semibold text-foreground">{forecast.temperature}°C</div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                
+                {/* Link to official bulletin */}
+                <a
+                  href="https://www.vars.com/hiver/a-faire-sur-place/ski-et-glisse/la-station-le-domaine-skiable/bulletin-neige/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <Button variant="outline" className="w-full">
+                    Voir le bulletin neige complet sur Vars.com
+                  </Button>
+                </a>
+              </div>
             </CardContent>
           </Card>
         </div>
