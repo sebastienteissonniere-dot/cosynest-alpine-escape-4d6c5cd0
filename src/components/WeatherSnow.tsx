@@ -189,7 +189,7 @@ const WeatherSnow = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mountain className="h-6 w-6 text-primary" />
-                {t("weather.snowReport")}
+                Enneigement - {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
               </CardTitle>
               <CardDescription>Bulletin neige officiel de Vars</CardDescription>
             </CardHeader>
