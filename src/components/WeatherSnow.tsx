@@ -30,7 +30,7 @@ interface StationObservation {
 }
 
 const WeatherSnow = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [snowForecast, setSnowForecast] = useState<SnowForecast[]>([]);
   const [stationObs, setStationObs] = useState<StationObservation | null>(null);
@@ -189,9 +189,9 @@ const WeatherSnow = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mountain className="h-6 w-6 text-primary" />
-                Enneigement - {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {language === 'fr' ? 'Enneigement' : 'Snow Conditions'} - {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
               </CardTitle>
-              <CardDescription>Bulletin neige officiel de Vars</CardDescription>
+              <CardDescription>{language === 'fr' ? 'Bulletin neige officiel de Vars' : 'Official Vars snow report'}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
