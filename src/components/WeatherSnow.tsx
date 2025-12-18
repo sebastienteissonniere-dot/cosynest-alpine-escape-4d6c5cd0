@@ -224,18 +224,6 @@ const WeatherSnow = () => {
                     <div className="font-semibold text-foreground">2/5 - Limité</div>
                   </div>
                 </div>
-                
-                {/* Link to official bulletin */}
-                <a
-                  href="https://www.vars.com/hiver/a-faire-sur-place/ski-et-glisse/la-station-le-domaine-skiable/bulletin-neige/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
-                >
-                  <Button variant="outline" className="w-full">
-                    Voir le bulletin neige complet sur Vars.com
-                  </Button>
-                </a>
               </div>
             </CardContent>
           </Card>
