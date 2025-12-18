@@ -198,14 +198,14 @@ const WeatherSnow = () => {
                 {/* Snow depth info */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-accent/10 rounded-lg text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Sommet (2750m)</div>
+                    <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Sommet (2750m)' : 'Summit (2750m)'}</div>
                     <div className="flex items-center justify-center gap-2">
                       <CloudSnow className="h-5 w-5 text-primary" />
                       <span className="text-2xl font-bold text-foreground">65 cm</span>
                     </div>
                   </div>
                   <div className="p-4 bg-accent/10 rounded-lg text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Bas station (1650m)</div>
+                    <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Bas station (1650m)' : 'Base (1650m)'}</div>
                     <div className="flex items-center justify-center gap-2">
                       <CloudSnow className="h-5 w-5 text-primary" />
                       <span className="text-2xl font-bold text-foreground">30 cm</span>
@@ -216,12 +216,12 @@ const WeatherSnow = () => {
                 {/* Snow quality and avalanche risk */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-accent/10 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">Qualité de neige</div>
-                    <div className="font-semibold text-foreground">Fraîche</div>
+                    <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Qualité de neige' : 'Snow quality'}</div>
+                    <div className="font-semibold text-foreground">{language === 'fr' ? 'Fraîche' : 'Fresh'}</div>
                   </div>
                   <div className="p-4 bg-accent/10 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">Risque avalanche</div>
-                    <div className="font-semibold text-foreground">2/5 - Limité</div>
+                    <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Risque avalanche' : 'Avalanche risk'}</div>
+                    <div className="font-semibold text-foreground">{language === 'fr' ? '2/5 - Limité' : '2/5 - Limited'}</div>
                   </div>
                 </div>
               </div>
