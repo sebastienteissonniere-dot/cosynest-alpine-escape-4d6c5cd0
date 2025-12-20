@@ -28,11 +28,11 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const t = (key: string): string => {
     const keys = key.split(".");
     let value: any = translations[language];
-    
+
     for (const k of keys) {
       value = value?.[k];
     }
-    
+
     return value || key;
   };
 
@@ -89,7 +89,7 @@ const translations = {
         finalCleaning: "Ménage de fin de séjour inclus",
         essentials: "Essentiels de cuisine offerts (huile, café, épices...)",
         products: "Produits d'accueil premium",
-        concierge: "Conciergerie disponible",
+        concierge: "Conciergerie",
         wifi: "Connexion Wi-Fi haut débit",
         evCharger: "Borne de recharge véhicule électrique à disposition",
       },
@@ -198,7 +198,7 @@ const translations = {
         finalCleaning: "End-of-stay cleaning included",
         essentials: "Kitchen essentials provided (oil, coffee, spices...)",
         products: "Premium welcome products",
-        concierge: "Concierge service available",
+        concierge: "Concierge",
         wifi: "High-speed Wi-Fi connection",
         evCharger: "Electric vehicle charging station available",
       },
