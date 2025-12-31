@@ -9,6 +9,7 @@ import Reservation from "./pages/Reservation";
 import Chalet from "./pages/Chalet";
 import Weather from "./pages/Weather";
 import NotFound from "./pages/NotFound";
+import CookieConsent from "@/components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        <CookieConsent />
       </TooltipProvider>
     </LanguageProvider>
   </QueryClientProvider>

@@ -152,6 +152,11 @@ const translations = {
       followUs: "Suivez-nous",
       rights: "Tous droits réservés.",
     },
+    cookie: {
+      message: "Nous utilisons des cookies pour analyser notre trafic et améliorer votre expérience.",
+      accept: "Accepter",
+      decline: "Refuser",
+    },
   },
   en: {
     nav: {
@@ -260,6 +265,11 @@ const translations = {
       contact: "Contact",
       followUs: "Follow us",
       rights: "All rights reserved.",
+    },
+    cookie: {
+      message: "We use cookies to analyze our traffic and improve your experience.",
+      accept: "Accept",
+      decline: "Decline",
     },
   },
 };
