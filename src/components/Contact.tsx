@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+import { useNavigate } from "react-router-dom";
+
 const Contact = () => {
+  const navigate = useNavigate();
   const { t } = useLanguage();
-  
+
   return (
     <section id="contact" className="py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,7 +47,11 @@ const Contact = () => {
           </div>
 
           <div className="space-y-4">
-            <Button size="lg" className="text-lg px-8 shadow-luxury">
+            <Button
+              size="lg"
+              className="text-lg px-8 shadow-luxury"
+              onClick={() => navigate("/reservation")}
+            >
               {t("contact.bookNow")}
             </Button>
             <p className="text-sm text-muted-foreground">

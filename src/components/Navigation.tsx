@@ -30,13 +30,21 @@ const Navigation = () => {
     setIsOpen(false);
   };
 
+  const handleLogoClick = () => {
+    if (location.pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-border/50 shadow-soft">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex-shrink-0">
-            <button 
-              onClick={() => navigate("/")}
+            <button
+              onClick={handleLogoClick}
               className="text-2xl font-serif font-bold text-primary hover:opacity-80 transition-smooth"
             >
               Cosynest
@@ -83,8 +91,8 @@ const Navigation = () => {
               <Globe className="h-4 w-4" />
               {language === "fr" ? "EN" : "FR"}
             </button>
-            <Button 
-              variant="default" 
+            <Button
+              variant="default"
               size="lg"
               onClick={() => navigate("/reservation")}
             >
@@ -152,8 +160,8 @@ const Navigation = () => {
               {t("nav.contact")}
             </button>
             <Button
-              variant="default" 
-              size="lg" 
+              variant="default"
+              size="lg"
               className="w-full"
               onClick={() => {
                 navigate("/reservation");

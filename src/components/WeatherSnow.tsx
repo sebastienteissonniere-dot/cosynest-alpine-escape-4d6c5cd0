@@ -46,7 +46,7 @@ const WeatherSnow = () => {
           "https://api.open-meteo.com/v1/meteofrance?latitude=44.62&longitude=6.68&current=temperature_2m,precipitation,wind_speed_10m,weather_code,snowfall,snow_depth&hourly=temperature_2m,precipitation,wind_speed_10m,snowfall,snow_depth&daily=snowfall_sum,snow_depth_max,temperature_2m_max,temperature_2m_min&timezone=Europe/Paris&models=arome_seamless"
         );
         const data = await response.json();
-        
+
         if (data.current) {
           setWeather({
             temperature: data.current.temperature_2m,
@@ -75,7 +75,7 @@ const WeatherSnow = () => {
           }));
           setSnowForecast(forecasts);
         }
-        
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching weather:", err);
@@ -141,7 +141,7 @@ const WeatherSnow = () => {
                   {t("weather.loading")}
                 </div>
               )}
-              
+
               {error && (
                 <div className="text-center py-8 text-destructive">
                   {t("weather.error")}
@@ -212,7 +212,7 @@ const WeatherSnow = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Snow quality and avalanche risk */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-accent/10 rounded-lg">
@@ -270,14 +270,14 @@ const WeatherSnow = () => {
 
         {/* Webcam Dialog */}
         <Dialog open={!!selectedWebcam} onOpenChange={(open) => !open && setSelectedWebcam(null)}>
-          <DialogContent className="max-w-6xl h-[90vh]">
+          <DialogContent className="max-w-6xl h-[90vh] flex flex-col p-6">
             <DialogHeader>
-              <DialogTitle>{selectedWebcam?.name}</DialogTitle>
+              <DialogTitle className="text-xl md:text-2xl">{selectedWebcam?.name}</DialogTitle>
             </DialogHeader>
-            <div className="relative w-full h-full">
+            <div className="relative w-full flex-1 min-h-0 mt-2">
               <iframe
                 src={selectedWebcam?.url}
-                className="w-full h-full rounded-lg border-0"
+                className="w-full h-full rounded-lg border-0 bg-muted"
                 title={selectedWebcam?.name}
                 allow="fullscreen"
               />

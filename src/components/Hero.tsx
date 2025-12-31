@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const Hero = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  
+
   const scrollToExperience = () => {
     const element = document.getElementById("experience");
     if (element) {
@@ -38,8 +38,8 @@ const Hero = () => {
           {t("hero.description")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="text-lg px-8 py-6 shadow-luxury"
             onClick={() => navigate("/reservation")}
           >
@@ -49,6 +49,7 @@ const Hero = () => {
             variant="outline"
             size="lg"
             className="text-lg px-8 py-6 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20"
+            onClick={scrollToExperience}
           >
             {t("hero.discover")}
           </Button>
