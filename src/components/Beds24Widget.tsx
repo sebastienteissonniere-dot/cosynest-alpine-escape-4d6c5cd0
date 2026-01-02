@@ -19,18 +19,20 @@ const Beds24Widget = ({ propId = '306743' }: Beds24WidgetProps) => { // Default 
         };
     }, []);
 
-    const widgetUrl = `https://www.beds24.com/booking2.php?propid=${propId}`;
+    const widgetUrl = `https://www.beds24.com/booking2.php?propid=${propId}&hideheader=yes&hidefooter=yes&referer=iframe`;
 
     return (
-        <div className="w-full min-h-[600px] bg-white rounded-lg shadow-xl p-4">
+        <div className="w-full min-h-[600px] bg-white rounded-lg shadow-xl p-4 flex justify-center">
             <iframe
                 src={widgetUrl}
-                width="100%"
-                height="1200"
-                style={{ border: "none", overflow: "hidden" }}
+                width="800"
+                height="2000"
+                style={{ maxWidth: "100%", border: "none", overflow: "auto" }}
                 title="Beds24 Booking Engine"
             >
-                <p>Your browser does not support iframes.</p>
+                <p>
+                    <a href={widgetUrl} title="Book Now">Book Now</a>
+                </p>
             </iframe>
         </div>
     );
