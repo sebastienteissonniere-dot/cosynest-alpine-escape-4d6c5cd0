@@ -4,7 +4,7 @@ interface Beds24WidgetProps {
     propId?: string;
 }
 
-const Beds24Widget = ({ propId = '360743' }: Beds24WidgetProps) => { // Default to provided ID
+const Beds24Widget = ({ propId = '306743' }: Beds24WidgetProps) => { // Default to provided ID
     useEffect(() => {
         // This script is required for Beds24 widgets if using the JS method, 
         // but for a simple iFrame, we just need the iframe.
@@ -19,7 +19,7 @@ const Beds24Widget = ({ propId = '360743' }: Beds24WidgetProps) => { // Default 
         };
     }, []);
 
-    const widgetUrl = `https://www.beds24.com/booking.php?propid=${propId}&sku=1&window=1`;
+    const widgetUrl = `https://www.beds24.com/booking2.php?propid=${propId}`;
 
     return (
         <div className="w-full min-h-[600px] bg-white rounded-lg shadow-xl p-4">
