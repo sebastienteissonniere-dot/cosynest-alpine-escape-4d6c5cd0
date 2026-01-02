@@ -4,7 +4,7 @@ interface Beds24WidgetProps {
     propId?: string;
 }
 
-const Beds24Widget = ({ propId = 'PG157390' }: Beds24WidgetProps) => { // Default to provided ID
+const Beds24Widget = ({ propId = '360743' }: Beds24WidgetProps) => { // Default to provided ID
     useEffect(() => {
         // This script is required for Beds24 widgets if using the JS method, 
         // but for a simple iFrame, we just need the iframe.
