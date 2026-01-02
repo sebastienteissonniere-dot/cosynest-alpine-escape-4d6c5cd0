@@ -9,6 +9,7 @@ import Reservation from "./pages/Reservation";
 import Chalet from "./pages/Chalet";
 import Weather from "./pages/Weather";
 import NotFound from "./pages/NotFound";
+import ComingSoon from "./pages/ComingSoon";
 import CookieConsent from "@/components/CookieConsent";
 
 const queryClient = new QueryClient();
@@ -21,7 +22,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<ComingSoon />} />
+            <Route path="/dev" element={<Index />} />
             <Route path="/chalet" element={<Chalet />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/reservation" element={<Reservation />} />

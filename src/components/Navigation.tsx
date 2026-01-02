@@ -12,8 +12,8 @@ const Navigation = () => {
 
   const scrollToSection = (id: string) => {
     // If not on home page, navigate there first
-    if (location.pathname !== "/") {
-      navigate("/");
+    if (location.pathname !== "/dev") {
+      navigate("/dev");
       // Wait for navigation to complete, then scroll
       setTimeout(() => {
         const element = document.getElementById(id);
@@ -31,10 +31,10 @@ const Navigation = () => {
   };
 
   const handleLogoClick = () => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/dev") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      navigate("/");
+      navigate("/dev");
     }
   };
 
