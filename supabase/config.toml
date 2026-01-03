@@ -1,7 +1,0 @@
-project_id = "leaudeddhgqwuusopdjo"
-
-[functions.sync-beds24]
-verify_jwt = false
-
-[functions.sync-school-holidays]
-verify_jwt = false
