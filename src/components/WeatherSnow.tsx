@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CloudSnow, Droplets, Wind, Thermometer, Camera, Mountain } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import webcamSpeedMaster from "@/assets/webcam-speed-master.jpg";
 import webcamMayt from "@/assets/webcam-mayt.jpg";
 import webcamColDeCrevoux from "@/assets/webcam-col-de-crevoux.jpg";
 import webcamPeynier from "@/assets/webcam-peynier.jpg";
+import mqtt from "mqtt";
 
 interface WeatherData {
   temperature: number;
@@ -29,14 +29,83 @@ interface StationObservation {
   lastUpdate: string;
 }
 
+interface SnowReport {
+  summitDepth: number;
+  resortDepth: number;
+  freshSnow: number;
+  lastUpdate: string;
+  snowQuality: string;
+  avalancheRisk: string;
+}
+
 const WeatherSnow = () => {
   const { t, language } = useLanguage();
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [snowForecast, setSnowForecast] = useState<SnowForecast[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [stationObs, setStationObs] = useState<StationObservation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedWebcam, setSelectedWebcam] = useState<{ name: string; url: string; image: string } | null>(null);
+
+  const [snowReport, setSnowReport] = useState<SnowReport>({
+    summitDepth: 0,
+    resortDepth: 0,
+    freshSnow: 0,
+    lastUpdate: new Date().toISOString(),
+    snowQuality: "Fresh",
+    avalancheRisk: "2/5 - Limited"
+  });
+
+  useEffect(() => {
+    // MQTT Connection for Live Snow Data
+    const client = mqtt.connect("wss://wss.mqtt.digibox.app:443/mqtt", {
+      username: "digiPoulpe",
+      password: "WyumfcItTe2ZJ1HhOovJ",
+      clean: true,
+      clientId: `mqtt_${Math.random().toString(16).slice(3)}`,
+    });
+
+    client.on("connect", () => {
+      console.log("Connected to Digisnow MQTT");
+      client.subscribe("poulpe/DigiSnow/vars/snow/latest");
+    });
+
+    client.on("message", (topic, message) => {
+      if (topic === "poulpe/DigiSnow/vars/snow/latest") {
+        try {
+          const payload = JSON.parse(message.toString());
+          // Payload is an array of objects. We need to find "Haut station" and "Bas station"
+          // Based on research:
+          // Haut station (Summit) -> zoneId 2, total_depth 85, fresh_depth 27 (example)
+          // Bas station (Resort) -> zoneId 1, total_depth 70, fresh_depth 15 (example)
+
+          const summit = payload.find((p: any) => p.where === "Haut station");
+          const resort = payload.find((p: any) => p.where === "Bas station");
+
+          if (summit && resort) {
+            setSnowReport(prev => ({
+              ...prev,
+              summitDepth: summit.total_depth || 0,
+              resortDepth: resort.total_depth || 0,
+              freshSnow: summit.fresh_depth || 0,
+              lastUpdate: new Date().toISOString(),
+              // Assuming quality is in the payload too, typically "fresh" -> mapped to string
+              snowQuality: summit.quality || "Fresh",
+            }));
+          }
+        } catch (e) {
+          console.error("Error parsing MQTT message", e);
+        }
+      }
+    });
+
+    return () => {
+      if (client.connected) {
+        client.end();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -201,14 +270,14 @@ const WeatherSnow = () => {
                     <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Sommet (2750m)' : 'Summit (2750m)'}</div>
                     <div className="flex items-center justify-center gap-2">
                       <CloudSnow className="h-5 w-5 text-primary" />
-                      <span className="text-2xl font-bold text-foreground">65 cm</span>
+                      <span className="text-2xl font-bold text-foreground">{snowReport.summitDepth === 0 ? '--' : snowReport.summitDepth} cm</span>
                     </div>
                   </div>
                   <div className="p-4 bg-accent/10 rounded-lg text-center">
                     <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Bas station (1650m)' : 'Base (1650m)'}</div>
                     <div className="flex items-center justify-center gap-2">
                       <CloudSnow className="h-5 w-5 text-primary" />
-                      <span className="text-2xl font-bold text-foreground">30 cm</span>
+                      <span className="text-2xl font-bold text-foreground">{snowReport.resortDepth === 0 ? '--' : snowReport.resortDepth} cm</span>
                     </div>
                   </div>
                 </div>
@@ -217,7 +286,9 @@ const WeatherSnow = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-accent/10 rounded-lg">
                     <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Qualité de neige' : 'Snow quality'}</div>
-                    <div className="font-semibold text-foreground">{language === 'fr' ? 'Fraîche' : 'Fresh'}</div>
+                    <div className="font-semibold text-foreground">
+                      {language === 'fr' ? (snowReport.snowQuality === 'fresh' ? 'Fraîche' : snowReport.snowQuality) : snowReport.snowQuality}
+                    </div>
                   </div>
                   <div className="p-4 bg-accent/10 rounded-lg">
                     <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Risque avalanche' : 'Avalanche risk'}</div>
