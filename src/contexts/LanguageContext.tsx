@@ -51,6 +51,7 @@ const translations = {
       weather: "Météo Vars",
       services: "Services",
       contact: "Contact",
+      around: "Alentours",
       book: "Réserver",
     },
     hero: {
@@ -226,6 +227,7 @@ const translations = {
       weather: "Weather Vars",
       services: "Services",
       contact: "Contact",
+      around: "Around",
       book: "Book",
     },
     hero: {
