@@ -157,6 +157,27 @@ const translations = {
       accept: "Accepter",
       decline: "Refuser",
     },
+    legal: {
+      title: "Mentions Légales",
+      editor: {
+        title: "1. Éditeur du site",
+        text: "Le site <strong>chaletcosynest.fr</strong> est édité par la société <strong>CosyNest SARL</strong>, société au capital de 1000 €.",
+        address: "Siège social :",
+        director: "Directeur de la publication :",
+      },
+      hosting: {
+        title: "2. Hébergement",
+        text: "Le site est hébergé par <strong>Infomaniak Network SA</strong>."
+      },
+      ip: {
+        title: "3. Propriété intellectuelle",
+        text: "L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques."
+      },
+      data: {
+        title: "4. Données personnelles",
+        text: "Les informations recueillies via le formulaire de contact ou de réservation sont destinées exclusivement à CosyNest SARL pour la gestion de votre demande. Conformément à la loi « Informatique et Libertés », vous disposez d'un droit d'accès, de modification et de suppression des données vous concernant."
+      }
+    },
   },
   en: {
     nav: {
@@ -270,6 +291,27 @@ const translations = {
       message: "We use cookies to analyze our traffic and improve your experience.",
       accept: "Accept",
       decline: "Decline",
+    },
+    legal: {
+      title: "Legal Notices",
+      editor: {
+        title: "1. Site Editor",
+        text: "The website <strong>chaletcosynest.fr</strong> is edited by the company <strong>CosyNest SARL</strong>, with a capital of 1000 €.",
+        address: "Headquarters:",
+        director: "Publication Director:",
+      },
+      hosting: {
+        title: "2. Hosting",
+        text: "The website is hosted by <strong>Infomaniak Network SA</strong>."
+      },
+      ip: {
+        title: "3. Intellectual Property",
+        text: "This entire site is subject to French and international legislation on copyright and intellectual property. All reproduction rights are reserved, including for downloadable documents and iconographic and photographic representations."
+      },
+      data: {
+        title: "4. Personal Data",
+        text: "The information collected via the contact or booking form is intended exclusively for CosyNest SARL for the management of your request. In accordance with the 'Information Technology and Liberties' law, you have the right to access, modify and delete data concerning you."
+      }
     },
   },
 };

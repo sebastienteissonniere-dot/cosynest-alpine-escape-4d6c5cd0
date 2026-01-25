@@ -53,7 +53,7 @@ const Footer = () => {
             <p>© {currentYear} Cosynest SARL. {t("footer.rights")}</p>
             <span className="hidden md:inline text-background/40">|</span>
             <a href="/mentions-legales" className="hover:text-background transition-colors">
-              Mentions Légales
+              {t("legal.title")}
             </a>
           </div>
         </div>
