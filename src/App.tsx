@@ -7,7 +7,10 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Reservation from "./pages/Reservation";
 import Chalet from "./pages/Chalet";
+import Gallery from "./pages/Gallery";
+import Plans from "./pages/Plans";
 import Around from "./pages/Around";
+import Journal from "./pages/Journal";
 import Weather from "./pages/Weather";
 import NotFound from "./pages/NotFound";
 import ComingSoon from "./pages/ComingSoon";
@@ -27,7 +30,10 @@ const App = () => (
             <Route path="/" element={<ComingSoon />} />
             <Route path="/dev" element={<Index />} />
             <Route path="/chalet" element={<Chalet />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/plans" element={<Plans />} />
             <Route path="/around" element={<Around />} />
+            <Route path="/journal" element={<Journal />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/reservation" element={<Reservation />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />

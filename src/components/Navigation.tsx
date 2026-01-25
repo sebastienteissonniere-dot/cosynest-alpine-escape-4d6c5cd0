@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Menu, Globe } from "lucide-react";
+import { Menu, Globe, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +59,24 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+            {/* Le Chalet Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-smooth font-medium outline-none">
+                {t("nav.chalet.title")} <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => navigate("/chalet")}>
+                  {t("nav.chalet.presentation")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/gallery")}>
+                  {t("nav.chalet.gallery")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/plans")}>
+                  {t("nav.chalet.plans")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <button
               onClick={() => scrollToSection("experience")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
@@ -60,29 +84,30 @@ const Navigation = () => {
               {t("nav.experience")}
             </button>
             <button
-              onClick={() => navigate("/chalet")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.chalet")}
-            </button>
-            <button
-              onClick={() => navigate("/around")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.around")}
-            </button>
-            <button
               onClick={() => scrollToSection("services")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
               {t("nav.services")}
             </button>
-            <button
-              onClick={() => navigate("/weather")}
-              className="text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.weather")}
-            </button>
+
+            {/* Destination Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-smooth font-medium outline-none">
+                {t("nav.destination.title")} <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => navigate("/around")}>
+                  {t("nav.destination.around")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/journal")}>
+                  {t("nav.destination.journal")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/weather")}>
+                  {t("nav.destination.weather")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <button
               onClick={() => scrollToSection("contact")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
@@ -129,51 +154,26 @@ const Navigation = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden pb-6 space-y-4">
-            <button
-              onClick={() => scrollToSection("experience")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.experience")}
-            </button>
-            <button
-              onClick={() => {
-                navigate("/chalet");
-                setIsOpen(false);
-              }}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.chalet")}
-            </button>
-            <button
-              onClick={() => {
-                navigate("/around");
-                setIsOpen(false);
-              }}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.around")}
-            </button>
-            <button
-              onClick={() => scrollToSection("services")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.services")}
-            </button>
-            <button
-              onClick={() => {
-                navigate("/weather");
-                setIsOpen(false);
-              }}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.weather")}
-            </button>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
-            >
-              {t("nav.contact")}
-            </button>
+
+            <div className="space-y-2">
+              <span className="block px-2 text-sm font-semibold text-muted-foreground">{t("nav.chalet.title")}</span>
+              <button onClick={() => { navigate("/chalet"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.presentation")}</button>
+              <button onClick={() => { navigate("/gallery"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.gallery")}</button>
+              <button onClick={() => { navigate("/plans"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.plans")}</button>
+            </div>
+
+            <button onClick={() => scrollToSection("experience")} className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium">{t("nav.experience")}</button>
+            <button onClick={() => scrollToSection("services")} className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium">{t("nav.services")}</button>
+
+            <div className="space-y-2">
+              <span className="block px-2 text-sm font-semibold text-muted-foreground">{t("nav.destination.title")}</span>
+              <button onClick={() => { navigate("/around"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.destination.around")}</button>
+              <button onClick={() => { navigate("/journal"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.destination.journal")}</button>
+              <button onClick={() => { navigate("/weather"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.destination.weather")}</button>
+            </div>
+
+            <button onClick={() => scrollToSection("contact")} className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium">{t("nav.contact")}</button>
+
             <Button
               variant="default"
               size="lg"

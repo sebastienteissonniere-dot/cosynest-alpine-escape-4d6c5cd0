@@ -47,11 +47,20 @@ const translations = {
   fr: {
     nav: {
       experience: "L'Expérience",
-      chalet: "Le Chalet",
-      weather: "Météo Vars",
+      chalet: {
+        title: "Le Chalet",
+        presentation: "Présentation",
+        gallery: "Galerie Photos",
+        plans: "Plans & Architecture",
+      },
+      destination: {
+        title: "Destination",
+        around: "Autour du Chalet",
+        journal: "Journal",
+        weather: "Météo & Webcam",
+      },
       services: "Services",
       contact: "Contact",
-      around: "Alentours",
       book: "Réserver",
     },
     hero: {
@@ -223,11 +232,20 @@ const translations = {
   en: {
     nav: {
       experience: "The Experience",
-      chalet: "The Chalet",
-      weather: "Weather Vars",
+      chalet: {
+        title: "The Chalet",
+        presentation: "Presentation",
+        gallery: "Photo Gallery",
+        plans: "Plans & Architecture",
+      },
+      destination: {
+        title: "Destination",
+        around: "Around",
+        journal: "Journal",
+        weather: "Weather & Webcam",
+      },
       services: "Services",
       contact: "Contact",
-      around: "Around",
       book: "Book",
     },
     hero: {
