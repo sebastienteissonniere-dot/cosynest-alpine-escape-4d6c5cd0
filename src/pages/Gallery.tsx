@@ -39,8 +39,8 @@ const Gallery = () => {
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             if (!isOpen) return;
-            if (event.key === "ArrowLeft") handlePrevious();
-            if (event.key === "ArrowRight") handleNext();
+            if (event.key === "ArrowLeft" || event.key === "ArrowUp") handlePrevious();
+            if (event.key === "ArrowRight" || event.key === "ArrowDown") handleNext();
         },
         [isOpen, handleNext, handlePrevious]
     );
