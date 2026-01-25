@@ -55,6 +55,37 @@ const Gallery = () => {
         setIsOpen(true);
     };
 
+    // Touch handling for swipe
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    // Min swipe distance (in px)
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null); // Reset touch end
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            handleNext();
+        }
+        if (isRightSwipe) {
+            handlePrevious();
+        }
+    };
+
     return (
         <div className="min-h-screen bg-background">
             <Navigation />
@@ -85,7 +116,12 @@ const Gallery = () => {
 
                 {/* Lightbox Dialog */}
                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                    <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-black/90 border-none shadow-none text-white overflow-hidden flex flex-col justify-center items-center outline-none">
+                    <DialogContent
+                        className="max-w-7xl w-full h-[90vh] p-0 bg-black/90 border-none shadow-none text-white overflow-hidden flex flex-col justify-center items-center outline-none"
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                    >
 
                         {/* Close Button Override */}
                         <DialogClose className="absolute right-4 top-4 z-50 rounded-full p-2 bg-black/50 hover:bg-black/70 text-white transition-colors">
@@ -97,7 +133,7 @@ const Gallery = () => {
                             <>
                                 <div className="relative w-full h-full flex items-center justify-center p-4">
 
-                                    {/* Previous Button */}
+                                    {/* Previous Button - Hidden on mobile, visible on sm+ */}
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -114,10 +150,11 @@ const Gallery = () => {
                                     <img
                                         src={images[selectedIndex].src}
                                         alt={images[selectedIndex].alt}
-                                        className="max-h-full max-w-full object-contain shadow-2xl rounded-sm"
+                                        className="max-h-full max-w-full object-contain shadow-2xl rounded-sm select-none"
+                                        draggable="false"
                                     />
 
-                                    {/* Next Button */}
+                                    {/* Next Button - Hidden on mobile, visible on sm+ */}
                                     <Button
                                         variant="ghost"
                                         size="icon"
