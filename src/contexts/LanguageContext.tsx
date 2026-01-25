@@ -63,6 +63,11 @@ const translations = {
       contact: "Contact",
       book: "Réserver",
     },
+    journal: {
+      readMore: "Lire la suite",
+      backToJournal: "Retour au journal",
+      publishedOn: "Publié le",
+    },
     hero: {
       title: "Votre refuge de luxe",
       subtitle: "dans les Alpes",
@@ -247,6 +252,11 @@ const translations = {
       services: "Services",
       contact: "Contact",
       book: "Book",
+    },
+    journal: {
+      readMore: "Read more",
+      backToJournal: "Back to journal",
+      publishedOn: "Published on",
     },
     hero: {
       title: "Your luxury retreat",
