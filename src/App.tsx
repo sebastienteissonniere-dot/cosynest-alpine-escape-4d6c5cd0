@@ -10,6 +10,7 @@ import Chalet from "./pages/Chalet";
 import Weather from "./pages/Weather";
 import NotFound from "./pages/NotFound";
 import ComingSoon from "./pages/ComingSoon";
+import MentionsLegales from "./pages/MentionsLegales";
 import CookieConsent from "@/components/CookieConsent";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/chalet" element={<Chalet />} />
             <Route path="/weather" element={<Weather />} />
             <Route path="/reservation" element={<Reservation />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

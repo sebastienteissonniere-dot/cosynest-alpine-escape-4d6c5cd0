@@ -23,6 +23,11 @@ const Footer = () => {
               <li>Hameau des rennes, Fontbonne</li>
               <li>05560 Vars, France</li>
               <li>contact@chaletcosynest.fr</li>
+              <li>
+                <a href="/mentions-legales" className="hover:text-background transition-colors">
+                  Mentions Légales
+                </a>
+              </li>
             </ul>
           </div>
 
