@@ -23,11 +23,7 @@ const Footer = () => {
               <li>Hameau des rennes, Fontbonne</li>
               <li>05560 Vars, France</li>
               <li>contact@chaletcosynest.fr</li>
-              <li>
-                <a href="/mentions-legales" className="hover:text-background transition-colors">
-                  Mentions Légales
-                </a>
-              </li>
+
             </ul>
           </div>
 
@@ -53,7 +49,13 @@ const Footer = () => {
         </div>
 
         <div className="pt-8 border-t border-background/20 text-center text-background/60 text-sm">
-          <p>© {currentYear} Cosynest SARL. {t("footer.rights")}</p>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+            <p>© {currentYear} Cosynest SARL. {t("footer.rights")}</p>
+            <span className="hidden md:inline text-background/40">|</span>
+            <a href="/mentions-legales" className="hover:text-background transition-colors">
+              Mentions Légales
+            </a>
+          </div>
         </div>
       </div>
     </footer>
