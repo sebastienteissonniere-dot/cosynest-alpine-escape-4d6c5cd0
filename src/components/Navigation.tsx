@@ -66,6 +66,12 @@ const Navigation = () => {
               {t("nav.chalet")}
             </button>
             <button
+              onClick={() => navigate("/around")}
+              className="text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              {t("nav.around")}
+            </button>
+            <button
               onClick={() => scrollToSection("services")}
               className="text-foreground hover:text-primary transition-smooth font-medium"
             >
@@ -137,6 +143,15 @@ const Navigation = () => {
               className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
             >
               {t("nav.chalet")}
+            </button>
+            <button
+              onClick={() => {
+                navigate("/around");
+                setIsOpen(false);
+              }}
+              className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium"
+            >
+              {t("nav.around")}
             </button>
             <button
               onClick={() => scrollToSection("services")}

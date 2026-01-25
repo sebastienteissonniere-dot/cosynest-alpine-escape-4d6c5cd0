@@ -178,6 +178,46 @@ const translations = {
         text: "Les informations recueillies via le formulaire de contact ou de réservation sont destinées exclusivement à CosyNest SARL pour la gestion de votre demande. Conformément à la loi « Informatique et Libertés », vous disposez d'un droit d'accès, de modification et de suppression des données vous concernant."
       }
     },
+    around: {
+      title: "Autour du Chalet",
+      subtitle: "Vars, une destination d'exception en toutes saisons",
+      winter: "Hiver",
+      summer: "Été",
+      activities: {
+        ski: {
+          title: "Ski & Glisse",
+          description: "Domaine de la Forêt Blanche avec 185km de pistes. Snowpark de l'Eyssina pour le freestyle.",
+        },
+        luge: {
+          title: "Luge du Caribou",
+          description: "Descente d'un kilomètre sur rail avec virages et sensations garanties.",
+        },
+        insolite: {
+          title: "Activités Insolites",
+          description: "Grotte de Glace, Chiens de traîneau, Fatbike sur neige.",
+        },
+        hiking_winter: {
+          title: "Raquettes & Piétons",
+          description: "Sentiers balisés pour explorer la nature enneigée et observer la faune.",
+        },
+        hiking_summer: {
+          title: "Randonnée",
+          description: "Découverte du Val d'Escreins, Lac des 9 couleurs, et sentiers panoramiques.",
+        },
+        mtb: {
+          title: "VTT de Descente",
+          description: "Pistes variées pour tous niveaux et événements internationaux.",
+        },
+        adventure: {
+          title: "Parcours Aventure",
+          description: "Accrobranche et parcours dans les arbres pour toute la famille.",
+        },
+        water: {
+          title: "Sports d'Eau Vive",
+          description: "Rafting et canyoning dans la Durance à proximité.",
+        },
+      }
+    },
   },
   en: {
     nav: {
@@ -311,6 +351,46 @@ const translations = {
       data: {
         title: "4. Personal Data",
         text: "The information collected via the contact or booking form is intended exclusively for CosyNest SARL for the management of your request. In accordance with the 'Information Technology and Liberties' law, you have the right to access, modify and delete data concerning you."
+      }
+    },
+    around: {
+      title: "Around the Chalet",
+      subtitle: "Vars, an exceptional destination in all seasons",
+      winter: "Winter",
+      summer: "Summer",
+      activities: {
+        ski: {
+          title: "Ski & Ride",
+          description: "Forêt Blanche ski area with 185km of slopes. Eyssina Snowpark for freestyle.",
+        },
+        luge: {
+          title: "Caribou Luge",
+          description: "One kilometer rail descent with turns and guaranteed thrills.",
+        },
+        insolite: {
+          title: "Unusual Activities",
+          description: "Ice Cave, Dog sledding, Fatbike on snow.",
+        },
+        hiking_winter: {
+          title: "Snowshoeing & Walking",
+          description: "Marked trails to explore the snowy nature and observe wildlife.",
+        },
+        hiking_summer: {
+          title: "Hiking",
+          description: "Discovery of Val d'Escreins, Lake of 9 Colors, and panoramic trails.",
+        },
+        mtb: {
+          title: "Downhill MTB",
+          description: "Varied tracks for all levels and international events.",
+        },
+        adventure: {
+          title: "Adventure Park",
+          description: "Tree climbing and adventure courses for the whole family.",
+        },
+        water: {
+          title: "Whitewater Sports",
+          description: "Rafting and canyoning in the nearby Durance river.",
+        },
       }
     },
   },
