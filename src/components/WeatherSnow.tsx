@@ -54,7 +54,7 @@ const WeatherSnow = () => {
     freshSnow: 0,
     lastUpdate: new Date().toISOString(),
     snowQuality: "Fresh",
-    avalancheRisk: "2/5 - Limited"
+    avalancheRisk: "--/5"
   });
 
   useEffect(() => {
@@ -69,6 +69,7 @@ const WeatherSnow = () => {
     client.on("connect", () => {
       console.log("Connected to Digisnow MQTT");
       client.subscribe("poulpe/DigiSnow/vars/snow/latest");
+      client.subscribe("poulpe/DigiSnow/vars/forecastReport/latest/avalancheRisk");
     });
 
     client.on("message", (topic, message) => {
@@ -95,7 +96,19 @@ const WeatherSnow = () => {
             }));
           }
         } catch (e) {
-          console.error("Error parsing MQTT message", e);
+          console.error("Error parsing MQTT snow message", e);
+        }
+      } else if (topic === "poulpe/DigiSnow/vars/forecastReport/latest/avalancheRisk") {
+        try {
+          const payload = JSON.parse(message.toString());
+          if (payload.level) {
+            setSnowReport(prev => ({
+              ...prev,
+              avalancheRisk: `${payload.level}/5`
+            }));
+          }
+        } catch (e) {
+          console.error("Error parsing MQTT avalanche message", e);
         }
       }
     });
@@ -292,7 +305,7 @@ const WeatherSnow = () => {
                   </div>
                   <div className="p-4 bg-accent/10 rounded-lg">
                     <div className="text-sm text-muted-foreground mb-1">{language === 'fr' ? 'Risque avalanche' : 'Avalanche risk'}</div>
-                    <div className="font-semibold text-foreground">{language === 'fr' ? '2/5 - Limité' : '2/5 - Limited'}</div>
+                    <div className="font-semibold text-foreground">{snowReport.avalancheRisk}</div>
                   </div>
                 </div>
               </div>
