@@ -71,10 +71,16 @@ export const EarlyAccessForm = ({ variant = "card", className = "" }: EarlyAcces
         const emailPrefix = email.split("@")[0] || "Prospect";
         zohoData.append("Last Name", emailPrefix);
 
-        // Associate with Zoho CRM Campaign "Ouverture Debut 2027"
-        zohoData.append("Campaign Name", "Ouverture Debut 2027");
-        zohoData.append("Lead Source", "Ouverture Debut 2027");
-        zohoData.append("Description", "Prospect inscrit pour l'ouverture début 2027 - Campagne Ouverture Debut 2027");
+        // Associate with Zoho CRM Campaign & Lead Source (all standard Zoho field variations)
+        const campaignName = "Ouverture Debut 2027";
+        zohoData.append("Lead Source", campaignName);
+        zohoData.append("Lead_Source", campaignName);
+        zohoData.append("Campaign Name", campaignName);
+        zohoData.append("Campaign_Name", campaignName);
+        zohoData.append("Campaign", campaignName);
+        zohoData.append("Campaign_ID", campaignName);
+        zohoData.append("campId", campaignName);
+        zohoData.append("Description", "Inscription alerte ouverture réservations début 2027 - Campagne: Ouverture Debut 2027");
 
         // Submit to Zoho CRM EU WebToLead endpoint
         fetch("https://crm.zoho.eu/crm/WebToLeadForm", {
