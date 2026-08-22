@@ -4,32 +4,33 @@ on:
   push:
     branches:
       - main
-      - master 
+      - master
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 1. Checkout du code
         uses: actions/checkout@v4
-      
+
       - name: 2. Configuration de Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' 
-      
+          node-version: '20'
+
       - name: 3. Installation des dépendances et compilation
         run: |
           npm install
           npm run build
-        
-      - name: 4. Déploiement SFTP vers Infomaniak
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+
+      - name: 4. Déploiement FTP/SFTP vers Infomaniak
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.FTP_SERVER }}
+          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          remote_dir: ${{ secrets.FTP_PATH }}
-          local_dir: './dist/'
+          server-dir: ${{ secrets.FTP_PATH }}
+          local-dir: './dist/'
           
