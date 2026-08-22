@@ -1,27 +1,27 @@
 import { Globe } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import heroImage from "@/assets/hero-chalet.jpg";
+import chaletRender from "@/assets/chalet-render-2027.jpg";
 import EarlyAccessForm from "@/components/EarlyAccessForm";
 
 const ComingSoon = () => {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-y-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen flex items-center justify-center overflow-y-auto py-12 px-4 sm:px-6 lg:px-8 bg-slate-950">
       {/* Background Image with Overlay */}
-      <div className="fixed inset-0 z-0">
+      <div className="fixed inset-0 z-0 flex items-center justify-center overflow-hidden">
         <img
-          src={heroImage}
-          alt="Cosynest - Chalet de luxe à Vars"
-          className="w-full h-full object-cover"
+          src={chaletRender}
+          alt="Chalet Cosynest - Architecture 2027"
+          className="w-full h-full object-contain md:object-cover object-center opacity-35 filter drop-shadow-2xl scale-105"
         />
-        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/90 backdrop-blur-[1px]" />
       </div>
 
       {/* Main Content */}
       <div className="relative z-10 text-center max-w-3xl mx-auto w-full my-auto py-8">
         {/* Main Title */}
-        <h1 className="text-4xl sm:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
+        <h1 className="text-4xl sm:text-6xl font-serif font-bold text-white mb-4 tracking-tight drop-shadow-md">
           Chalet Cosynest
         </h1>
 
@@ -29,7 +29,7 @@ const ComingSoon = () => {
         <div className="flex justify-center mb-6">
           <button
             onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
-            className="inline-flex items-center gap-2 text-white/90 hover:text-white bg-slate-900/60 hover:bg-slate-900/90 border border-slate-700/60 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider transition-all duration-200 shadow-lg cursor-pointer hover:scale-105"
+            className="inline-flex items-center gap-2 text-white/90 hover:text-white bg-slate-900/80 hover:bg-slate-900 border border-slate-700/80 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider transition-all duration-200 shadow-xl cursor-pointer hover:scale-105"
             aria-label="Change language"
           >
             <Globe className="w-4 h-4 text-amber-400" />
@@ -37,9 +37,9 @@ const ComingSoon = () => {
           </button>
         </div>
 
-        <div className="w-20 h-1 bg-gradient-to-r from-amber-500 to-amber-300 mx-auto mb-6 rounded-full" />
+        <div className="w-20 h-1 bg-gradient-to-r from-amber-500 to-amber-300 mx-auto mb-6 rounded-full shadow-amber-500/50 shadow-sm" />
 
-        <p className="text-xl sm:text-2xl text-amber-200/90 font-light tracking-wide mb-8">
+        <p className="text-xl sm:text-2xl text-amber-200/95 font-light tracking-wide mb-8 drop-shadow-sm">
           {t("earlyAccess.badge")}
         </p>
 
