@@ -15,6 +15,13 @@ const Hero = () => {
     }
   };
 
+  const scrollToEarlyAccess = () => {
+    const element = document.getElementById("early-access");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -29,6 +36,14 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        {/* Early Access Badge */}
+        <button
+          onClick={scrollToEarlyAccess}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 backdrop-blur-md border border-amber-400/40 text-amber-200 text-xs sm:text-sm font-medium mb-6 hover:bg-amber-500/30 transition-all cursor-pointer animate-pulse"
+        >
+          <span>✨ {t("earlyAccess.badge")} — Inscrivez-vous pour être averti</span>
+        </button>
+
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-serif font-bold text-primary-foreground mb-6 animate-fade-in">
           {t("hero.title")}
           <br />
@@ -49,9 +64,9 @@ const Hero = () => {
             variant="outline"
             size="lg"
             className="text-lg px-8 py-6 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20"
-            onClick={scrollToExperience}
+            onClick={scrollToEarlyAccess}
           >
-            {t("hero.discover")}
+            {t("earlyAccess.badge")}
           </Button>
         </div>
       </div>
