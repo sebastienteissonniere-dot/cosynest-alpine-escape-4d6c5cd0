@@ -58,31 +58,21 @@ export const EarlyAccessForm = ({ variant = "card", className = "" }: EarlyAcces
         console.warn("Supabase record log fallback:", dbErr);
       }
 
-      // 3. Automatically create lead in Zoho CRM (Leads module)
+      // 3. Automatically create lead in user's Zoho CRM (Leads module)
       try {
         const zohoData = new FormData();
-        zohoData.append("Email", email);
-        zohoData.append("Last Name", "Prospect 2027");
-        zohoData.append("Company", "Chalet Cosynest Prospect");
-        zohoData.append("Lead Source", "Site Web chaletcosynest.fr");
-        zohoData.append("Description", "Inscription alerte ouverture réservations début 2027 sur chaletcosynest.fr");
-
-        if (import.meta.env.VITE_ZOHO_XNQSJSDP) {
-          zohoData.append("xnQsjsdp", import.meta.env.VITE_ZOHO_XNQSJSDP);
-        }
-        if (import.meta.env.VITE_ZOHO_XMI218L7) {
-          zohoData.append("xmI218l7", import.meta.env.VITE_ZOHO_XMI218L7);
-        }
+        zohoData.append("xnQsjsdp", "33d855aad84528203346ef62f6ff392b9f22c26cc40ab6b06067683dbf972823");
+        zohoData.append("xmIwtLD", "3decc00e618e9edf90d5b0ea8ce3f060a0a1ac2ee61672e58b9d4f37c7c04f6b6a0fcb8c68bc77f8e1288b000bc43eca");
         zohoData.append("actionType", "TGVhZHM=");
+        zohoData.append("returnURL", "https://chaletcosynest.fr/");
+        zohoData.append("Email", email);
 
-        // Submit to Zoho CRM WebToLead endpoints
+        // Derive name from email for Zoho CRM mandatory Last Name field
+        const emailPrefix = email.split("@")[0] || "Prospect";
+        zohoData.append("Last Name", emailPrefix);
+
+        // Submit to Zoho CRM EU WebToLead endpoint
         fetch("https://crm.zoho.eu/crm/WebToLeadForm", {
-          method: "POST",
-          mode: "no-cors",
-          body: zohoData
-        }).catch(zErr => console.warn("Zoho CRM post warning:", zErr));
-
-        fetch("https://crm.zoho.com/crm/WebToLeadForm", {
           method: "POST",
           mode: "no-cors",
           body: zohoData
