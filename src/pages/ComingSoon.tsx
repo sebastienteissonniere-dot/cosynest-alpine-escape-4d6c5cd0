@@ -27,6 +27,15 @@ const ComingSoon = () => {
         <div className="w-full">
           <EarlyAccessForm />
         </div>
+
+        <div className="mt-8 text-center">
+          <a 
+            href="mailto:contact@chaletcosynest.fr"
+            className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition-colors duration-300 text-sm sm:text-base font-light"
+          >
+            <span>contact@chaletcosynest.fr</span>
+          </a>
+        </div>
       </div>
     </div>
   );
