@@ -16,7 +16,7 @@ const ComingSoon = () => {
           className="w-full h-full object-cover object-center opacity-85 filter brightness-110 contrast-105 transition-opacity duration-500"
         />
         {/* Subtle Luxury Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/65 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-slate-950/45 to-slate-950/70 backdrop-blur-[1px]" />
       </div>
 
       {/* Main Content */}
@@ -40,9 +40,14 @@ const ComingSoon = () => {
 
         <div className="w-20 h-1 bg-gradient-to-r from-amber-500 to-amber-300 mx-auto mb-6 rounded-full shadow-amber-500/50 shadow-md" />
 
-        <p className="text-xl sm:text-2xl text-amber-200 font-light tracking-wide mb-8 drop-shadow-md">
+        <p className="text-xl sm:text-2xl text-amber-200 font-light tracking-wide mb-6 drop-shadow-md">
           {t("earlyAccess.badge")}
         </p>
+
+        {/* Chalet Description Card */}
+        <div className="mb-8 p-6 rounded-2xl bg-slate-900/75 border border-slate-700/70 backdrop-blur-md shadow-2xl text-slate-200 text-sm sm:text-base leading-relaxed font-light text-center">
+          <p>{t("earlyAccess.chaletDescription")}</p>
+        </div>
 
         {/* Early Access Subscription Form */}
         <div className="w-full">

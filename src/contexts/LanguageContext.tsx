@@ -174,6 +174,7 @@ const translations = {
       errorMessage: "Impossible d'envoyer votre inscription automatique. Cliquez ci-dessous pour envoyer un courriel direct à contact@chaletcosynest.fr",
       sendEmailDirectly: "Envoyer un email directement",
       privacyNote: "Vos données restent strictement confidentielles et ne seront utilisées que pour l'ouverture des réservations.",
+      chaletDescription: "Niché à Vars 2000, le Chalet Cosynest incarne l'alliance parfaite du luxe contemporain et de la chaleur alpine. Conçu pour accueillir jusqu'à 12 personnes avec 5 suites privatives, un espace bien-être avec sauna et salle de sport, ainsi qu'un grand salon chaleureux autour de sa cheminée centrale, c'est le refuge idéal pour des vacances d'exception été comme hiver.",
     },
     footer: {
       description: "Votre chalet de luxe à Vars pour des vacances inoubliables dans les Alpes.",
@@ -378,6 +379,7 @@ const translations = {
       errorMessage: "Unable to send automatic registration. Click below to send an email directly to contact@chaletcosynest.fr",
       sendEmailDirectly: "Send direct email",
       privacyNote: "Your data remains strictly confidential and will only be used for booking updates.",
+      chaletDescription: "Nestled in Vars 2000, Chalet Cosynest embodies the perfect blend of contemporary luxury and alpine warmth. Designed to accommodate up to 12 guests with 5 private suites, a wellness area featuring a sauna and gym, and a grand living room built around a central fireplace, it is the ideal retreat for an exceptional getaway, winter and summer alike.",
     },
     footer: {
       description: "Your luxury chalet in Vars for unforgettable holidays in the Alps.",
