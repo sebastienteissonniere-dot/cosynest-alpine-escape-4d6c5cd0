@@ -58,6 +58,39 @@ export const EarlyAccessForm = ({ variant = "card", className = "" }: EarlyAcces
         console.warn("Supabase record log fallback:", dbErr);
       }
 
+      // 3. Automatically create lead in Zoho CRM (Leads module)
+      try {
+        const zohoData = new FormData();
+        zohoData.append("Email", email);
+        zohoData.append("Last Name", "Prospect 2027");
+        zohoData.append("Company", "Chalet Cosynest Prospect");
+        zohoData.append("Lead Source", "Site Web chaletcosynest.fr");
+        zohoData.append("Description", "Inscription alerte ouverture réservations début 2027 sur chaletcosynest.fr");
+
+        if (import.meta.env.VITE_ZOHO_XNQSJSDP) {
+          zohoData.append("xnQsjsdp", import.meta.env.VITE_ZOHO_XNQSJSDP);
+        }
+        if (import.meta.env.VITE_ZOHO_XMI218L7) {
+          zohoData.append("xmI218l7", import.meta.env.VITE_ZOHO_XMI218L7);
+        }
+        zohoData.append("actionType", "TGVhZHM=");
+
+        // Submit to Zoho CRM WebToLead endpoints
+        fetch("https://crm.zoho.eu/crm/WebToLeadForm", {
+          method: "POST",
+          mode: "no-cors",
+          body: zohoData
+        }).catch(zErr => console.warn("Zoho CRM post warning:", zErr));
+
+        fetch("https://crm.zoho.com/crm/WebToLeadForm", {
+          method: "POST",
+          mode: "no-cors",
+          body: zohoData
+        }).catch(zErr => console.warn("Zoho CRM post warning:", zErr));
+      } catch (zErr) {
+        console.warn("Zoho CRM creation error:", zErr);
+      }
+
       if (response.ok || response.status === 200) {
         setStatus("success");
         setEmail("");
