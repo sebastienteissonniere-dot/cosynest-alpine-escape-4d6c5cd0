@@ -43,7 +43,7 @@ export const blogPosts: BlogPost[] = [
         <h3>Nouveautés sur le domaine</h3>
         <p>Le domaine de la Forêt Blanche s'enrichit de deux nouvelles pistes rouges et d'un espace ludique agrandi pour les enfants. Le télésiège de la Mayt a été modernisé pour plus de confort et de rapidité.</p>
         <h3>Au Chalet Cosynest</h3>
-        <p>Nous avons profité de l'intersaison pour rénover l'espace bien-être. Venez découvrir notre nouveau hammam encore plus spacieux après une bonne journée de glisse.</p>
+        <p>Nous avons profité de l'intersaison pour rénover l'espace bien-être. Venez découvrir notre nouveau sauna encore plus spacieux après une bonne journée de glisse.</p>
         <p>Les réservations sont ouvertes, ne tardez pas à bloquer vos dates pour les vacances de février !</p>
       `,
             en: `
@@ -51,7 +51,7 @@ export const blogPosts: BlogPost[] = [
         <h3>New on the ski area</h3>
         <p>The Forêt Blanche area is enriched with two new red runs and an expanded play area for children. The Mayt chairlift has been modernized for more comfort and speed.</p>
         <h3>At Chalet Cosynest</h3>
-        <p>We took advantage of the off-season to renovate the wellness area. Come and discover our new, even more spacious hammam after a good day of skiing.</p>
+        <p>We took advantage of the off-season to renovate the wellness area. Come and discover our new, even more spacious sauna after a good day of skiing.</p>
         <p>Bookings are open, don't delay in blocking your dates for the February holidays!</p>
       `,
         },

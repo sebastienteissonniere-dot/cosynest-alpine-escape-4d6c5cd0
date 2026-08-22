@@ -85,7 +85,7 @@ const translations = {
       },
       wellness: {
         title: "Espace bien-être",
-        description: "Salle de sport équipée et hammam privatif pour votre détente après une journée de ski",
+        description: "Salle de sport équipée et sauna privatif pour votre détente après une journée de ski",
       },
       living: {
         title: "Espace de vie",
@@ -289,7 +289,7 @@ const translations = {
       },
       wellness: {
         title: "Wellness area",
-        description: "Equipped gym and private hammam for your relaxation after a day of skiing",
+        description: "Equipped gym and private sauna for your relaxation after a day of skiing",
       },
       living: {
         title: "Living space",
