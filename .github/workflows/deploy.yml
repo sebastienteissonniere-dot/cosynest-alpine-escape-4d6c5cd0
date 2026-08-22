@@ -25,7 +25,7 @@ jobs:
           npm install
           npm run build
 
-      - name: 4. Déploiement SFTP vers Infomaniak
+      - name: 4. Déploiement FTPS vers Infomaniak
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -33,5 +33,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_PATH }}
           local-dir: './dist/'
-          protocol: sftp
-          port: 22
+          protocol: ftps
+          
