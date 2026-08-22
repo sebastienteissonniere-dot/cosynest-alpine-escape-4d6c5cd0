@@ -90,12 +90,6 @@ export const EarlyAccessForm = ({ variant = "card", className = "" }: EarlyAcces
       <div className="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-amber-600/10 blur-3xl" />
 
       <div className="relative z-10 max-w-2xl mx-auto text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-6">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>{t("earlyAccess.badge")}</span>
-        </div>
-
         {/* Title */}
         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-white mb-4 tracking-tight">
           {t("earlyAccess.title")}
