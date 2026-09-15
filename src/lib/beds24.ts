@@ -97,14 +97,37 @@ const MOCK_RESERVATIONS: Record<string, Beds24Reservation> = {
   }
 };
 
+import {
+  getSupabaseReservation,
+  getAllSupabaseReservations,
+  saveSupabaseReservation,
+} from './supabaseDb';
+
 export async function fetchBeds24Reservation(bookingId: string): Promise<Beds24Reservation | null> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  // 1. Try fetching from Supabase PostgreSQL database first
+  const dbResult = await getSupabaseReservation(bookingId);
+  if (dbResult) {
+    MOCK_RESERVATIONS[bookingId] = dbResult;
+    return dbResult;
+  }
+
+  // 2. Fallback to local memory cache / mock
+  await new Promise((resolve) => setTimeout(resolve, 200));
   return MOCK_RESERVATIONS[bookingId] || MOCK_RESERVATIONS['demo'];
 }
 
 export async function fetchAllReservations(): Promise<Beds24Reservation[]> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  // 1. Try fetching from Supabase
+  const dbList = await getAllSupabaseReservations();
+  if (dbList.length > 0) {
+    dbList.forEach((r) => {
+      MOCK_RESERVATIONS[r.bookingId] = r;
+    });
+    return dbList;
+  }
+
+  // 2. Fallback to local cache
+  await new Promise((resolve) => setTimeout(resolve, 200));
   return Object.values(MOCK_RESERVATIONS);
 }
 
@@ -115,5 +138,9 @@ export async function updateReservationState(
   const current = MOCK_RESERVATIONS[bookingId] || MOCK_RESERVATIONS['demo'];
   const updated = { ...current, ...updates };
   MOCK_RESERVATIONS[bookingId] = updated;
+
+  // Persist asynchronously in Supabase
+  saveSupabaseReservation({ ...updates, bookingId });
+
   return updated;
 }
