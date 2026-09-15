@@ -1,10 +1,10 @@
-<IfModule mod_mime.c>
-  AddType application/x-httpd-php .php
-</IfModule>
-
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Permettre l'exécution directe des scripts PHP dans /api/
+  RewriteRule ^api/ - [L]
+
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
