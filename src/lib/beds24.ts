@@ -98,26 +98,47 @@ const MOCK_RESERVATIONS: Record<string, Beds24Reservation> = {
 };
 
 import {
+  getInfomaniakReservation,
+  getAllInfomaniakReservations,
+  saveInfomaniakReservation,
+} from './infomaniakDb';
+import {
   getSupabaseReservation,
   getAllSupabaseReservations,
   saveSupabaseReservation,
 } from './supabaseDb';
 
 export async function fetchBeds24Reservation(bookingId: string): Promise<Beds24Reservation | null> {
-  // 1. Try fetching from Supabase PostgreSQL database first
+  // 1. Try fetching from Infomaniak Native PHP API
+  const infomaniakResult = await getInfomaniakReservation(bookingId);
+  if (infomaniakResult) {
+    MOCK_RESERVATIONS[bookingId] = infomaniakResult;
+    return infomaniakResult;
+  }
+
+  // 2. Try fetching from Supabase PostgreSQL database
   const dbResult = await getSupabaseReservation(bookingId);
   if (dbResult) {
     MOCK_RESERVATIONS[bookingId] = dbResult;
     return dbResult;
   }
 
-  // 2. Fallback to local memory cache / mock
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  // 3. Fallback to local memory cache / mock
+  await new Promise((resolve) => setTimeout(resolve, 150));
   return MOCK_RESERVATIONS[bookingId] || MOCK_RESERVATIONS['demo'];
 }
 
 export async function fetchAllReservations(): Promise<Beds24Reservation[]> {
-  // 1. Try fetching from Supabase
+  // 1. Try fetching from Infomaniak Native PHP API
+  const infomaniakList = await getAllInfomaniakReservations();
+  if (infomaniakList.length > 0) {
+    infomaniakList.forEach((r) => {
+      MOCK_RESERVATIONS[r.bookingId] = r;
+    });
+    return infomaniakList;
+  }
+
+  // 2. Try fetching from Supabase
   const dbList = await getAllSupabaseReservations();
   if (dbList.length > 0) {
     dbList.forEach((r) => {
@@ -126,8 +147,8 @@ export async function fetchAllReservations(): Promise<Beds24Reservation[]> {
     return dbList;
   }
 
-  // 2. Fallback to local cache
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  // 3. Fallback to local cache
+  await new Promise((resolve) => setTimeout(resolve, 150));
   return Object.values(MOCK_RESERVATIONS);
 }
 
@@ -139,7 +160,8 @@ export async function updateReservationState(
   const updated = { ...current, ...updates };
   MOCK_RESERVATIONS[bookingId] = updated;
 
-  // Persist asynchronously in Supabase
+  // Persist in Infomaniak DB & Supabase
+  saveInfomaniakReservation({ ...updates, bookingId });
   saveSupabaseReservation({ ...updates, bookingId });
 
   return updated;
