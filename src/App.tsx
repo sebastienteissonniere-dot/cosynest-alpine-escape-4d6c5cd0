@@ -47,6 +47,7 @@ const App = () => (
               {/* Site Public Chalet CosyNest */}
               <Route path="/" element={<ComingSoon />} />
               <Route path="/dev" element={<Index />} />
+              <Route path="/dev/*" element={<Index />} />
               <Route path="/chalet" element={<Chalet />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/plans" element={<Plans />} />

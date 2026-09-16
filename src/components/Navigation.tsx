@@ -18,7 +18,7 @@ const Navigation = () => {
 
   const scrollToSection = (id: string) => {
     // If not on /dev page, navigate to /dev first
-    if (location.pathname !== "/dev") {
+    if (!location.pathname.startsWith("/dev")) {
       navigate("/dev");
       // Wait for navigation to complete, then scroll
       setTimeout(() => {
@@ -37,7 +37,7 @@ const Navigation = () => {
   };
 
   const handleLogoClick = () => {
-    if (location.pathname === "/dev") {
+    if (location.pathname.startsWith("/dev")) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       navigate("/dev");
