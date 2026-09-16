@@ -45,9 +45,8 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               {/* Site Public Chalet CosyNest */}
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<ComingSoon />} />
               <Route path="/dev" element={<Index />} />
-              <Route path="/coming-soon" element={<ComingSoon />} />
               <Route path="/chalet" element={<Chalet />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/plans" element={<Plans />} />
