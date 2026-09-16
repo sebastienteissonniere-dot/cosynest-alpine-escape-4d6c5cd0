@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$db_host = getenv('INFOMANIAK_DB_HOST') ?: 'localhost';
+$db_host = getenv('INFOMANIAK_DB_HOST') ?: '127.0.0.1';
 $db_name = getenv('INFOMANIAK_DB_NAME') ?: 'cosynest_db';
 $db_user = getenv('INFOMANIAK_DB_USER') ?: 'cosynest_user';
 $db_pass = getenv('INFOMANIAK_DB_PASS') ?: 'password_secret';
