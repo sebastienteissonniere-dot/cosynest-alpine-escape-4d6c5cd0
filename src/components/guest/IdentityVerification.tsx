@@ -169,20 +169,20 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
   }
 
   return (
-    <Card className="bg-white border-slate-200/80 text-slate-900 rounded-2xl shadow-sm">
+    <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-sm">
       {/* Hidden canvas for capturing image from video stream */}
       <canvas ref={canvasRef} className="hidden" />
 
-      <CardHeader className="pb-3 border-b border-slate-100">
+      <CardHeader className="pb-3 border-b border-amber-900/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-indigo-600" />
-            <CardTitle className="text-base font-bold text-slate-900">
+            <UserCheck className="w-5 h-5 text-[#9B6B43]" />
+            <CardTitle className="text-base font-serif font-bold text-amber-950">
               Vérification d'Identité IA (Biométrie & Pièce)
             </CardTitle>
           </div>
-          <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-indigo-600" /> Gemini Vision
+          <span className="text-[11px] font-bold font-serif text-amber-900 bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-amber-300/60 flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-[#9B6B43]" /> Gemini Vision
           </span>
         </div>
       </CardHeader>
@@ -191,11 +191,11 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
         {step === 1 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800">Étape 1/2 : Photo de votre pièce d'identité</span>
-              <span className="text-[11px] text-slate-500">Passeport ou CNI</span>
+              <span className="text-xs font-bold font-serif text-amber-950">Étape 1/2 : Photo de votre pièce d'identité</span>
+              <span className="text-[11px] text-amber-900/60 font-medium">Passeport ou CNI</span>
             </div>
 
-            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center bg-slate-50 hover:border-indigo-400 transition-colors relative">
+            <div className="border-2 border-dashed border-amber-900/20 rounded-2xl p-5 text-center bg-amber-50/40 hover:border-[#9B6B43] transition-colors relative">
               <input
                 type="file"
                 accept="image/*"
@@ -204,18 +204,18 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
               />
               {idPreview ? (
                 <div className="space-y-2">
-                  <img src={idPreview} alt="Aperçu pièce d'identité" className="h-28 mx-auto rounded-xl object-cover border border-slate-300" />
+                  <img src={idPreview} alt="Aperçu pièce d'identité" className="h-28 mx-auto rounded-xl object-cover border border-amber-900/20" />
                   <p className="text-xs font-bold text-emerald-700 flex items-center justify-center gap-1">
                     <CheckCircle2 className="w-4 h-4" /> Pièce d'identité enregistrée
                   </p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center space-y-2">
-                  <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
+                  <div className="p-3 bg-amber-100/60 text-[#9B6B43] rounded-2xl">
                     <Camera className="w-6 h-6" />
                   </div>
-                  <p className="text-xs font-bold text-slate-800">Cliquer ici pour importer votre document</p>
-                  <p className="text-[11px] text-slate-400">Passeport, Carte d'Identité ou Permis (Format JPG/PNG)</p>
+                  <p className="text-xs font-bold font-serif text-amber-950">Cliquer ici pour importer votre document</p>
+                  <p className="text-[11px] text-amber-900/60">Passeport, Carte d'Identité ou Permis (Format JPG/PNG)</p>
                 </div>
               )}
             </div>
@@ -226,7 +226,7 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
                 setStep(2);
                 startCameraStream();
               }}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs py-2.5 rounded-xl shadow-xs"
+              className="w-full bg-[#9B6B43] hover:bg-[#855a38] text-white font-serif font-semibold text-xs py-2.5 rounded-xl shadow-xs"
             >
               Étape suivante : Prenez un Selfie en direct ➔
             </Button>
@@ -236,20 +236,20 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
         {step === 2 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800">Étape 2/2 : Prise de Selfie en direct</span>
+              <span className="text-xs font-bold font-serif text-amber-950">Étape 2/2 : Prise de Selfie en direct</span>
               <button
                 onClick={() => {
                   stopCameraStream();
                   setStep(1);
                 }}
-                className="text-[11px] text-indigo-600 font-semibold hover:underline"
+                className="text-[11px] text-[#9B6B43] font-semibold hover:underline"
               >
                 ← Revenir à l'étape 1
               </button>
             </div>
 
             {/* LIVE WEBCAM VIDEO STREAM CONTAINER */}
-            <div className="relative border-2 border-indigo-200 rounded-2xl overflow-hidden bg-slate-950 p-2 text-center min-h-[220px] flex items-center justify-center">
+            <div className="relative border-2 border-amber-900/20 rounded-2xl overflow-hidden bg-stone-950 p-2 text-center min-h-[220px] flex items-center justify-center">
               {selfiePreview ? (
                 <div className="space-y-2 py-2">
                   <img src={selfiePreview} alt="Selfie capturé" className="h-40 w-40 mx-auto rounded-full object-cover border-4 border-emerald-500 shadow-lg" />
@@ -263,7 +263,7 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
                       setSelfiePreview(null);
                       startCameraStream();
                     }}
-                    className="text-xs bg-slate-800 text-white border-slate-700 hover:bg-slate-700"
+                    className="text-xs bg-stone-800 text-white border-stone-700 hover:bg-stone-700"
                   >
                     <RefreshCw className="w-3.5 h-3.5 mr-1" /> Recommencer la prise de vue
                   </Button>
@@ -279,13 +279,13 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
 
                   {!isCameraActive && (
                     <div className="py-6 space-y-3 text-white">
-                      <div className="p-3 bg-indigo-600 text-white rounded-full w-12 h-12 mx-auto flex items-center justify-center">
+                      <div className="p-3 bg-[#9B6B43] text-white rounded-full w-12 h-12 mx-auto flex items-center justify-center">
                         <Video className="w-6 h-6" />
                       </div>
                       <p className="text-xs font-semibold">Autorisez l'accès à votre caméra pour le Selfie</p>
                       <Button
                         onClick={startCameraStream}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2 px-4 rounded-xl"
+                        className="bg-[#9B6B43] hover:bg-[#855a38] text-white font-bold text-xs py-2 px-4 rounded-xl"
                       >
                         🎥 Activer la Caméra du Navigateur
                       </Button>
@@ -316,9 +316,9 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
             {/* FALLBACK FILE UPLOADER IF CAMERA NOT WORKING */}
             {!selfiePreview && (
               <div className="pt-2">
-                <label className="block text-center border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer text-xs font-semibold text-slate-700 transition-colors">
+                <label className="block text-center border border-amber-900/15 hover:border-amber-900/30 bg-amber-50/40 hover:bg-amber-50 p-2.5 rounded-xl cursor-pointer text-xs font-semibold text-amber-950 transition-colors">
                   <span className="flex items-center justify-center gap-1.5">
-                    <Upload className="w-3.5 h-3.5 text-slate-500" /> Ou choisir une photo/selfie depuis votre appareil
+                    <Upload className="w-3.5 h-3.5 text-amber-900/60" /> Ou choisir une photo/selfie depuis votre appareil
                   </span>
                   <input
                     type="file"
@@ -333,7 +333,7 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
             <Button
               disabled={!selfiePreview}
               onClick={handleRunGeminiVerification}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl shadow-md shadow-emerald-600/20"
+              className="w-full bg-[#9B6B43] hover:bg-[#855a38] text-white font-serif font-bold text-xs py-3 rounded-xl shadow-md shadow-[#9B6B43]/20"
             >
               <Sparkles className="w-4 h-4 mr-1.5" /> Lancer l'Analyse d'Identité IA Gemini
             </Button>
@@ -344,9 +344,9 @@ export const IdentityVerification: React.FC<IdentityVerificationProps> = ({
           <div className="py-6 text-center space-y-4">
             {analyzing ? (
               <div className="space-y-3">
-                <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
-                <p className="text-xs font-bold text-slate-800">Analyse Multimodale Gemini IA en cours...</p>
-                <div className="text-[11px] text-slate-500 space-y-1">
+                <div className="w-12 h-12 border-4 border-[#9B6B43] border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-xs font-serif font-bold text-amber-950">Analyse Multimodale Gemini IA en cours...</p>
+                <div className="text-[11px] text-amber-900/70 space-y-1">
                   <p>1. Extraction du nom et contrôle de la pièce d'identité</p>
                   <p>2. Comparaison faciale biométrique (Document vs Selfie)</p>
                   <p>3. Validation de la réservation de {guestName}</p>

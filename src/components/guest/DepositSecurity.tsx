@@ -72,35 +72,35 @@ export const DepositSecurity: React.FC<DepositSecurityProps> = ({
   }
 
   return (
-    <Card className="bg-white border-slate-200/80 text-slate-900 rounded-2xl shadow-sm">
-      <CardHeader className="pb-3 border-b border-slate-100">
+    <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-sm">
+      <CardHeader className="pb-3 border-b border-amber-900/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Lock className="w-5 h-5 text-amber-600" />
-            <CardTitle className="text-base font-bold text-slate-900">Dépôt de Garantie / Caution</CardTitle>
+            <Lock className="w-5 h-5 text-[#9B6B43]" />
+            <CardTitle className="text-base font-serif font-bold text-amber-950">Dépôt de Garantie / Caution</CardTitle>
           </div>
-          <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+          <span className="text-[11px] font-bold font-serif text-amber-900 bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-amber-300/60">
             Swikly / Stripe
           </span>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-3 pt-4">
-        <div className="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div className="flex items-center justify-between bg-amber-50/50 p-4 rounded-xl border border-amber-900/15">
           <div>
-            <p className="text-xs text-slate-500 font-semibold">Montant de la caution</p>
-            <p className="text-2xl font-extrabold text-slate-900">{depositAmount} €</p>
+            <p className="text-xs text-amber-900/60 font-medium">Montant de la caution</p>
+            <p className="text-2xl font-serif font-extrabold text-amber-950">{depositAmount} €</p>
           </div>
-          <div className="text-right text-xs text-slate-500">
-            <p className="flex items-center justify-end gap-1 text-emerald-600 font-bold">
+          <div className="text-right text-xs text-amber-900/70">
+            <p className="flex items-center justify-end gap-1 text-emerald-700 font-bold">
               <ShieldCheck className="w-3.5 h-3.5" /> Sans débit immédiat
             </p>
-            <p className="text-[11px] text-slate-400 font-medium">Restitution à la sortie</p>
+            <p className="text-[11px] text-amber-900/50 font-medium">Restitution à la sortie</p>
           </div>
         </div>
 
-        <div className="flex items-start gap-2 text-xs text-amber-800 bg-amber-50/70 p-3 rounded-xl border border-amber-200">
-          <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 text-xs text-amber-950 bg-amber-50/70 p-3 rounded-xl border border-amber-300/60">
+          <AlertCircle className="w-4 h-4 text-[#9B6B43] flex-shrink-0 mt-0.5" />
           <p className="font-medium">
             L'enregistrement de l'empreinte bancaire déverrouille immédiatement vos codes d'accès à la serrure Igloohome.
           </p>
@@ -111,7 +111,7 @@ export const DepositSecurity: React.FC<DepositSecurityProps> = ({
         <Button
           onClick={handleAuthorize}
           disabled={loading}
-          className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs py-3 rounded-xl shadow-md shadow-amber-600/20"
+          className="w-full bg-[#9B6B43] hover:bg-[#855a38] text-white font-serif font-semibold text-xs py-3 rounded-xl shadow-md shadow-[#9B6B43]/20"
         >
           {loading ? (
             'Communication avec Swikly...'

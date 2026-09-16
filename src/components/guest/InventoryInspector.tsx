@@ -62,21 +62,21 @@ export const InventoryInspector: React.FC<InventoryInspectorProps> = ({
   }
 
   return (
-    <Card className="bg-white border-slate-200/80 text-slate-900 rounded-2xl shadow-sm">
-      <CardHeader className="pb-3 border-b border-slate-100">
+    <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-sm">
+      <CardHeader className="pb-3 border-b border-amber-900/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ClipboardCheck className="w-5 h-5 text-indigo-600" />
-            <CardTitle className="text-base font-bold text-slate-900">{title}</CardTitle>
+            <ClipboardCheck className="w-5 h-5 text-[#9B6B43]" />
+            <CardTitle className="text-base font-serif font-bold text-amber-950">{title}</CardTitle>
           </div>
-          <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
+          <span className="text-[11px] font-bold font-serif text-amber-900 bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-amber-300/60">
             {type === 'check_in' ? 'Arrivée (24h réserves)' : 'Départ'}
           </span>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4 pt-4">
-        <p className="text-xs text-slate-600 font-medium leading-relaxed">
+        <p className="text-xs text-amber-900/80 font-medium leading-relaxed">
           Veuillez contrôler les espaces du chalet et joindre des photos en cas de réserve particulière.
         </p>
 
@@ -90,8 +90,8 @@ export const InventoryInspector: React.FC<InventoryInspectorProps> = ({
                 key={room.id}
                 className={`p-3.5 rounded-xl border transition-all ${
                   isChecked
-                    ? 'bg-slate-50 border-emerald-300'
-                    : 'bg-white border-slate-200 hover:border-slate-300'
+                    ? 'bg-amber-50/60 border-emerald-400'
+                    : 'bg-white border-amber-900/15 hover:border-amber-900/30'
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -100,16 +100,16 @@ export const InventoryInspector: React.FC<InventoryInspectorProps> = ({
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => toggleRoom(room.id)}
-                      className="mt-1 rounded border-slate-300 bg-white text-emerald-600 focus:ring-emerald-500"
+                      className="mt-1 rounded border-amber-900/30 bg-white text-emerald-700 focus:ring-emerald-500"
                     />
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900">{room.name}</h4>
-                      <p className="text-[11px] text-slate-500 font-medium">{room.description}</p>
+                      <h4 className="text-xs font-serif font-bold text-amber-950">{room.name}</h4>
+                      <p className="text-[11px] text-amber-900/70 font-medium">{room.description}</p>
                     </div>
                   </div>
 
-                  <label className="p-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 cursor-pointer transition-colors relative">
-                    <Camera className="w-4 h-4 text-indigo-600" />
+                  <label className="p-2 bg-amber-100/60 text-amber-950 rounded-lg hover:bg-amber-100 cursor-pointer transition-colors relative">
+                    <Camera className="w-4 h-4 text-[#9B6B43]" />
                     <input
                       type="file"
                       accept="image/*"
@@ -130,12 +130,12 @@ export const InventoryInspector: React.FC<InventoryInspectorProps> = ({
         </div>
 
         <div className="space-y-1">
-          <label className="text-xs text-slate-700 font-semibold">Remarques ou réserves éventuelles :</label>
+          <label className="text-xs text-amber-950 font-serif font-semibold">Remarques ou réserves éventuelles :</label>
           <textarea
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
             placeholder="Ex : Légère rayure constatée sur la table en bois à l'arrivée..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-indigo-600 h-20"
+            className="w-full bg-amber-50/50 border border-amber-900/15 rounded-xl p-3 text-xs text-amber-950 focus:outline-none focus:border-[#9B6B43] h-20 placeholder:text-amber-900/40"
           />
         </div>
       </CardContent>
@@ -144,7 +144,7 @@ export const InventoryInspector: React.FC<InventoryInspectorProps> = ({
         <Button
           onClick={handleSubmit}
           disabled={!isAllChecked}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs py-3 rounded-xl shadow-md shadow-indigo-600/20"
+          className="w-full bg-[#9B6B43] hover:bg-[#855a38] text-white font-serif font-semibold text-xs py-3 rounded-xl shadow-md shadow-[#9B6B43]/20"
         >
           <ShieldCheck className="w-4 h-4 mr-2" /> Valider l'{title}
         </Button>
