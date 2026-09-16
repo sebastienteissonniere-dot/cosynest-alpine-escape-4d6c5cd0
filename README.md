@@ -1,7 +1,7 @@
 # Chalet Cosynest - Backoffice & Guest App PWA
 
 Projet d'application complète pour le **Chalet Cosynest** à Vars (Hautes-Alpes) comprenant :
-- **Site Public** : `/dev` (Chalet, Galerie, Météo/Webcams, Pistes, Journal).
+- **Site Public** : `/` (Site complet Chalet, Galerie, Météo/Webcams, Pistes, Journal).
 - **Guest App PWA** : `/guest/:bookingId` (Livret d'accueil, Signature Contrat, Caution Swikly, Scanner d'Identité IA Gemini 2.5 Flash).
 - **Backoffice Sécurisé** : `/backoffice` (Tableau de bord propriétaires & conciergerie, gestion des serrures Igloohome, états des lieux).
 - **Déploiement Automatique Infomaniak** : GitHub Actions via FTP.
