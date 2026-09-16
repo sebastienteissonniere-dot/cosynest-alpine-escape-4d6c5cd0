@@ -1,13 +1,33 @@
--- Script SQL pour Base de Données Native Infomaniak (phpMyAdmin / MySQL / MariaDB / PostgreSQL)
--- Projet Chalet Cosynest
+-- Script SQL d'installation manuelle pour Infomaniak phpMyAdmin / MariaDB / MySQL
+-- Base de données Chalet Cosynest (Backoffice & PWA Voyageurs)
 
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 1. Table admin_users
+CREATE TABLE IF NOT EXISTS `admin_users` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `email` VARCHAR(255) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(50) NOT NULL DEFAULT 'admin',
+  `token` VARCHAR(255) NULL,
+  `last_login` DATETIME NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Insertion des administrateurs par défaut (contact@chaletcosynest.fr / Cosynest2026! & concierge@chaletcosynest.fr / Concierge2026!)
+INSERT IGNORE INTO `admin_users` (`email`, `password_hash`, `name`, `role`) VALUES 
+('contact@chaletcosynest.fr', '$2y$10$eE61B2O6qK5t8H3M.W5r4.3mH8Qz2bK9w1jP7oL3xY9n6vQ0t5w6O', 'Propriétaire CosyNest', 'admin'),
+('concierge@chaletcosynest.fr', '$2y$10$w81V7B6n.M4L0pP9x1.1r4O5u1p2Q3r4S5t6U7v8W9x0Y1z2A3b4C', 'Conciergerie Chalet', 'concierge');
+
+-- 2. Table reservations
 CREATE TABLE IF NOT EXISTS `reservations` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `booking_id` VARCHAR(100) NOT NULL UNIQUE,
   `property_id` VARCHAR(100) DEFAULT 'cosynest-chalet-vars',
   `guest_name` VARCHAR(255) NOT NULL,
-  `guest_email` VARCHAR(255),
-  `guest_phone` VARCHAR(50),
+  `guest_email` VARCHAR(255) NULL,
+  `guest_phone` VARCHAR(50) NULL,
   `check_in` DATE NOT NULL,
   `check_out` DATE NOT NULL,
   `number_of_guests` INT DEFAULT 2,
@@ -29,16 +49,17 @@ CREATE TABLE IF NOT EXISTS `reservations` (
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 3. Table guest_signatures
 CREATE TABLE IF NOT EXISTS `guest_signatures` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `booking_id` VARCHAR(100) NOT NULL,
   `guest_name` VARCHAR(255) NOT NULL,
   `signature_data_url` LONGTEXT NOT NULL,
   `ip_address` VARCHAR(50) NULL,
-  `signed_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`booking_id`) REFERENCES `reservations`(`booking_id`) ON DELETE CASCADE
+  `signed_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 4. Table identity_verifications
 CREATE TABLE IF NOT EXISTS `identity_verifications` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `booking_id` VARCHAR(100) NOT NULL,
@@ -50,10 +71,10 @@ CREATE TABLE IF NOT EXISTS `identity_verifications` (
   `name_matches` TINYINT(1) DEFAULT 0,
   `is_live_person` TINYINT(1) DEFAULT 1,
   `summary_reason` TEXT NULL,
-  `verified_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`booking_id`) REFERENCES `reservations`(`booking_id`) ON DELETE CASCADE
+  `verified_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 5. Table inventories
 CREATE TABLE IF NOT EXISTS `inventories` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `booking_id` VARCHAR(100) NOT NULL,
@@ -61,6 +82,19 @@ CREATE TABLE IF NOT EXISTS `inventories` (
   `inspector_name` VARCHAR(255) NOT NULL,
   `items` LONGTEXT NOT NULL,
   `general_remarks` TEXT NULL,
-  `signed_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`booking_id`) REFERENCES `reservations`(`booking_id`) ON DELETE CASCADE
+  `signed_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6. Table igloohome_logs
+CREATE TABLE IF NOT EXISTS `igloohome_logs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `booking_id` VARCHAR(100) NOT NULL,
+  `pin_code` VARCHAR(50) NOT NULL,
+  `keybox_code` VARCHAR(50) NOT NULL,
+  `valid_from` DATETIME NOT NULL,
+  `valid_to` DATETIME NOT NULL,
+  `status` VARCHAR(50) DEFAULT 'active',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SET FOREIGN_KEY_CHECKS = 1;

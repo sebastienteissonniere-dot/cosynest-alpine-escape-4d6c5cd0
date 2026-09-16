@@ -72,3 +72,26 @@ export async function saveInfomaniakIdentityLog(bookingId: string, result: Gemin
     console.warn('Infomaniak DB identity log error:', err);
   }
 }
+
+export interface InfomaniakStats {
+  totalBookings: number;
+  totalRevenue: number;
+  authorizedDeposits: number;
+  pendingVerifications: number;
+  occupancyRate: number;
+}
+
+/**
+ * Fetch Backoffice Dashboard stats from Infomaniak PHP API
+ */
+export async function getInfomaniakStats(): Promise<InfomaniakStats | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/stats.php`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.stats || null;
+  } catch (err) {
+    console.warn('Infomaniak DB stats error:', err);
+    return null;
+  }
+}
