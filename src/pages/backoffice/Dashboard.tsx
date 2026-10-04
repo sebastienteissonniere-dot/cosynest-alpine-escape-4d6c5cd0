@@ -228,11 +228,11 @@ export default function BackofficeDashboard() {
                       <td className="py-3.5 px-4">
                         {r.depositStatus === 'authorized' ? (
                           <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full text-[11px] border border-emerald-200">
-                            ✓ {r.depositAmount} €
+                            ✓ {user?.role === 'concierge' ? 'Empreinte Active' : `${r.depositAmount} €`}
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-full text-[11px] border border-amber-200">
-                            {r.depositAmount} €
+                            {user?.role === 'concierge' ? 'En attente' : `${r.depositAmount} €`}
                           </span>
                         )}
                       </td>

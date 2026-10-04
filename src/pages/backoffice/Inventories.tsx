@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ClipboardCheck, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { fetchAllReservations, Beds24Reservation, updateReservationState } from '@/lib/beds24';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function BackofficeInventories() {
+  const { user } = useAuth();
   const [reservations, setReservations] = useState<Beds24Reservation[]>([]);
 
   useEffect(() => {
@@ -18,6 +20,10 @@ export default function BackofficeInventories() {
       fetchAllReservations().then(setReservations);
     });
   };
+
+  const sortedReservations = [...reservations].sort(
+    (a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime()
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased p-6">
@@ -35,18 +41,20 @@ export default function BackofficeInventories() {
         </div>
 
         <div className="space-y-4">
-          {reservations.map((res) => (
+          {sortedReservations.map((res) => (
             <Card key={res.bookingId} className="bg-white border-slate-200/80 shadow-sm rounded-2xl overflow-hidden">
               <CardHeader className="py-4 px-6 border-b border-slate-100 bg-slate-50/50">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <ClipboardCheck className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+                    <Badge variant="outline" className="border-indigo-200 text-indigo-700 bg-indigo-50 font-semibold text-xs">
+                      Séjour du {res.checkIn} au {res.checkOut}
+                    </Badge>
+                  </div>
                   <div className="flex items-center gap-2">
-                    <ClipboardCheck className="w-5 h-5 text-indigo-600" />
                     <CardTitle className="text-base font-bold text-slate-900">{res.guestName}</CardTitle>
                     <span className="text-xs text-slate-400 font-mono">({res.bookingId})</span>
                   </div>
-                  <Badge variant="outline" className="border-indigo-200 text-indigo-700 bg-indigo-50 font-semibold">
-                    Séjour du {res.checkIn} au {res.checkOut}
-                  </Badge>
                 </div>
               </CardHeader>
 
@@ -86,7 +94,7 @@ export default function BackofficeInventories() {
                 {/* Gestion Caution */}
                 <div className="flex items-center justify-between bg-slate-100/70 p-3.5 rounded-xl border border-slate-200 text-xs font-medium">
                   <div>
-                    <span className="text-slate-600">Statut Caution ({res.depositAmount} €) : </span>
+                    <span className="text-slate-600">Statut Caution{user?.role !== 'concierge' ? ` (${res.depositAmount} €)` : ''} : </span>
                     <strong className={res.depositStatus === 'authorized' ? 'text-amber-700 font-bold' : 'text-emerald-700 font-bold'}>
                       {res.depositStatus === 'authorized' ? 'Empreinte Active (Swikly)' : 'Caution Libérée'}
                     </strong>

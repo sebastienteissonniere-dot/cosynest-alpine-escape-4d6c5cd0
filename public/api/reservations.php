@@ -81,7 +81,12 @@ if ($method === 'POST' || $method === 'PUT') {
         $source, $status, $requiresContract, $contractSigned, $identityVerified, $depositStatus, $depositAmount, $igloohomePinCode, $notes
     ]);
 
-    echo json_encode(["success" => true, "bookingId" => $bookingId]);
+    // Send automated email to guest if email provided
+    if (!empty($guestEmail)) {
+        sendWelcomeEmail($guestEmail, $guestName, $bookingId, $checkIn, $checkOut, $source);
+    }
+
+    echo json_encode(["success" => true, "bookingId" => $bookingId, "emailSent" => !empty($guestEmail)]);
     exit();
 }
 
@@ -109,4 +114,75 @@ function formatReservation($row) {
         "checkOutInventoryDone" => (bool)$row['check_out_inventory_done'],
         "notes" => $row['notes'],
     ];
+}
+
+function sendWelcomeEmail($guestEmail, $guestName, $bookingId, $checkIn, $checkOut, $source) {
+    if (empty($guestEmail) || !filter_var($guestEmail, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+
+    $subject = "Chalet Cosynest - Vos accès et instructions de séjour (Réservation #" . $bookingId . ")";
+    $guestUrl = "https://chaletcosynest.fr/guest/" . urlencode($bookingId);
+
+    $isDirect = (strtolower($source) === 'direct');
+
+    $htmlContent = '
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: "Georgia", serif; background-color: #FAF7F2; color: #3c2415; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 16px; border: 1px solid #e8dfd3; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { text-align: center; border-bottom: 1px solid #e8dfd3; padding-bottom: 20px; margin-bottom: 20px; }
+        .title { font-size: 26px; font-weight: bold; color: #9B6B43; margin: 0; }
+        .subtitle { font-size: 13px; color: #785233; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+        .badge { display: inline-block; background: #f5ebe0; color: #9B6B43; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .step { background: #fdfbf7; padding: 14px; border-radius: 12px; border: 1px solid #f0e6d8; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+        .step-num { color: #9B6B43; font-weight: bold; margin-right: 8px; }
+        .btn { display: block; width: 100%; text-align: center; background: #9B6B43; color: #ffffff !important; padding: 15px 0; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 25px; font-size: 15px; }
+        .footer { text-align: center; margin-top: 25px; font-size: 12px; color: #a38c78; line-height: 1.5; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 class="title">Chalet Cosynest</h1>
+          <div class="subtitle">Livret d\'Accueil & Clés Numériques</div>
+        </div>
+
+        <p>Bonjour <strong>' . htmlspecialchars($guestName) . '</strong>,</p>
+        <p>Nous avons le plaisir de vous confirmer votre réservation pour votre séjour au <strong>Chalet Cosynest</strong> (Vars 2000) du <strong>' . htmlspecialchars($checkIn) . '</strong> au <strong>' . htmlspecialchars($checkOut) . '</strong>.</p>
+        
+        <p style="margin-top: 20px; font-weight: bold;">Afin de préparer au mieux votre arrivée et débloquer vos digicodes d\'accès :</p>';
+
+    if ($isDirect) {
+        $htmlContent .= '
+        <div class="step"><span class="step-num">1.</span> ✍️ <strong>Signature du contrat de location</strong> : Signez électroniquement votre contrat de location saisonnière.</div>
+        <div class="step"><span class="step-num">2.</span> 🛡️ <strong>Empreinte de caution en ligne</strong> : Validez votre caution sécurisée via Swikly.</div>
+        <div class="step"><span class="step-num">3.</span> 🪪 <strong>Vérification d\'identité</strong> : Transmettez votre pièce d\'identité (analyse IA).</div>
+        <div class="step"><span class="step-num">4.</span> 🔑 <strong>Digicode Serrure Igloohome</strong> : Récupérez votre code d\'accès personnel.</div>';
+    } else {
+        $htmlContent .= '
+        <div class="step"><span class="step-num">1.</span> 🪪 <strong>Vérification d\'identité</strong> : Transmettez votre pièce d\'identité (analyse IA).</div>
+        <div class="step"><span class="step-num">2.</span> 🔑 <strong>Digicode Serrure Igloohome</strong> : Récupérez votre code d\'accès personnel.</div>';
+    }
+
+    $htmlContent .= '
+        <a href="' . $guestUrl . '" class="btn">Accéder à mon Espace Voyageur PWA</a>
+
+        <div class="footer">
+          Chalet Cosynest • Vars 2000, Hautes-Alpes<br>
+          Service Conciergerie : contact@chaletcosynest.fr
+        </div>
+      </div>
+    </body>
+    </html>';
+
+    $headers  = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
+    $headers .= "From: Chalet Cosynest <contact@chaletcosynest.fr>" . "\r\n";
+    $headers .= "Reply-To: contact@chaletcosynest.fr" . "\r\n";
+
+    return @mail($guestEmail, $subject, $htmlContent, $headers);
 }

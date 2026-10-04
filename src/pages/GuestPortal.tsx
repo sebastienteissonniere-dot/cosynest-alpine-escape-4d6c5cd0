@@ -32,9 +32,9 @@ import { ContractSigner } from '@/components/guest/ContractSigner';
 import { IdentityVerification } from '@/components/guest/IdentityVerification';
 import { DepositSecurity } from '@/components/guest/DepositSecurity';
 import { IgloohomeKeyAccess } from '@/components/guest/IgloohomeKeyAccess';
-import { InventoryInspector } from '@/components/guest/InventoryInspector';
 import { WhatsAppConcierge } from '@/components/guest/WhatsAppConcierge';
 import chaletRender from '@/assets/chalet-render-2027.jpg';
+import wifiQr from '@/assets/wifi-qr.png';
 import { ReviewRedirect } from '@/components/guest/ReviewRedirect';
 
 export default function GuestPortal() {
@@ -78,7 +78,7 @@ export default function GuestPortal() {
   };
 
   const copyWifiPassword = () => {
-    navigator.clipboard.writeText('AlpineLuxury2026!');
+    navigator.clipboard.writeText('Cosynest05560!');
     setCopiedWifi(true);
     setTimeout(() => setCopiedWifi(false), 2000);
   };
@@ -257,18 +257,6 @@ export default function GuestPortal() {
             </button>
 
             <button
-              onClick={() => setActiveTab('inventory')}
-              className={`flex-1 min-w-max px-3.5 py-2 rounded-xl text-xs font-serif font-bold transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'inventory'
-                  ? 'bg-[#9B6B43] text-white shadow-sm'
-                  : 'bg-amber-50/60 text-amber-950 hover:bg-amber-100/60 border border-amber-900/10'
-              }`}
-            >
-              <ClipboardCheck className="w-3.5 h-3.5" />
-              <span>{t('guest.tabs.inventory')}</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('concierge')}
               className={`flex-1 min-w-max px-3.5 py-2 rounded-xl text-xs font-serif font-bold transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'concierge'
@@ -318,7 +306,7 @@ export default function GuestPortal() {
           {activeTab === 'manual' && (
             <div className="space-y-4">
               {/* Wi-Fi Card */}
-              <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-xs">
+              <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-xs overflow-hidden">
                 <CardHeader className="py-3 flex flex-row items-center justify-between border-b border-amber-900/10">
                   <div className="flex items-center gap-2">
                     <Wifi className="w-5 h-5 text-[#9B6B43]" />
@@ -327,37 +315,64 @@ export default function GuestPortal() {
                     </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="text-xs space-y-2 text-amber-900/80 pt-3">
-                  <p><span className="text-amber-900/60 font-medium">{language === 'fr' ? 'Réseau :' : 'Network:'}</span> <strong className="text-amber-950 font-bold font-mono">CosyNest_5G_Chalet</strong></p>
+                <CardContent className="text-xs space-y-3 text-amber-900/80 pt-3">
+                  <p><span className="text-amber-900/60 font-medium">{language === 'fr' ? 'Réseau (SSID) :' : 'Network (SSID):'}</span> <strong className="text-amber-950 font-bold font-mono text-sm">Cosynest</strong></p>
+                  
                   <div className="flex items-center justify-between bg-amber-50/50 p-2.5 rounded-xl border border-amber-900/15">
                     <div>
                       <span className="text-amber-900/50 text-[10px] block font-bold uppercase">{language === 'fr' ? 'Mot de passe' : 'Password'}</span>
-                      <strong className="text-[#9B6B43] font-mono text-sm">AlpineLuxury2026!</strong>
+                      <strong className="text-[#9B6B43] font-mono text-sm">Cosynest05560!</strong>
                     </div>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={copyWifiPassword}
-                      className="text-[#9B6B43] hover:bg-amber-100/60 font-semibold text-xs"
+                      className="text-[#9B6B43] hover:bg-amber-100/60 font-semibold text-xs gap-1.5"
                     >
-                      {copiedWifi ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                      {copiedWifi ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-600" />
+                          <span className="text-emerald-600 font-bold">{language === 'fr' ? 'Copié !' : 'Copied!'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          <span>{language === 'fr' ? 'Copier' : 'Copy'}</span>
+                        </>
+                      )}
                     </Button>
+                  </div>
+
+                  {/* QR Code Section */}
+                  <div className="pt-2 border-t border-amber-900/10 flex flex-col sm:flex-row items-center gap-3.5 bg-amber-50/40 p-3 rounded-xl border border-amber-900/10">
+                    <div className="bg-white p-2 rounded-xl shadow-xs border border-amber-900/10 flex-shrink-0">
+                      <img src={wifiQr} alt="Wi-Fi QR Code" className="w-28 h-28 object-contain rounded-lg" />
+                    </div>
+                    <div className="text-center sm:text-left space-y-1">
+                      <span className="text-xs font-serif font-bold text-amber-950 block">
+                        {language === 'fr' ? 'Flash & Connect 📲' : 'Scan & Connect 📲'}
+                      </span>
+                      <p className="text-[11px] text-amber-900/70 leading-snug">
+                        {language === 'fr'
+                          ? 'Scannez ce QR Code avec l\'appareil photo de votre smartphone pour vous connecter directement au réseau Wi-Fi du chalet.'
+                          : 'Scan this QR Code with your smartphone camera to connect directly to the chalet\'s Wi-Fi network.'}
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Jacuzzi & Sauna Card */}
+              {/* Sauna & Fitness Card */}
               <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-xs">
                 <CardHeader className="py-3 flex flex-row items-center gap-2 border-b border-amber-900/10">
                   <Flame className="w-5 h-5 text-[#9B6B43]" />
                   <CardTitle className="text-sm font-serif font-bold text-amber-950">
-                    {language === 'fr' ? 'Jacuzzi & Sauna Nordique' : 'Jacuzzi & Nordic Sauna'}
+                    {language === 'fr' ? 'Sauna Nordique & Espace Fitness' : 'Nordic Sauna & Fitness Area'}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-xs space-y-2 text-amber-900/80 pt-3 font-medium">
-                  <p>{language === 'fr' ? '• Le jacuzzi est préchauffé à 37.5°C pour votre arrivée.' : '• Jacuzzi is pre-heated to 37.5°C for your arrival.'}</p>
-                  <p>{language === 'fr' ? '• Merci de remettre la couverture thermique après chaque utilisation.' : '• Please replace the thermal cover after each use.'}</p>
-                  <p>{language === 'fr' ? '• Sauna : allumer le poêle 30 min avant utilisation via le boîtier mural.' : '• Sauna: turn on the heater 30 mins before use via the wall controller.'}</p>
+                  <p>{language === 'fr' ? '• Sauna Nordique : allumer le poêle 30 min avant utilisation via le boîtier mural.' : '• Nordic Sauna: turn on the heater 30 mins before use via the wall controller.'}</p>
+                  <p>{language === 'fr' ? '• Salle Fitness : équipée d\'un tapis de course Technogym, d\'haltères et de tapis de yoga à votre disposition.' : '• Fitness Room: equipped with a Technogym treadmill, dumbbells, and yoga mats at your disposal.'}</p>
                 </CardContent>
               </Card>
 
@@ -378,26 +393,7 @@ export default function GuestPortal() {
             </div>
           )}
 
-          {/* SECTION 3: ÉTATS DES LIEUX (ENTRÉE & SORTIE) */}
-          {activeTab === 'inventory' && (
-            <div className="space-y-4">
-              <InventoryInspector
-                type="check_in"
-                isCompleted={reservation.checkInInventoryDone}
-                onComplete={handleCheckInComplete}
-              />
-
-              {reservation.checkInInventoryDone && (
-                <InventoryInspector
-                  type="check_out"
-                  isCompleted={reservation.checkOutInventoryDone}
-                  onComplete={handleCheckOutComplete}
-                />
-              )}
-            </div>
-          )}
-
-          {/* SECTION 4: CONCIERGERIE & AVIS */}
+          {/* SECTION 3: CONCIERGERIE & AVIS */}
           {activeTab === 'concierge' && (
             <div className="space-y-4">
               <WhatsAppConcierge guestName={reservation.guestName} bookingId={reservation.bookingId} />

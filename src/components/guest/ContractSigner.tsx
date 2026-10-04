@@ -129,7 +129,7 @@ export const ContractSigner: React.FC<ContractSignerProps> = ({ reservation, onS
           <p>
             Le logement est destiné exclusivement à l'usage de villégiature privée. Les fêtes et événements non autorisés sont strictly interdits.
           </p>
-          <p className="font-bold text-amber-950">2. Jacuzzi & Sauna :</p>
+          <p className="font-bold text-amber-950">2. Sauna & Salle Fitness :</p>
           <p>
             L'utilisation de l'espace bien-être se fait sous la responsabilité des occupants. Les enfants doivent être sous la surveillance constante d'un adulte.
           </p>

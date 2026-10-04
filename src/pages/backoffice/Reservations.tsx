@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Copy, Check, Search, Calendar, UserCheck, Shield } from 'lucide-react';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function BackofficeReservations() {
+  const { user } = useAuth();
   const [reservations, setReservations] = useState<Beds24Reservation[]>([]);
   const [filterSource, setFilterSource] = useState<string>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -88,7 +90,7 @@ export default function BackofficeReservations() {
                     ID Beds24 : <span className="font-mono text-indigo-600 font-bold">{res.bookingId}</span> | {res.guestEmail} | {res.guestPhone}
                   </p>
                   <p className="text-xs text-slate-700 font-medium">
-                    Période du séjour : <strong className="text-slate-900">{res.checkIn}</strong> au <strong className="text-slate-900">{res.checkOut}</strong> ({res.numberOfGuests} personnes - {res.totalAmount} €)
+                    Période du séjour : <strong className="text-slate-900">{res.checkIn}</strong> au <strong className="text-slate-900">{res.checkOut}</strong> ({res.numberOfGuests} personnes{user?.role !== 'concierge' ? ` - ${res.totalAmount} €` : ''})
                   </p>
                 </div>
 
