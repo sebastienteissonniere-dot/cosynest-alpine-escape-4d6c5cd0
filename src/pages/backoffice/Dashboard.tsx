@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   AlertCircle,
   ArrowUpRight,
+  TrendingUp,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
@@ -32,9 +33,26 @@ export default function BackofficeDashboard() {
     });
   }, []);
 
+  const currentYear = new Date().getFullYear();
+
   const directBookings = reservations.filter((r) => r.source === 'Direct');
   const signedContracts = reservations.filter((r) => r.contractSigned);
   const authorizedDeposits = reservations.filter((r) => r.depositStatus === 'authorized');
+
+  // Chiffre d'affaires prévu sur l'année civile en cours
+  const annualProjectedRevenue = reservations
+    .filter((r) => {
+      if (!r.checkIn) return false;
+      const stayYear = new Date(r.checkIn).getFullYear();
+      return stayYear === currentYear && r.status !== 'cancelled';
+    })
+    .reduce((sum, r) => sum + (r.totalAmount || 0), 0);
+
+  const formattedRevenue = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(annualProjectedRevenue);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
@@ -101,7 +119,23 @@ export default function BackofficeDashboard() {
         </div>
 
         {/* ChargeAutomation Metrics KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <Card className="bg-white border-slate-200/80 shadow-sm rounded-2xl border-l-4 border-l-emerald-600">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">CA Prévu ({currentYear})</p>
+                <p className="text-2xl font-extrabold text-emerald-600 mt-1">
+                  {user?.role === 'concierge' ? '•••• €' : formattedRevenue}
+                </p>
+                <p className="text-[11px] text-emerald-700 font-semibold mt-1">
+                  Année civile en cours
+                </p>
+              </div>
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+            </CardContent>
+          </Card>
           <Card className="bg-white border-slate-200/80 shadow-sm rounded-2xl">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
