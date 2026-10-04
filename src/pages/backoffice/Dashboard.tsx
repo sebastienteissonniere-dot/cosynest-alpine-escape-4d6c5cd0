@@ -106,11 +106,6 @@ export default function BackofficeDashboard() {
               Réservations Beds24
             </Button>
           </Link>
-          <Link to="/backoffice/inventories">
-            <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
-              États des Lieux
-            </Button>
-          </Link>
           <Link to="/backoffice/igloohome-keys">
             <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
               Serrures Igloohome
