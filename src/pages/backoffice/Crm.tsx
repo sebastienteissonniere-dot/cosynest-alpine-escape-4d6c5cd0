@@ -114,12 +114,18 @@ export default function BackofficeCrm() {
   }, []);
 
   // Filtered & Sorted Clients
-  const filteredClients = clients
+  const filteredClients = (clients || [])
     .filter((client) => {
+      if (!client) return false;
+      const nameStr = (client.name || '').toLowerCase();
+      const emailStr = (client.email || '').toLowerCase();
+      const phoneStr = client.phone || '';
+      const searchStr = (searchTerm || '').toLowerCase();
+
       const matchSearch =
-        client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        client.phone.includes(searchTerm);
+        nameStr.includes(searchStr) ||
+        emailStr.includes(searchStr) ||
+        phoneStr.includes(searchStr);
 
       if (filterSegment === 'all') return matchSearch;
       return matchSearch && client.statusTag === filterSegment;
@@ -128,25 +134,34 @@ export default function BackofficeCrm() {
       let comparison = 0;
 
       if (sortBy === 'revenue') {
-        comparison = a.totalRevenue - b.totalRevenue;
+        comparison = (a.totalRevenue || 0) - (b.totalRevenue || 0);
       } else if (sortBy === 'date') {
-        comparison = new Date(a.lastCheckIn).getTime() - new Date(b.lastCheckIn).getTime();
+        const dA = new Date(a.lastCheckIn || 0).getTime() || 0;
+        const dB = new Date(b.lastCheckIn || 0).getTime() || 0;
+        comparison = dA - dB;
       } else if (sortBy === 'stays') {
-        comparison = a.totalStays - b.totalStays;
+        comparison = (a.totalStays || 0) - (b.totalStays || 0);
       } else if (sortBy === 'name') {
-        comparison = a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' });
+        comparison = (a.name || '').localeCompare(b.name || '', 'fr', { sensitivity: 'base' });
       }
 
       return sortOrder === 'desc' ? -comparison : comparison;
     });
 
   // Filtered Prospects
-  const filteredProspects = prospects.filter((p) => {
+  const filteredProspects = (prospects || []).filter((p) => {
+    if (!p) return false;
+    const nameStr = (p.name || '').toLowerCase();
+    const emailStr = (p.email || '').toLowerCase();
+    const phoneStr = p.phone || '';
+    const sourceStr = (p.source || '').toLowerCase();
+    const searchStr = (prospectSearch || '').toLowerCase();
+
     const matchSearch =
-      p.name.toLowerCase().includes(prospectSearch.toLowerCase()) ||
-      p.email.toLowerCase().includes(prospectSearch.toLowerCase()) ||
-      p.phone.includes(prospectSearch) ||
-      p.source.toLowerCase().includes(prospectSearch.toLowerCase());
+      nameStr.includes(searchStr) ||
+      emailStr.includes(searchStr) ||
+      phoneStr.includes(searchStr) ||
+      sourceStr.includes(searchStr);
 
     const matchStatus = prospectStatusFilter === 'all' || p.statusTag === prospectStatusFilter;
     const matchSource = prospectSourceFilter === 'all' || p.source === prospectSourceFilter;

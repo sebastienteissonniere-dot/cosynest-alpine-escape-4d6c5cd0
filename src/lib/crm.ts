@@ -98,55 +98,68 @@ const INITIAL_CAMPAIGNS: EmailCampaign[] = [
 export function buildClientProfiles(reservations: Beds24Reservation[]): ClientProfile[] {
   const map = new Map<string, ClientProfile>();
 
+  if (!Array.isArray(reservations)) return [];
+
   reservations.forEach((r) => {
-    const emailKey = r.guestEmail.trim().toLowerCase() || r.guestName.trim().toLowerCase();
+    if (!r) return;
+    const rawEmail = typeof r.guestEmail === 'string' ? r.guestEmail : '';
+    const rawName = typeof r.guestName === 'string' ? r.guestName : 'Voyageur';
+
+    const guestEmail = rawEmail.trim();
+    const guestName = rawName.trim();
+    const emailKey = (guestEmail || guestName).toLowerCase();
+    if (!emailKey) return;
     
     const historyItem: ClientBookingHistory = {
-      bookingId: r.bookingId,
-      checkIn: r.checkIn,
-      checkOut: r.checkOut,
-      totalAmount: r.totalAmount || 0,
-      source: r.source,
-      status: r.status,
-      numberOfGuests: r.numberOfGuests || 2,
-      contractSigned: r.contractSigned,
-      depositStatus: r.depositStatus,
+      bookingId: r.bookingId || 'ID-RES',
+      checkIn: r.checkIn || new Date().toISOString().slice(0, 10),
+      checkOut: r.checkOut || new Date().toISOString().slice(0, 10),
+      totalAmount: typeof r.totalAmount === 'number' ? r.totalAmount : 0,
+      source: r.source || 'Direct',
+      status: r.status || 'confirmed',
+      numberOfGuests: typeof r.numberOfGuests === 'number' ? r.numberOfGuests : 2,
+      contractSigned: Boolean(r.contractSigned),
+      depositStatus: r.depositStatus || 'pending',
     };
 
     if (!map.has(emailKey)) {
       const isDirect = r.source === 'Direct';
       map.set(emailKey, {
         id: emailKey,
-        name: r.guestName,
-        email: r.guestEmail || 'Email non fourni',
+        name: guestName || 'Voyageur',
+        email: guestEmail || 'Email non fourni',
         phone: r.guestPhone || 'N/A',
         totalStays: r.status !== 'cancelled' ? 1 : 0,
-        totalRevenue: r.status !== 'cancelled' ? r.totalAmount || 0 : 0,
-        lastCheckIn: r.checkIn,
-        preferredSource: r.source,
+        totalRevenue: r.status !== 'cancelled' ? (typeof r.totalAmount === 'number' ? r.totalAmount : 0) : 0,
+        lastCheckIn: r.checkIn || new Date().toISOString().slice(0, 10),
+        preferredSource: r.source || 'Direct',
         isDirectBooker: isDirect,
         statusTag: 'Nouveau Client',
         bookings: [historyItem],
-        tags: [r.source],
+        tags: [r.source || 'Direct'],
       });
     } else {
       const client = map.get(emailKey)!;
       client.bookings.push(historyItem);
       if (r.status !== 'cancelled') {
         client.totalStays += 1;
-        client.totalRevenue += r.totalAmount || 0;
+        client.totalRevenue += typeof r.totalAmount === 'number' ? r.totalAmount : 0;
       }
-      if (new Date(r.checkIn) > new Date(client.lastCheckIn)) {
+      if (r.checkIn && client.lastCheckIn && new Date(r.checkIn).getTime() > new Date(client.lastCheckIn).getTime()) {
         client.lastCheckIn = r.checkIn;
       }
-      if (!client.tags.includes(r.source)) {
+      if (r.source && !client.tags.includes(r.source)) {
         client.tags.push(r.source);
       }
     }
   });
 
   const profiles = Array.from(map.values()).map((client) => {
-    client.bookings.sort((a, b) => new Date(b.checkIn).getTime() - new Date(a.checkIn).getTime());
+    client.bookings.sort((a, b) => {
+      const tA = new Date(a.checkIn || 0).getTime() || 0;
+      const tB = new Date(b.checkIn || 0).getTime() || 0;
+      return tB - tA;
+    });
 
     const hasDirect = client.bookings.some((b) => b.source === 'Direct');
     const hasOTA = client.bookings.some((b) => b.source !== 'Direct');
@@ -164,7 +177,7 @@ export function buildClientProfiles(reservations: Beds24Reservation[]): ClientPr
     return client;
   });
 
-  return profiles.sort((a, b) => b.totalRevenue - a.totalRevenue);
+  return profiles.sort((a, b) => (b.totalRevenue || 0) - (a.totalRevenue || 0));
 }
 
 /**

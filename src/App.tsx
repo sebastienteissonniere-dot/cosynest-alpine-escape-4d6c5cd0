@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/backoffice/ProtectedRoute";
-import { registerServiceWorker } from "@/pwaRegister";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
 import Reservation from "./pages/Reservation";
@@ -43,7 +43,8 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <ErrorBoundary>
+            <BrowserRouter>
             <Routes>
               {/* Site Public Chalet CosyNest */}
               <Route path="/" element={<ComingSoon />} />
@@ -113,6 +114,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+          </ErrorBoundary>
           <CookieConsent />
         </TooltipProvider>
       </LanguageProvider>
