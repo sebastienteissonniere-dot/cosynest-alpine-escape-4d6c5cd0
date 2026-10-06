@@ -34,13 +34,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
 import {
   buildClientProfiles,
-  getEmailCampaigns,
+  getEmailCampaignsLocal,
+  fetchCampaignsFromDb,
   saveEmailCampaign,
   exportClientsCSV,
   exportProspectsCSV,
-  getProspects,
-  saveProspect,
-  deleteProspect,
+  fetchProspectsFromDb,
+  saveProspectToDb,
+  deleteProspectFromDb,
   ClientProfile,
   ProspectLead,
   EmailCampaign,
@@ -97,10 +98,11 @@ export default function BackofficeCrm() {
       setReservations(data);
       const profiles = buildClientProfiles(data);
       setClients(profiles);
-      setProspects(getProspects());
-      setCampaigns(getEmailCampaigns());
       setLoading(false);
     });
+
+    fetchProspectsFromDb().then(setProspects);
+    fetchCampaignsFromDb().then(setCampaigns);
   }, []);
 
   // Filtered & Sorted Clients
@@ -142,8 +144,8 @@ export default function BackofficeCrm() {
     return matchSearch && p.statusTag === prospectStatusFilter;
   });
 
-  // Save or Update Prospect
-  const handleSaveProspect = () => {
+  // Save or Update Prospect in BDD
+  const handleSaveProspect = async () => {
     if (!prospectName || !prospectEmail) return;
 
     const newProspect: ProspectLead = {
@@ -158,7 +160,7 @@ export default function BackofficeCrm() {
       tags: ['Prospect', prospectSource],
     };
 
-    const updated = saveProspect(newProspect);
+    const updated = await saveProspectToDb(newProspect);
     setProspects(updated);
     setShowProspectModal(false);
     resetProspectForm();
@@ -175,9 +177,9 @@ export default function BackofficeCrm() {
     setShowProspectModal(true);
   };
 
-  const handleDeleteProspect = (id: string) => {
+  const handleDeleteProspect = async (id: string) => {
     if (confirm('Voulez-vous supprimer ce prospect ?')) {
-      const updated = deleteProspect(id);
+      const updated = await deleteProspectFromDb(id);
       setProspects(updated);
     }
   };

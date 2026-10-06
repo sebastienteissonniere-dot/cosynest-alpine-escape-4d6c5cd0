@@ -56,7 +56,7 @@ export interface EmailCampaign {
   revenueGenerated?: number;
 }
 
-// Keys for localStorage
+// Keys for localStorage fallback
 const CAMPAIGNS_KEY = 'cosynest_crm_campaigns';
 const PROSPECTS_KEY = 'cosynest_crm_prospects';
 
@@ -71,17 +71,6 @@ const INITIAL_PROSPECTS: ProspectLead[] = [
     notes: 'Intéressé par 1 semaine en février 2027 pour 10 personnes. Souhaite des infos sur le Sauna.',
     createdAt: '2026-09-28',
     tags: ['Prospect', 'Hiver 2027'],
-  },
-  {
-    id: 'prospect-102',
-    name: 'Camille Bertrand',
-    email: 'c.bertrand@example.com',
-    phone: '+33 6 11 22 33 44',
-    source: 'Recommandation Client',
-    statusTag: 'Nouveau Prospect',
-    notes: 'Demande de tarif pour un séminaire d\'entreprise (8 personnes).',
-    createdAt: '2026-10-02',
-    tags: ['Prospect', 'Séminaire'],
   },
 ];
 
@@ -100,19 +89,6 @@ const INITIAL_CAMPAIGNS: EmailCampaign[] = [
     openRatePercent: 68,
     clickRatePercent: 41,
     revenueGenerated: 9600,
-  },
-  {
-    id: 'camp-02',
-    title: 'Nouveautés Espace Bien-Être & Sauna Nordique',
-    subject: '🧘 Découvrez le nouveau Sauna Nordique & Espace Fitness au Chalet CosyNest',
-    targetSegment: 'all',
-    templateId: 'season_reopening',
-    status: 'draft',
-    createdDate: '2026-10-01',
-    recipientsCount: 85,
-    openRatePercent: 0,
-    clickRatePercent: 0,
-    revenueGenerated: 0,
   },
 ];
 
@@ -192,25 +168,62 @@ export function buildClientProfiles(reservations: Beds24Reservation[]): ClientPr
 }
 
 /**
- * Récupère les prospects / leads enregistrés
+ * Récupère les prospects / leads enregistrés depuis la BDD Infomaniak
  */
-export function getProspects(): ProspectLead[] {
+export async function fetchProspectsFromDb(): Promise<ProspectLead[]> {
+  try {
+    const res = await fetch('/api/crm.php?action=get_prospects');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status === 'success' && Array.isArray(data.data)) {
+        localStorage.setItem(PROSPECTS_KEY, JSON.stringify(data.data));
+        return data.data;
+      }
+    }
+  } catch (e) {
+    console.warn('Fallback local pour prospects:', e);
+  }
+  return getProspectsLocal();
+}
+
+export function getProspectsLocal(): ProspectLead[] {
   try {
     const stored = localStorage.getItem(PROSPECTS_KEY);
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (e) {
-    console.error('Erreur lecture prospects CRM', e);
+    console.error('Erreur lecture prospects local', e);
   }
   return INITIAL_PROSPECTS;
 }
 
 /**
- * Enregistre ou met à jour un prospect / lead
+ * Enregistre ou met à jour un prospect / lead en BDD Infomaniak
  */
-export function saveProspect(prospect: ProspectLead): ProspectLead[] {
-  const current = getProspects();
+export async function saveProspectToDb(prospect: ProspectLead): Promise<ProspectLead[]> {
+  // Save local fallback immediately
+  const localList = saveProspectLocal(prospect);
+
+  try {
+    await fetch('/api/crm.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'save_prospect',
+        prospect: prospect,
+      }),
+    });
+    // Refresh from DB
+    return await fetchProspectsFromDb();
+  } catch (e) {
+    console.error('Erreur sauvegarde prospect BDD:', e);
+  }
+  return localList;
+}
+
+function saveProspectLocal(prospect: ProspectLead): ProspectLead[] {
+  const current = getProspectsLocal();
   const idx = current.findIndex((p) => p.id === prospect.id);
 
   let updated: ProspectLead[];
@@ -224,45 +237,77 @@ export function saveProspect(prospect: ProspectLead): ProspectLead[] {
   try {
     localStorage.setItem(PROSPECTS_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Erreur sauvegarde prospect', e);
+    console.error('Erreur sauvegarde prospect local', e);
   }
   return updated;
 }
 
 /**
- * Supprime un prospect / lead
+ * Supprime un prospect / lead de la BDD Infomaniak
  */
-export function deleteProspect(id: string): ProspectLead[] {
-  const current = getProspects();
+export async function deleteProspectFromDb(id: string): Promise<ProspectLead[]> {
+  deleteProspectLocal(id);
+
+  try {
+    await fetch('/api/crm.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'delete_prospect',
+        id: id,
+      }),
+    });
+    return await fetchProspectsFromDb();
+  } catch (e) {
+    console.error('Erreur suppression prospect BDD:', e);
+  }
+  return getProspectsLocal();
+}
+
+function deleteProspectLocal(id: string): ProspectLead[] {
+  const current = getProspectsLocal();
   const updated = current.filter((p) => p.id !== id);
   try {
     localStorage.setItem(PROSPECTS_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Erreur suppression prospect', e);
+    console.error('Erreur suppression prospect local', e);
   }
   return updated;
 }
 
 /**
- * Récupère les campagnes e-mails enregistrées
+ * Récupère les campagnes e-mails enregistrées depuis la BDD
  */
-export function getEmailCampaigns(): EmailCampaign[] {
+export async function fetchCampaignsFromDb(): Promise<EmailCampaign[]> {
+  try {
+    const res = await fetch('/api/crm.php?action=get_campaigns');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status === 'success' && Array.isArray(data.data)) {
+        localStorage.setItem(CAMPAIGNS_KEY, JSON.stringify(data.data));
+        return data.data;
+      }
+    }
+  } catch (e) {
+    console.warn('Fallback local pour campagnes:', e);
+  }
+  return getEmailCampaignsLocal();
+}
+
+export function getEmailCampaignsLocal(): EmailCampaign[] {
   try {
     const stored = localStorage.getItem(CAMPAIGNS_KEY);
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (e) {
-    console.error('Erreur lecture campagnes CRM', e);
+    console.error('Erreur lecture campagnes local', e);
   }
   return INITIAL_CAMPAIGNS;
 }
 
-/**
- * Sauvegarde ou met à jour une campagne e-mail
- */
 export function saveEmailCampaign(campaign: EmailCampaign): EmailCampaign[] {
-  const current = getEmailCampaigns();
+  const current = getEmailCampaignsLocal();
   const existingIdx = current.findIndex((c) => c.id === campaign.id);
 
   let updated: EmailCampaign[];
@@ -276,7 +321,7 @@ export function saveEmailCampaign(campaign: EmailCampaign): EmailCampaign[] {
   try {
     localStorage.setItem(CAMPAIGNS_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Erreur sauvegarde campagne CRM', e);
+    console.error('Erreur sauvegarde campagne local', e);
   }
   return updated;
 }

@@ -114,6 +114,33 @@ try {
       `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
     );");
 
+    // 7. Table prospects
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `prospects` (
+      `id` VARCHAR(100) PRIMARY KEY,
+      `name` VARCHAR(255) NOT NULL,
+      `email` VARCHAR(255) NOT NULL,
+      `phone` VARCHAR(50) NULL,
+      `source` VARCHAR(100) DEFAULT 'Formulaire Web',
+      `status_tag` VARCHAR(50) DEFAULT 'Nouveau Prospect',
+      `notes` TEXT NULL,
+      `created_at` DATE NOT NULL
+    );");
+
+    // 8. Table email_campaigns
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `email_campaigns` (
+      `id` VARCHAR(100) PRIMARY KEY,
+      `title` VARCHAR(255) NOT NULL,
+      `subject` VARCHAR(255) NOT NULL,
+      `target_segment` VARCHAR(50) NOT NULL,
+      `promo_code` VARCHAR(50) NULL,
+      `status` VARCHAR(50) DEFAULT 'sent',
+      `created_date` DATE NOT NULL,
+      `recipients_count` INT DEFAULT 0,
+      `open_rate_percent` INT DEFAULT 100,
+      `click_rate_percent` INT DEFAULT 50,
+      `revenue_generated` DECIMAL(10,2) DEFAULT 0
+    );");
+
     // Pre-seeding demo reservations
     $pdo->exec("$insertIgnore `reservations` 
         (`booking_id`, `guest_name`, `guest_email`, `guest_phone`, `check_in`, `check_out`, `number_of_guests`, `total_amount`, `source`, `status`, `requires_contract`, `contract_signed`, `identity_verified`, `deposit_status`, `deposit_amount`, `igloohome_pin_code`) 
