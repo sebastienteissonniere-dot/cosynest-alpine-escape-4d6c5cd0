@@ -28,11 +28,18 @@ export default function BackofficeIgloohomeKeys() {
             <h1 className="text-xl font-bold text-slate-900 tracking-tight">Gestionnaire des Serrures & Boîtes à Clés Igloohome</h1>
             <p className="text-xs text-slate-500 font-medium">Contrôle des codes d'accès temporaires générés pour chaque séjour</p>
           </div>
-          <Link to="/backoffice/dashboard">
-            <Button size="sm" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold rounded-xl">
-              ← Retour Dashboard
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/backoffice/crm">
+              <Button size="sm" variant="outline" className="border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 text-xs font-semibold rounded-xl">
+                CRM & Campagnes
+              </Button>
+            </Link>
+            <Link to="/backoffice/dashboard">
+              <Button size="sm" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold rounded-xl">
+                ← Retour Dashboard
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
