@@ -55,7 +55,43 @@ function send_php_email($toEmail, $subject, $htmlBody, $senderEmail = "contact@c
     $headers .= "Return-Path: {$senderEmail}\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . " (Infomaniak ChaletCosyNest)\r\n";
 
-    // 1. Check native mail() function safely
+    // 1. Direct Socket SMTP to local Infomaniak MTA (Fastest: < 0.5s)
+    if (function_exists('fsockopen')) {
+        $fp = @fsockopen('127.0.0.1', 25, $errno, $errstr, 1);
+        if (!$fp) {
+            $fp = @fsockopen('localhost', 25, $errno, $errstr, 1);
+        }
+        if ($fp) {
+            stream_set_timeout($fp, 2);
+            $greeting = fgets($fp, 512);
+            fputs($fp, "HELO " . ($_SERVER['SERVER_NAME'] ?? 'chaletcosynest.fr') . "\r\n");
+            fgets($fp, 512);
+            fputs($fp, "MAIL FROM: <{$senderEmail}>\r\n");
+            fgets($fp, 512);
+            fputs($fp, "RCPT TO: <{$toEmail}>\r\n");
+            $rcptResp = fgets($fp, 512);
+            if (substr($rcptResp, 0, 3) == '250') {
+                fputs($fp, "DATA\r\n");
+                fgets($fp, 512);
+                fputs($fp, "To: <{$toEmail}>\r\n");
+                fputs($fp, "Subject: {$subject}\r\n");
+                fputs($fp, $headers);
+                fputs($fp, "\r\n");
+                fputs($fp, $htmlBody);
+                fputs($fp, "\r\n.\r\n");
+                $dataResp = fgets($fp, 512);
+                fputs($fp, "QUIT\r\n");
+                fclose($fp);
+                if (substr($dataResp, 0, 3) == '250') {
+                    return ["success" => true, "method" => "smtp_socket_127.0.0.1:25"];
+                }
+            } else {
+                fclose($fp);
+            }
+        }
+    }
+
+    // 2. Fallback to native mail() function
     if (function_exists('mail')) {
         $res = @mail($toEmail, $subject, $htmlBody, $headers, "-f{$senderEmail}");
         if ($res) return ["success" => true, "method" => "native_mail_envelope"];
@@ -63,64 +99,7 @@ function send_php_email($toEmail, $subject, $htmlBody, $senderEmail = "contact@c
         if ($res2) return ["success" => true, "method" => "native_mail"];
     }
 
-    // 2. Direct Socket SMTP fallback
-    if (function_exists('fsockopen')) {
-        $hosts = ['127.0.0.1', 'localhost', 'mail.infomaniak.com', 'smtp.infomaniak.com'];
-        $ports = [25, 587, 2525];
-        foreach ($hosts as $host) {
-            foreach ($ports as $port) {
-                $fp = @fsockopen($host, $port, $errno, $errstr, 2);
-                if ($fp) {
-                    fgets($fp, 512);
-                    fputs($fp, "HELO " . ($_SERVER['SERVER_NAME'] ?? 'chaletcosynest.fr') . "\r\n");
-                    fgets($fp, 512);
-                    fputs($fp, "MAIL FROM: <{$senderEmail}>\r\n");
-                    fgets($fp, 512);
-                    fputs($fp, "RCPT TO: <{$toEmail}>\r\n");
-                    $rcptResp = fgets($fp, 512);
-                    if (substr($rcptResp, 0, 3) == '250') {
-                        fputs($fp, "DATA\r\n");
-                        fgets($fp, 512);
-                        fputs($fp, "To: <{$toEmail}>\r\n");
-                        fputs($fp, "Subject: {$subject}\r\n");
-                        fputs($fp, $headers);
-                        fputs($fp, "\r\n");
-                        fputs($fp, $htmlBody);
-                        fputs($fp, "\r\n.\r\n");
-                        $dataResp = fgets($fp, 512);
-                        fputs($fp, "QUIT\r\n");
-                        fclose($fp);
-                        if (substr($dataResp, 0, 3) == '250') {
-                            return ["success" => true, "method" => "smtp_socket_{$host}:{$port}"];
-                        }
-                    } else {
-                        fclose($fp);
-                    }
-                }
-            }
-        }
-    }
-
-    // 3. Sendmail CLI fallback
-    if (function_exists('popen')) {
-        $sendmailPath = ini_get('sendmail_path') ?: '/usr/sbin/sendmail -t -i';
-        if ($sendmailPath) {
-            $pipe = @popen($sendmailPath, 'w');
-            if ($pipe) {
-                fputs($pipe, "To: <{$toEmail}>\r\n");
-                fputs($pipe, "Subject: {$subject}\r\n");
-                fputs($pipe, $headers);
-                fputs($pipe, "\r\n");
-                fputs($pipe, $htmlBody);
-                $pcloseRes = pclose($pipe);
-                if ($pcloseRes === 0) {
-                    return ["success" => true, "method" => "sendmail_cli"];
-                }
-            }
-        }
-    }
-
-    return ["success" => false, "error" => "Fonction mail() non disponible sur le serveur."];
+    return ["success" => false, "error" => "Échec de connexion SMTP."];
 }
 
 $method = $_SERVER['REQUEST_METHOD'];
