@@ -87,6 +87,7 @@ export default function BackofficeCrm() {
   // Campaign Builder Modal
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [newCampTitle, setNewCampTitle] = useState('');
+  const [newCampSubject, setNewCampSubject] = useState('');
   const [newCampBody, setNewCampBody] = useState<string>(
     "Bonjour {{nom}},\n\nNous espérons que vous préparez votre prochain séjour au Chalet CosyNest !\n\nBénéficiez d'une réduction privilège de **-15% sur votre séjour en direct** sur notre site internet avec le code promo {{code_promo}}."
   );
