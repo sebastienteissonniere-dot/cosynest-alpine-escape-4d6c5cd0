@@ -87,12 +87,12 @@ export default function BackofficeCrm() {
   // Campaign Builder Modal
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [newCampTitle, setNewCampTitle] = useState('');
-  const [newCampBody, setNewCampBody] = useState(
+  const [newCampBody, setNewCampBody] = useState<string>(
     "Bonjour {{nom}},\n\nNous espérons que vous préparez votre prochain séjour au Chalet CosyNest !\n\nBénéficiez d'une réduction privilège de **-15% sur votre séjour en direct** sur notre site internet avec le code promo {{code_promo}}."
   );
 
   const insertFormatting = (token: string) => {
-    setNewCampBody((prev) => prev + token);
+    setNewCampBody((prev) => (prev || '') + token);
   };
   const [newCampSegment, setNewCampSegment] = useState<
     'all' | 'direct_only' | 'ota_convert' | 'vip' | 'prospects_only' | 'all_with_prospects'
@@ -1158,7 +1158,7 @@ export default function BackofficeCrm() {
                   <div
                     className="text-slate-700 whitespace-pre-wrap leading-relaxed"
                     dangerouslySetInnerHTML={{
-                      __html: newCampBody
+                      __html: (newCampBody || '')
                         .replace(/\{\{nom\}\}/g, 'Jean Dupont')
                         .replace(/\{\{code_promo\}\}/g, newCampPromo || 'DIRECT15')
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
