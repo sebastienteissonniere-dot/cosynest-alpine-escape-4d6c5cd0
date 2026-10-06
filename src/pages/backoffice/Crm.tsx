@@ -220,50 +220,53 @@ export default function BackofficeCrm() {
   };
 
   // Calculate Metrics
-  const totalClients = clients.length;
-  const totalProspects = prospects.length;
-  const otaToConvertCount = clients.filter((c) => c.statusTag === 'OTA à Convertir').length;
-  const vipCount = clients.filter((c) => c.statusTag === 'VIP').length;
+  const totalClients = (clients || []).length;
+  const totalProspects = (prospects || []).length;
+  const otaToConvertCount = (clients || []).filter((c) => c && c.statusTag === 'OTA à Convertir').length;
+  const vipCount = (clients || []).filter((c) => c && c.statusTag === 'VIP').length;
 
   const handleCreateCampaign = async () => {
     if (!newCampTitle || !newCampSubject) return;
 
     setSendingCamp(true);
 
-    // 1. Construire la liste réelle des destinataires ciblés
+    const safeClients = clients || [];
+    const safeProspects = prospects || [];
+
+    // 1. Construire la liste réelle des destinataires cibles
     let targetRecipients: { email: string; name: string }[] = [];
 
     if (newCampSegment === 'prospects_only') {
-      targetRecipients = prospects.map((p) => ({ email: p.email, name: p.name }));
+      targetRecipients = safeProspects.map((p) => ({ email: p.email || '', name: p.name || 'Prospect' }));
     } else if (newCampSegment === 'all_with_prospects') {
       targetRecipients = [
-        ...clients.map((c) => ({ email: c.email, name: c.name })),
-        ...prospects.map((p) => ({ email: p.email, name: p.name })),
+        ...safeClients.map((c) => ({ email: c.email || '', name: c.name || 'Client' })),
+        ...safeProspects.map((p) => ({ email: p.email || '', name: p.name || 'Prospect' })),
       ];
     } else if (newCampSegment === 'direct_only') {
-      targetRecipients = clients
-        .filter((c) => c.isDirectBooker)
-        .map((c) => ({ email: c.email, name: c.name }));
+      targetRecipients = safeClients
+        .filter((c) => c && c.isDirectBooker)
+        .map((c) => ({ email: c.email || '', name: c.name || 'Client' }));
     } else if (newCampSegment === 'ota_convert') {
-      targetRecipients = clients
-        .filter((c) => c.statusTag === 'OTA à Convertir')
-        .map((c) => ({ email: c.email, name: c.name }));
+      targetRecipients = safeClients
+        .filter((c) => c && c.statusTag === 'OTA à Convertir')
+        .map((c) => ({ email: c.email || '', name: c.name || 'Client' }));
     } else if (newCampSegment === 'vip') {
-      targetRecipients = clients
-        .filter((c) => c.statusTag === 'VIP')
-        .map((c) => ({ email: c.email, name: c.name }));
+      targetRecipients = safeClients
+        .filter((c) => c && c.statusTag === 'VIP')
+        .map((c) => ({ email: c.email || '', name: c.name || 'Client' }));
     } else {
-      targetRecipients = clients.map((c) => ({ email: c.email, name: c.name }));
+      targetRecipients = safeClients.map((c) => ({ email: c.email || '', name: c.name || 'Client' }));
     }
 
     // Filtrer les adresses vides ou invalides
     targetRecipients = targetRecipients.filter(
-      (r) => r.email && r.email.includes('@') && !r.email.includes('example.com')
+      (r) => r && typeof r.email === 'string' && r.email.includes('@') && !r.email.includes('example.com')
     );
 
     // Si aucune adresse réelle (ex: adresses de démo), conserver au moins la liste de test
     if (targetRecipients.length === 0) {
-      targetRecipients = prospects.map((p) => ({ email: p.email, name: p.name }));
+      targetRecipients = safeProspects.map((p) => ({ email: p.email || '', name: p.name || 'Prospect' }));
     }
 
     let apiResultMessage = '';
@@ -1083,10 +1086,10 @@ export default function BackofficeCrm() {
                   onChange={(e) => setNewCampSegment(e.target.value as any)}
                   className="w-full text-xs rounded-xl border border-slate-200 p-2.5 bg-white font-medium text-slate-800"
                 >
-                  <option value="prospects_only">📩 Prospects & Leads uniquement ({prospects.length})</option>
-                  <option value="all_with_prospects">🌟 Base Complète (Clients + Prospects : {clients.length + prospects.length})</option>
+                  <option value="prospects_only">📩 Prospects & Leads uniquement ({(prospects || []).length})</option>
+                  <option value="all_with_prospects">🌟 Base Complète (Clients + Prospects : {(clients || []).length + (prospects || []).length})</option>
                   <option value="ota_convert">Convertir OTA → Direct (Anciens Airbnb/Booking)</option>
-                  <option value="all">Tous les Clients enregistrés ({clients.length})</option>
+                  <option value="all">Tous les Clients enregistrés ({(clients || []).length})</option>
                   <option value="direct_only">Clients ayant déjà réservé en Direct</option>
                   <option value="vip">Clients VIP uniquement (CA {'>'} 5 000 €)</option>
                 </select>
