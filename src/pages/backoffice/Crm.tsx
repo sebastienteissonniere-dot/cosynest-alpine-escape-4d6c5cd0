@@ -87,7 +87,13 @@ export default function BackofficeCrm() {
   // Campaign Builder Modal
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [newCampTitle, setNewCampTitle] = useState('');
-  const [newCampSubject, setNewCampSubject] = useState('');
+  const [newCampBody, setNewCampBody] = useState(
+    "Bonjour {{nom}},\n\nNous espérons que vous préparez votre prochain séjour au Chalet CosyNest !\n\nBénéficiez d'une réduction privilège de **-15% sur votre séjour en direct** sur notre site internet avec le code promo {{code_promo}}."
+  );
+
+  const insertFormatting = (token: string) => {
+    setNewCampBody((prev) => prev + token);
+  };
   const [newCampSegment, setNewCampSegment] = useState<
     'all' | 'direct_only' | 'ota_convert' | 'vip' | 'prospects_only' | 'all_with_prospects'
   >('ota_convert');
@@ -257,6 +263,7 @@ export default function BackofficeCrm() {
           title: newCampTitle,
           subject: newCampSubject,
           promoCode: newCampPromo,
+          customBody: newCampBody,
           recipients: targetRecipients,
         }),
       });
@@ -1070,7 +1077,7 @@ export default function BackofficeCrm() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Code Promo offert</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Code Promo offert (optionnel)</label>
                 <Input
                   placeholder="DIRECT15"
                   value={newCampPromo}
@@ -1079,20 +1086,91 @@ export default function BackofficeCrm() {
                 />
               </div>
 
-              {/* Email Template Preview Box */}
+              {/* Message Body Editor with Formatting Toolbar */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-slate-700">Corps du message (contenu de l'e-mail)</label>
+                  <span className="text-[10px] text-slate-400">Options de mise en forme rapide</span>
+                </div>
+
+                {/* Formatting Toolbar */}
+                <div className="flex flex-wrap items-center gap-1.5 p-2 bg-slate-100 rounded-t-xl border border-b-0 border-slate-200">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => insertFormatting(' **texte en gras** ')}
+                    className="h-7 text-[11px] font-bold px-2 rounded-lg bg-white border-slate-200"
+                  >
+                    B (Gras)
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => insertFormatting(' *texte en italique* ')}
+                    className="h-7 text-[11px] italic px-2 rounded-lg bg-white border-slate-200"
+                  >
+                    I (Italique)
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => insertFormatting('\n• ')}
+                    className="h-7 text-[11px] px-2 rounded-lg bg-white border-slate-200"
+                  >
+                    • Puce
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => insertFormatting('{{nom}}')}
+                    className="h-7 text-[11px] font-medium text-indigo-700 px-2 rounded-lg bg-indigo-50 border-indigo-200"
+                  >
+                    + Nom (`{{nom}}`)
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => insertFormatting('{{code_promo}}')}
+                    className="h-7 text-[11px] font-medium text-emerald-700 px-2 rounded-lg bg-emerald-50 border-emerald-200"
+                  >
+                    + Code Promo (`{{code_promo}}`)
+                  </Button>
+                </div>
+
+                <textarea
+                  value={newCampBody}
+                  onChange={(e) => setNewCampBody(e.target.value)}
+                  rows={5}
+                  className="w-full text-xs rounded-b-xl border border-slate-200 p-3 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono leading-relaxed"
+                  placeholder="Rédigez ici le corps de votre e-mail..."
+                />
+              </div>
+
+              {/* Live Email Template Preview Box */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                <p className="text-[11px] font-bold text-slate-500 uppercase">Aperçu du mail envoyé depuis contact@chaletcosynest.fr</p>
-                <div className="bg-white p-4 rounded-lg border border-slate-200 text-xs space-y-2">
-                  <p className="font-semibold text-slate-900">Bonjour {"{{nom_destinataire}}"},</p>
-                  <p className="text-slate-600">
-                    Nous espérons que vous préparez votre prochain séjour au Chalet CosyNest !
-                  </p>
-                  <p className="text-slate-600">
-                    Bénéficiez d'une réduction privilège de <strong>-15%</strong> en réservant directement sur notre site avec le code promo :
-                  </p>
-                  <div className="p-2.5 bg-indigo-50 border border-indigo-200 text-center font-mono font-extrabold text-indigo-700 rounded-lg text-sm">
-                    {newCampPromo || 'VOTRE_CODE'}
-                  </div>
+                <p className="text-[11px] font-bold text-slate-500 uppercase">Aperçu en direct du mail (contact@chaletcosynest.fr)</p>
+                <div className="bg-white p-4 rounded-lg border border-slate-200 text-xs space-y-2 font-sans">
+                  <div
+                    className="text-slate-700 whitespace-pre-wrap leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: newCampBody
+                        .replace(/\{\{nom\}\}/g, 'Jean Dupont')
+                        .replace(/\{\{code_promo\}\}/g, newCampPromo || 'DIRECT15')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*([^\*]+)\*/g, '<em>$1</em>'),
+                    }}
+                  />
+
+                  {newCampPromo && (
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-200 text-center font-mono font-extrabold text-emerald-800 rounded-lg text-sm mt-3">
+                      CODE PROMO : {newCampPromo}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

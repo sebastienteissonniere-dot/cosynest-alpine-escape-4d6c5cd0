@@ -112,7 +112,6 @@ if ($method === 'POST') {
                 name = VALUES(name), email = VALUES(email), phone = VALUES(phone),
                 source = VALUES(source), status_tag = VALUES(status_tag), notes = VALUES(notes)";
         
-        // Handle SQLite syntax fallback if needed
         $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
         if ($driver === 'sqlite') {
             $sql = "INSERT OR REPLACE INTO prospects (id, name, email, phone, source, status_tag, notes, created_at)
@@ -151,6 +150,7 @@ if ($method === 'POST') {
         $subject = $body['subject'] ?? '🎁 Offre privilège au Chalet CosyNest';
         $promoCode = $body['promoCode'] ?? 'DIRECT15';
         $targetSegment = $body['targetSegment'] ?? 'all';
+        $rawCustomBody = $body['customBody'] ?? $body['content'] ?? null;
         $campaignId = 'camp-' . time();
 
         $senderEmail = "contact@chaletcosynest.fr";
@@ -171,6 +171,23 @@ if ($method === 'POST') {
 
             if (empty($toEmail) || !filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
                 continue;
+            }
+
+            if (!empty($rawCustomBody)) {
+                $formatted = htmlspecialchars($rawCustomBody, ENT_QUOTES, 'UTF-8');
+                $formatted = str_replace(['{{nom}}', '{{nom_destinataire}}'], htmlspecialchars($toName), $formatted);
+                $formatted = str_replace('{{code_promo}}', htmlspecialchars($promoCode), $formatted);
+                $formatted = preg_replace('/\*\*(.*?)\*\*/s', '<strong>$1</strong>', $formatted);
+                $formatted = preg_replace('/\*([^\*]+)\*/s', '<em>$1</em>', $formatted);
+                $formatted = nl2br($formatted);
+
+                $bodyHtmlContent = "<div style='font-size:15px; line-height:1.6; color:#334155;'>{$formatted}</div>";
+            } else {
+                $bodyHtmlContent = "
+                  <p>Bonjour <strong>" . htmlspecialchars($toName) . "</strong>,</p>
+                  <p>Nous espérons que vous préparez votre prochain séjour au Chalet CosyNest !</p>
+                  <p>Bénéficiez d'une réduction privilège de <strong>-15% sur votre séjour en direct</strong> sur notre site avec le code promo :</p>
+                ";
             }
 
             $htmlBody = "
@@ -198,14 +215,13 @@ if ($method === 'POST') {
                   <p class='subtitle'>Hautes-Alpes • Station de Risoul</p>
                 </div>
                 <div class='content'>
-                  <p>Bonjour <strong>" . htmlspecialchars($toName) . "</strong>,</p>
-                  <p>Nous espérons que vous préparez votre prochain séjour au Chalet CosyNest !</p>
-                  <p>Bénéficiez d'une réduction privilège de <strong>-15% sur votre séjour en direct</strong> sur notre site avec le code promo :</p>
+                  {$bodyHtmlContent}
                   
+                  " . (!empty($promoCode) ? "
                   <div class='promo-box'>
                     <p style='margin:0 0 8px 0; font-size:12px; color:#166534; font-weight:bold; text-transform:uppercase;'>Votre Code Réduction Direct</p>
                     <div class='promo-code'>" . htmlspecialchars($promoCode) . "</div>
-                  </div>
+                  </div>" : "") . "
 
                   <p style='text-align: center;'>
                     <a href='https://chaletcosynest.fr/dev#booking' class='btn'>Réserver mon séjour au Chalet</a>
