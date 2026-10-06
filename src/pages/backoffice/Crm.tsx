@@ -69,6 +69,7 @@ export default function BackofficeCrm() {
   // Search & Filter state for Prospects
   const [prospectSearch, setProspectSearch] = useState('');
   const [prospectStatusFilter, setProspectStatusFilter] = useState<string>('all');
+  const [prospectSourceFilter, setProspectSourceFilter] = useState<string>('all');
 
   // Client Details Modal
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
@@ -79,7 +80,7 @@ export default function BackofficeCrm() {
   const [prospectName, setProspectName] = useState('');
   const [prospectEmail, setProspectEmail] = useState('');
   const [prospectPhone, setProspectPhone] = useState('');
-  const [prospectSource, setProspectSource] = useState('Formulaire Web CosyNest');
+  const [prospectSource, setProspectSource] = useState('Formulaire Web');
   const [prospectStatus, setProspectStatus] = useState<ProspectLead['statusTag']>('Nouveau Prospect');
   const [prospectNotes, setProspectNotes] = useState('');
 
@@ -140,8 +141,10 @@ export default function BackofficeCrm() {
       p.phone.includes(prospectSearch) ||
       p.source.toLowerCase().includes(prospectSearch.toLowerCase());
 
-    if (prospectStatusFilter === 'all') return matchSearch;
-    return matchSearch && p.statusTag === prospectStatusFilter;
+    const matchStatus = prospectStatusFilter === 'all' || p.statusTag === prospectStatusFilter;
+    const matchSource = prospectSourceFilter === 'all' || p.source === prospectSourceFilter;
+
+    return matchSearch && matchStatus && matchSource;
   });
 
   // Save or Update Prospect in BDD
@@ -189,7 +192,7 @@ export default function BackofficeCrm() {
     setProspectName('');
     setProspectEmail('');
     setProspectPhone('');
-    setProspectSource('Formulaire Web CosyNest');
+    setProspectSource('Formulaire Web');
     setProspectStatus('Nouveau Prospect');
     setProspectNotes('');
   };
@@ -628,13 +631,26 @@ export default function BackofficeCrm() {
                 />
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <select
+                  value={prospectSourceFilter}
+                  onChange={(e) => setProspectSourceFilter(e.target.value)}
+                  className="text-xs rounded-xl border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-700"
+                >
+                  <option value="all">Toutes les sources</option>
+                  <option value="Formulaire Web">Formulaire Web</option>
+                  <option value="Appel téléphonique">Appel téléphonique</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Recommandation">Recommandation</option>
+                  <option value="Amis">Amis</option>
+                </select>
+
                 <select
                   value={prospectStatusFilter}
                   onChange={(e) => setProspectStatusFilter(e.target.value)}
                   className="text-xs rounded-xl border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-700"
                 >
-                  <option value="all">Tous les statuts de prospects</option>
+                  <option value="all">Tous les statuts</option>
                   <option value="Nouveau Prospect">Nouveau Prospect</option>
                   <option value="Devis Envoyé">Devis Envoyé</option>
                   <option value="En Négociation">En Négociation</option>
@@ -945,12 +961,17 @@ export default function BackofficeCrm() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-slate-700 block mb-1">Source du Prospect</label>
-                  <Input
-                    placeholder="ex: Formulaire Web, Appel, Instagram..."
+                  <select
                     value={prospectSource}
                     onChange={(e) => setProspectSource(e.target.value)}
-                    className="text-xs rounded-xl"
-                  />
+                    className="w-full text-xs rounded-xl border border-slate-200 p-2.5 bg-white font-medium text-slate-800"
+                  >
+                    <option value="Formulaire Web">🌐 Formulaire Web</option>
+                    <option value="Appel téléphonique">📞 Appel téléphonique</option>
+                    <option value="Instagram">📸 Instagram</option>
+                    <option value="Recommandation">🤝 Recommandation</option>
+                    <option value="Amis">👥 Amis</option>
+                  </select>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-slate-700 block mb-1">Statut du Prospect</label>
