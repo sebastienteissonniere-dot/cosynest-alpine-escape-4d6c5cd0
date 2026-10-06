@@ -23,6 +23,8 @@ import {
   Tag,
   Eye,
   Filter,
+  ArrowUpDown,
+  ArrowDownUp,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
@@ -47,9 +49,11 @@ export default function BackofficeCrm() {
   // Tab State: 'clients' | 'campaigns'
   const [activeTab, setActiveTab] = useState<'clients' | 'campaigns'>('clients');
 
-  // Search & Filter state for Clients
+  // Search, Filter & Sort state for Clients
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSegment, setFilterSegment] = useState<'all' | 'VIP' | 'Fidèle Direct' | 'OTA à Convertir'>('all');
+  const [sortBy, setSortBy] = useState<'revenue' | 'date' | 'stays' | 'name'>('revenue');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   // Client Details Modal
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
@@ -72,16 +76,32 @@ export default function BackofficeCrm() {
     });
   }, []);
 
-  // Filtered Clients
-  const filteredClients = clients.filter((client) => {
-    const matchSearch =
-      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.phone.includes(searchTerm);
+  // Filtered & Sorted Clients
+  const filteredClients = clients
+    .filter((client) => {
+      const matchSearch =
+        client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        client.phone.includes(searchTerm);
 
-    if (filterSegment === 'all') return matchSearch;
-    return matchSearch && client.statusTag === filterSegment;
-  });
+      if (filterSegment === 'all') return matchSearch;
+      return matchSearch && client.statusTag === filterSegment;
+    })
+    .sort((a, b) => {
+      let comparison = 0;
+
+      if (sortBy === 'revenue') {
+        comparison = a.totalRevenue - b.totalRevenue;
+      } else if (sortBy === 'date') {
+        comparison = new Date(a.lastCheckIn).getTime() - new Date(b.lastCheckIn).getTime();
+      } else if (sortBy === 'stays') {
+        comparison = a.totalStays - b.totalStays;
+      } else if (sortBy === 'name') {
+        comparison = a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' });
+      }
+
+      return sortOrder === 'desc' ? -comparison : comparison;
+    });
 
   // Calculate Metrics
   const totalClients = clients.length;
@@ -284,23 +304,52 @@ export default function BackofficeCrm() {
                 />
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
-                <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Filtrer par :</span>
-                {(['all', 'VIP', 'Fidèle Direct', 'OTA à Convertir'] as const).map((seg) => (
-                  <Button
-                    key={seg}
-                    size="sm"
-                    variant={filterSegment === seg ? 'default' : 'outline'}
-                    onClick={() => setFilterSegment(seg)}
-                    className={`text-xs rounded-xl font-medium ${
-                      filterSegment === seg
-                        ? 'bg-indigo-600 text-white'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-100'
-                    }`}
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                {/* Filter Selector */}
+                <div className="flex items-center gap-1.5 overflow-x-auto">
+                  <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Filtrer :</span>
+                  {(['all', 'VIP', 'Fidèle Direct', 'OTA à Convertir'] as const).map((seg) => (
+                    <Button
+                      key={seg}
+                      size="sm"
+                      variant={filterSegment === seg ? 'default' : 'outline'}
+                      onClick={() => setFilterSegment(seg)}
+                      className={`text-xs rounded-xl font-medium ${
+                        filterSegment === seg
+                          ? 'bg-indigo-600 text-white'
+                          : 'border-slate-200 text-slate-600 hover:bg-slate-100'
+                      }`}
+                    >
+                      {seg === 'all' ? 'Tous' : seg}
+                    </Button>
+                  ))}
+                </div>
+
+                {/* Sort Selector */}
+                <div className="flex items-center gap-1.5 border-l border-slate-200 pl-3">
+                  <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Trier par :</span>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="text-xs rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
                   >
-                    {seg === 'all' ? 'Tous' : seg}
+                    <option value="revenue">💰 Montant dépense (CA)</option>
+                    <option value="date">📅 Date du dernier séjour</option>
+                    <option value="stays">🔢 Nombre de séjours</option>
+                    <option value="name">🔤 Nom du client (A-Z)</option>
+                  </select>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+                    title={sortOrder === 'desc' ? 'Ordre décroissant (plus grand d\'abord)' : 'Ordre croissant (plus petit d\'abord)'}
+                    className="text-xs rounded-xl border-slate-200 text-slate-700 hover:bg-slate-100 px-2 font-semibold"
+                  >
+                    <ArrowUpDown className="w-3.5 h-3.5 mr-1 text-indigo-600" />
+                    {sortOrder === 'desc' ? 'Décroissant' : 'Croissant'}
                   </Button>
-                ))}
+                </div>
               </div>
             </div>
 
