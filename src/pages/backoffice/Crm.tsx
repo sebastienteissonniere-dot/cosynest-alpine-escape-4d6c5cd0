@@ -1092,7 +1092,7 @@ export default function BackofficeCrm() {
                     onClick={() => insertFormatting('{{nom}}')}
                     className="h-7 text-[11px] font-medium text-indigo-700 px-2 rounded-lg bg-indigo-50 border-indigo-200"
                   >
-                    + Nom (`{{nom}}`)
+                    + Nom ({"{{nom}}"})
                   </Button>
                   <Button
                     type="button"
@@ -1101,7 +1101,7 @@ export default function BackofficeCrm() {
                     onClick={() => insertFormatting('{{code_promo}}')}
                     className="h-7 text-[11px] font-medium text-emerald-700 px-2 rounded-lg bg-emerald-50 border-emerald-200"
                   >
-                    + Code Promo (`{{code_promo}}`)
+                    + Code Promo ({"{{code_promo}}"})
                   </Button>
                 </div>
 
