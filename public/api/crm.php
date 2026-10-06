@@ -47,6 +47,19 @@ try {
     // Silent catch
 }
 
+function read_smtp_response($fp) {
+    $response = "";
+    while (!feof($fp)) {
+        $line = fgets($fp, 512);
+        if ($line === false) break;
+        $response .= $line;
+        if (strlen($line) >= 4 && (substr($line, 3, 1) === ' ' || substr($line, 3, 1) === "\r" || substr($line, 3, 1) === "\n")) {
+            break;
+        }
+    }
+    return $response;
+}
+
 function send_php_email($toEmail, $subject, $htmlBody, $senderEmail = "contact@chaletcosynest.fr", $senderName = "Chalet CosyNest") {
     $headers  = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -55,43 +68,72 @@ function send_php_email($toEmail, $subject, $htmlBody, $senderEmail = "contact@c
     $headers .= "Return-Path: {$senderEmail}\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . " (Infomaniak ChaletCosyNest)\r\n";
 
-    // 1. Direct Socket SMTP to local Infomaniak MTA (Fastest: < 0.5s)
+    // 1. Direct Socket SMTP to Infomaniak local MTA
     if (function_exists('fsockopen')) {
-        $fp = @fsockopen('127.0.0.1', 25, $errno, $errstr, 1);
-        if (!$fp) {
-            $fp = @fsockopen('localhost', 25, $errno, $errstr, 1);
-        }
-        if ($fp) {
-            stream_set_timeout($fp, 2);
-            $greeting = fgets($fp, 512);
-            fputs($fp, "HELO " . ($_SERVER['SERVER_NAME'] ?? 'chaletcosynest.fr') . "\r\n");
-            fgets($fp, 512);
-            fputs($fp, "MAIL FROM: <{$senderEmail}>\r\n");
-            fgets($fp, 512);
-            fputs($fp, "RCPT TO: <{$toEmail}>\r\n");
-            $rcptResp = fgets($fp, 512);
-            if (substr($rcptResp, 0, 3) == '250') {
+        $hosts = ['127.0.0.1', 'localhost', 'mail.infomaniak.com'];
+        $ports = [25, 587];
+
+        foreach ($hosts as $host) {
+            foreach ($ports as $port) {
+                $fp = @fsockopen($host, $port, $errno, $errstr, 1);
+                if (!$fp) continue;
+
+                stream_set_timeout($fp, 2);
+
+                $banner = read_smtp_response($fp);
+                if (substr($banner, 0, 3) !== '220') {
+                    fclose($fp);
+                    continue;
+                }
+
+                fputs($fp, "EHLO " . ($_SERVER['SERVER_NAME'] ?? 'chaletcosynest.fr') . "\r\n");
+                $ehloResp = read_smtp_response($fp);
+                if (substr($ehloResp, 0, 3) !== '250') {
+                    fputs($fp, "HELO " . ($_SERVER['SERVER_NAME'] ?? 'chaletcosynest.fr') . "\r\n");
+                    read_smtp_response($fp);
+                }
+
+                fputs($fp, "MAIL FROM: <{$senderEmail}>\r\n");
+                $mailResp = read_smtp_response($fp);
+                if (substr($mailResp, 0, 3) !== '250') {
+                    fclose($fp);
+                    continue;
+                }
+
+                fputs($fp, "RCPT TO: <{$toEmail}>\r\n");
+                $rcptResp = read_smtp_response($fp);
+                if (substr($rcptResp, 0, 3) !== '250') {
+                    fclose($fp);
+                    continue;
+                }
+
                 fputs($fp, "DATA\r\n");
-                fgets($fp, 512);
+                $dataStartResp = read_smtp_response($fp);
+                if (substr($dataStartResp, 0, 3) !== '354') {
+                    fclose($fp);
+                    continue;
+                }
+
                 fputs($fp, "To: <{$toEmail}>\r\n");
                 fputs($fp, "Subject: {$subject}\r\n");
                 fputs($fp, $headers);
                 fputs($fp, "\r\n");
                 fputs($fp, $htmlBody);
                 fputs($fp, "\r\n.\r\n");
-                $dataResp = fgets($fp, 512);
+
+                $dataEndResp = read_smtp_response($fp);
                 fputs($fp, "QUIT\r\n");
+                read_smtp_response($fp);
                 fclose($fp);
-                if (substr($dataResp, 0, 3) == '250') {
-                    return ["success" => true, "method" => "smtp_socket_127.0.0.1:25"];
+
+                if (substr($dataEndResp, 0, 3) === '250') {
+                    return ["success" => true, "method" => "smtp_socket_{$host}:{$port}"];
                 }
-            } else {
-                fclose($fp);
             }
         }
     }
 
-    // 2. Fallback to native mail() function
+    // 2. Fallback to native mail() function if available
     if (function_exists('mail')) {
         $res = @mail($toEmail, $subject, $htmlBody, $headers, "-f{$senderEmail}");
         if ($res) return ["success" => true, "method" => "native_mail_envelope"];
@@ -99,7 +141,7 @@ function send_php_email($toEmail, $subject, $htmlBody, $senderEmail = "contact@c
         if ($res2) return ["success" => true, "method" => "native_mail"];
     }
 
-    return ["success" => false, "error" => "Échec de connexion SMTP."];
+    return ["success" => false, "error" => "Aucune connexion SMTP n'a pu livrer le mail."];
 }
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -108,15 +150,33 @@ if ($method === 'GET') {
     $action = $_GET['action'] ?? 'all';
 
     if ($action === 'diag') {
+        $targets = [
+            'mail.infomaniak.com:587',
+            'mail.infomaniak.com:465',
+            'mail.infomaniak.com:25',
+            'smtp.infomaniak.com:587',
+            'smtp.infomaniak.com:465',
+            '127.0.0.1:25',
+            'localhost:25'
+        ];
+        $results = [];
+        foreach ($targets as $target) {
+            list($host, $port) = explode(':', $target);
+            $start = microtime(true);
+            $fp = @fsockopen($host, (int)$port, $errno, $errstr, 1);
+            $time = round((microtime(true) - $start) * 1000, 2);
+            if ($fp) {
+                fclose($fp);
+                $results[$target] = "OPEN ({$time}ms)";
+            } else {
+                $results[$target] = "CLOSED/TIMEOUT ({$time}ms: $errstr)";
+            }
+        }
         echo json_encode([
             "status" => "success",
-            "mail_function_exists" => function_exists('mail'),
-            "fsockopen_exists" => function_exists('fsockopen'),
-            "stream_socket_client_exists" => function_exists('stream_socket_client'),
-            "curl_exists" => function_exists('curl_init'),
             "disabled_functions" => ini_get('disable_functions'),
-            "php_version" => phpversion()
-        ]);
+            "smtp_tests" => $results
+        ], JSON_PRETTY_PRINT);
         exit();
     }
 
