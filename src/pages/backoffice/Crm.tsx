@@ -417,13 +417,13 @@ export default function BackofficeCrm() {
       targetRecipients = safeClients.map((c) => ({ email: c.email || '', name: c.name || 'Client' }));
     }
 
-    // Filtrer les adresses vides ou invalides
+    // Filtrer les adresses vides, invalides ou factices (example.com)
     targetRecipients = targetRecipients.filter(
       (r) => r && typeof r.email === 'string' && r.email.includes('@') && !r.email.includes('example.com')
     );
 
     // Si une adresse e-mail de test est saisie, l'ajouter aux destinataires
-    if (testEmailInput && testEmailInput.includes('@')) {
+    if (testEmailInput && testEmailInput.includes('@') && !testEmailInput.includes('example.com')) {
       const alreadyPresent = targetRecipients.some(
         (r) => r.email.toLowerCase() === testEmailInput.toLowerCase()
       );
@@ -432,9 +432,11 @@ export default function BackofficeCrm() {
       }
     }
 
-    // Si aucune adresse réelle (ex: adresses de démo), conserver au moins la liste de test
+    // Si aucun destinataire réel trouvé
     if (targetRecipients.length === 0) {
-      targetRecipients = safeProspects.map((p) => ({ email: p.email || '', name: p.name || 'Prospect' }));
+      setSendingCamp(false);
+      alert("⚠️ Aucun destinataire avec une adresse e-mail réelle n'a été trouvé pour ce segment.\n\nVeuillez saisir votre adresse e-mail dans la section '🧪 Tester la réception de ce mail' ci-dessus pour recevoir l'envoi.");
+      return;
     }
 
     let apiResultMessage = '';

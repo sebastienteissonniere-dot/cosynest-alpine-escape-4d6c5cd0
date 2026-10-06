@@ -64,7 +64,7 @@ const INITIAL_PROSPECTS: ProspectLead[] = [
   {
     id: 'prospect-101',
     name: 'Marc & Valérie Laurent',
-    email: 'marc.laurent@example.com',
+    email: 'contact@chaletcosynest.fr',
     phone: '+33 6 45 89 12 34',
     source: 'Formulaire Web CosyNest',
     statusTag: 'Devis Envoyé',
