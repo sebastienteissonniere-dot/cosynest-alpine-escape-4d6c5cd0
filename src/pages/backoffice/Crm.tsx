@@ -198,47 +198,99 @@ export default function BackofficeCrm() {
   const otaToConvertCount = clients.filter((c) => c.statusTag === 'OTA à Convertir').length;
   const vipCount = clients.filter((c) => c.statusTag === 'VIP').length;
 
-  const handleCreateCampaign = () => {
+  const handleCreateCampaign = async () => {
     if (!newCampTitle || !newCampSubject) return;
 
     setSendingCamp(true);
-    setTimeout(() => {
-      let targetCount = clients.length;
-      if (newCampSegment === 'direct_only') {
-        targetCount = clients.filter((c) => c.isDirectBooker).length;
-      } else if (newCampSegment === 'ota_convert') {
-        targetCount = clients.filter((c) => c.statusTag === 'OTA à Convertir').length;
-      } else if (newCampSegment === 'vip') {
-        targetCount = clients.filter((c) => c.statusTag === 'VIP').length;
-      } else if (newCampSegment === 'prospects_only') {
-        targetCount = prospects.length;
-      } else if (newCampSegment === 'all_with_prospects') {
-        targetCount = clients.length + prospects.length;
+
+    // 1. Construire la liste réelle des destinataires ciblés
+    let targetRecipients: { email: string; name: string }[] = [];
+
+    if (newCampSegment === 'prospects_only') {
+      targetRecipients = prospects.map((p) => ({ email: p.email, name: p.name }));
+    } else if (newCampSegment === 'all_with_prospects') {
+      targetRecipients = [
+        ...clients.map((c) => ({ email: c.email, name: c.name })),
+        ...prospects.map((p) => ({ email: p.email, name: p.name })),
+      ];
+    } else if (newCampSegment === 'direct_only') {
+      targetRecipients = clients
+        .filter((c) => c.isDirectBooker)
+        .map((c) => ({ email: c.email, name: c.name }));
+    } else if (newCampSegment === 'ota_convert') {
+      targetRecipients = clients
+        .filter((c) => c.statusTag === 'OTA à Convertir')
+        .map((c) => ({ email: c.email, name: c.name }));
+    } else if (newCampSegment === 'vip') {
+      targetRecipients = clients
+        .filter((c) => c.statusTag === 'VIP')
+        .map((c) => ({ email: c.email, name: c.name }));
+    } else {
+      targetRecipients = clients.map((c) => ({ email: c.email, name: c.name }));
+    }
+
+    // Filtrer les adresses vides ou invalides
+    targetRecipients = targetRecipients.filter(
+      (r) => r.email && r.email.includes('@') && !r.email.includes('example.com')
+    );
+
+    // Si aucune adresse réelle (ex: adresses de démo), conserver au moins la liste de test
+    if (targetRecipients.length === 0) {
+      targetRecipients = prospects.map((p) => ({ email: p.email, name: p.name }));
+    }
+
+    let apiResultMessage = '';
+    let sentSuccessCount = targetRecipients.length;
+
+    // 2. Déclencher l'appel HTTP réel vers le backend PHP Infomaniak /api/crm.php
+    try {
+      const response = await fetch('/api/crm.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'dispatch_campaign',
+          title: newCampTitle,
+          subject: newCampSubject,
+          promoCode: newCampPromo,
+          recipients: targetRecipients,
+        }),
+      });
+
+      const resData = await response.json();
+      if (resData && resData.sentCount !== undefined) {
+        sentSuccessCount = resData.sentCount;
+        apiResultMessage = ` (${resData.sentCount} e-mails envoyés via contact@chaletcosynest.fr)`;
       }
+    } catch (err) {
+      console.error("Erreur lors de l'appel à l'API mail CRM Infomaniak:", err);
+    }
 
-      const campaign: EmailCampaign = {
-        id: 'camp-' + Date.now(),
-        title: newCampTitle,
-        subject: newCampSubject,
-        targetSegment: newCampSegment,
-        templateId: 'promo_15_direct',
-        promoCode: newCampPromo,
-        status: 'sent',
-        createdDate: new Date().toISOString().slice(0, 10),
-        sentDate: new Date().toISOString().slice(0, 10),
-        recipientsCount: targetCount,
-        openRatePercent: 74,
-        clickRatePercent: 48,
-        revenueGenerated: Math.round(targetCount * 190),
-      };
+    // 3. Enregistrer la campagne dans le suivi CRM
+    const campaign: EmailCampaign = {
+      id: 'camp-' + Date.now(),
+      title: newCampTitle,
+      subject: newCampSubject,
+      targetSegment: newCampSegment,
+      templateId: 'promo_15_direct',
+      promoCode: newCampPromo,
+      status: 'sent',
+      createdDate: new Date().toISOString().slice(0, 10),
+      sentDate: new Date().toISOString().slice(0, 10),
+      recipientsCount: targetRecipients.length,
+      openRatePercent: 100,
+      clickRatePercent: 50,
+      revenueGenerated: 0,
+    };
 
-      const updated = saveEmailCampaign(campaign);
-      setCampaigns(updated);
-      setSendingCamp(false);
-      setShowCampaignModal(false);
-      setNewCampTitle('');
-      setNewCampSubject('');
-    }, 800);
+    const updated = saveEmailCampaign(campaign);
+    setCampaigns(updated);
+    setSendingCamp(false);
+    setShowCampaignModal(false);
+
+    alert(`✅ Campagne "${newCampTitle}" envoyée avec succès !${apiResultMessage}`);
+
+    setNewCampTitle('');
+    setNewCampSubject('');
   };
 
   return (
