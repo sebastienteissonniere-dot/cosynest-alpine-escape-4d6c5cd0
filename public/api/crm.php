@@ -47,10 +47,99 @@ try {
     // Silent catch
 }
 
+function send_php_email($toEmail, $subject, $htmlBody, $senderEmail = "contact@chaletcosynest.fr", $senderName = "Chalet CosyNest") {
+    $headers  = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $headers .= "From: {$senderName} <{$senderEmail}>\r\n";
+    $headers .= "Reply-To: {$senderEmail}\r\n";
+    $headers .= "Return-Path: {$senderEmail}\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion() . " (Infomaniak ChaletCosyNest)\r\n";
+
+    // 1. Check native mail() function safely
+    if (function_exists('mail')) {
+        $res = @mail($toEmail, $subject, $htmlBody, $headers, "-f{$senderEmail}");
+        if ($res) return ["success" => true, "method" => "native_mail_envelope"];
+        $res2 = @mail($toEmail, $subject, $htmlBody, $headers);
+        if ($res2) return ["success" => true, "method" => "native_mail"];
+    }
+
+    // 2. Direct Socket SMTP fallback
+    if (function_exists('fsockopen')) {
+        $hosts = ['127.0.0.1', 'localhost', 'mail.infomaniak.com', 'smtp.infomaniak.com'];
+        $ports = [25, 587, 2525];
+        foreach ($hosts as $host) {
+            foreach ($ports as $port) {
+                $fp = @fsockopen($host, $port, $errno, $errstr, 2);
+                if ($fp) {
+                    fgets($fp, 512);
+                    fputs($fp, "HELO " . ($_SERVER['SERVER_NAME'] ?? 'chaletcosynest.fr') . "\r\n");
+                    fgets($fp, 512);
+                    fputs($fp, "MAIL FROM: <{$senderEmail}>\r\n");
+                    fgets($fp, 512);
+                    fputs($fp, "RCPT TO: <{$toEmail}>\r\n");
+                    $rcptResp = fgets($fp, 512);
+                    if (substr($rcptResp, 0, 3) == '250') {
+                        fputs($fp, "DATA\r\n");
+                        fgets($fp, 512);
+                        fputs($fp, "To: <{$toEmail}>\r\n");
+                        fputs($fp, "Subject: {$subject}\r\n");
+                        fputs($fp, $headers);
+                        fputs($fp, "\r\n");
+                        fputs($fp, $htmlBody);
+                        fputs($fp, "\r\n.\r\n");
+                        $dataResp = fgets($fp, 512);
+                        fputs($fp, "QUIT\r\n");
+                        fclose($fp);
+                        if (substr($dataResp, 0, 3) == '250') {
+                            return ["success" => true, "method" => "smtp_socket_{$host}:{$port}"];
+                        }
+                    } else {
+                        fclose($fp);
+                    }
+                }
+            }
+        }
+    }
+
+    // 3. Sendmail CLI fallback
+    if (function_exists('popen')) {
+        $sendmailPath = ini_get('sendmail_path') ?: '/usr/sbin/sendmail -t -i';
+        if ($sendmailPath) {
+            $pipe = @popen($sendmailPath, 'w');
+            if ($pipe) {
+                fputs($pipe, "To: <{$toEmail}>\r\n");
+                fputs($pipe, "Subject: {$subject}\r\n");
+                fputs($pipe, $headers);
+                fputs($pipe, "\r\n");
+                fputs($pipe, $htmlBody);
+                $pcloseRes = pclose($pipe);
+                if ($pcloseRes === 0) {
+                    return ["success" => true, "method" => "sendmail_cli"];
+                }
+            }
+        }
+    }
+
+    return ["success" => false, "error" => "Fonction mail() non disponible sur le serveur."];
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     $action = $_GET['action'] ?? 'all';
+
+    if ($action === 'diag') {
+        echo json_encode([
+            "status" => "success",
+            "mail_function_exists" => function_exists('mail'),
+            "fsockopen_exists" => function_exists('fsockopen'),
+            "stream_socket_client_exists" => function_exists('stream_socket_client'),
+            "curl_exists" => function_exists('curl_init'),
+            "disabled_functions" => ini_get('disable_functions'),
+            "php_version" => phpversion()
+        ]);
+        exit();
+    }
 
     if ($action === 'get_prospects') {
         $stmt = $pdo->query("SELECT * FROM prospects ORDER BY created_at DESC");
@@ -208,13 +297,6 @@ if ($method === 'POST') {
 
         $senderEmail = "contact@chaletcosynest.fr";
         $senderName = "Chalet CosyNest";
-        
-        $headers  = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: {$senderName} <{$senderEmail}>\r\n";
-        $headers .= "Reply-To: {$senderEmail}\r\n";
-        $headers .= "Return-Path: {$senderEmail}\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion() . " (Infomaniak ChaletCosyNest)\r\n";
 
         if (!empty($rawCustomBody)) {
             $formatted = htmlspecialchars($rawCustomBody, ENT_QUOTES, 'UTF-8');
@@ -277,18 +359,16 @@ if ($method === 'POST') {
         </html>
         ";
 
-        $success = @mail($testEmail, $subject, $htmlBody, $headers, "-f{$senderEmail}");
-        if (!$success) {
-            $success = mail($testEmail, $subject, $htmlBody, $headers);
-        }
+        $mailResult = send_php_email($testEmail, $subject, $htmlBody, $senderEmail, $senderName);
 
         echo json_encode([
-            "status" => $success ? "success" : "error",
-            "message" => $success 
-                ? "E-mail de test envoyé avec succès à $testEmail via $senderEmail." 
-                : "Échec de l'envoi via PHP mail().",
+            "status" => $mailResult['success'] ? "success" : "error",
+            "message" => $mailResult['success'] 
+                ? "E-mail de test envoyé avec succès à $testEmail via {$mailResult['method']}." 
+                : ($mailResult['error'] ?? "Échec de l'envoi."),
             "testEmail" => $testEmail,
-            "sent" => $success
+            "sent" => $mailResult['success'],
+            "details" => $mailResult
         ]);
         exit();
     }
@@ -305,13 +385,6 @@ if ($method === 'POST') {
 
         $senderEmail = "contact@chaletcosynest.fr";
         $senderName = "Chalet CosyNest";
-        
-        $headers  = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: {$senderName} <{$senderEmail}>\r\n";
-        $headers .= "Reply-To: {$senderEmail}\r\n";
-        $headers .= "Return-Path: {$senderEmail}\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion() . " (Infomaniak ChaletCosyNest)\r\n";
 
         $sentCount = 0;
         $failedCount = 0;
@@ -386,12 +459,8 @@ if ($method === 'POST') {
             </html>
             ";
 
-            $success = @mail($toEmail, $subject, $htmlBody, $headers, "-f{$senderEmail}");
-            if (!$success) {
-                $success = mail($toEmail, $subject, $htmlBody, $headers);
-            }
-
-            if ($success) {
+            $res = send_php_email($toEmail, $subject, $htmlBody, $senderEmail, $senderName);
+            if ($res['success']) {
                 $sentCount++;
             } else {
                 $failedCount++;
