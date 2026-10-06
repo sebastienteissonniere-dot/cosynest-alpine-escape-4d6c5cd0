@@ -105,6 +105,40 @@ export default function BackofficeCrm() {
   >('ota_convert');
   const [newCampPromo, setNewCampPromo] = useState('DIRECT15');
   const [sendingCamp, setSendingCamp] = useState(false);
+  const [testEmailInput, setTestEmailInput] = useState(user?.email || '');
+  const [sendingTest, setSendingTest] = useState(false);
+
+  const handleSendTestEmail = async () => {
+    if (!testEmailInput || !testEmailInput.includes('@')) {
+      alert("Veuillez saisir une adresse e-mail de test valide (ex: votre-email@domaine.com).");
+      return;
+    }
+    setSendingTest(true);
+    try {
+      const response = await fetch('/api/crm.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'send_test_email',
+          testEmail: testEmailInput,
+          subject: newCampSubject || '🧪 Test de Réception E-mail — Chalet CosyNest',
+          promoCode: newCampPromo,
+          customBody: newCampBody,
+        }),
+      });
+      const data = await response.json();
+      if (data.status === 'success' || data.sent) {
+        alert(`✅ E-mail de test envoyé avec succès à ${testEmailInput} via contact@chaletcosynest.fr !\n\n💡 Vérifiez votre boîte de réception ainsi que votre dossier "Spam" / "Courrier Indésirable" si le mail met quelques secondes à arriver.`);
+      } else {
+        alert(`⚠️ Le serveur n'a pas pu envoyer l'e-mail : ${data.message || 'Erreur inconnue'}`);
+      }
+    } catch (err) {
+      console.error("Erreur lors de l'envoi de l'e-mail de test:", err);
+      alert("⚠️ Erreur de connexion avec le serveur d'envoi d'e-mails.");
+    } finally {
+      setSendingTest(false);
+    }
+  };
 
   useEffect(() => {
     fetchAllReservations().then((data) => {
@@ -340,6 +374,16 @@ export default function BackofficeCrm() {
       (r) => r && typeof r.email === 'string' && r.email.includes('@') && !r.email.includes('example.com')
     );
 
+    // Si une adresse e-mail de test est saisie, l'ajouter aux destinataires
+    if (testEmailInput && testEmailInput.includes('@')) {
+      const alreadyPresent = targetRecipients.some(
+        (r) => r.email.toLowerCase() === testEmailInput.toLowerCase()
+      );
+      if (!alreadyPresent) {
+        targetRecipients.push({ email: testEmailInput, name: user?.name || 'Administrateur' });
+      }
+    }
+
     // Si aucune adresse réelle (ex: adresses de démo), conserver au moins la liste de test
     if (targetRecipients.length === 0) {
       targetRecipients = safeProspects.map((p) => ({ email: p.email || '', name: p.name || 'Prospect' }));
@@ -397,7 +441,7 @@ export default function BackofficeCrm() {
     setShowCampaignModal(false);
     resetCampaignForm();
 
-    alert(`✅ Campagne "${newCampTitle}" envoyée avec succès !${apiResultMessage}`);
+    alert(`✅ Campagne "${newCampTitle}" envoyée avec succès à ${targetRecipients.length} destinataire(s) !${apiResultMessage}\n\n💡 Pensez à vérifier votre dossier Spam/Courrier Indésirable si le mail met quelques secondes à arriver.`);
   };
 
   return (
@@ -1260,6 +1304,37 @@ export default function BackofficeCrm() {
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Test Email Section */}
+              <div className="bg-amber-50 p-4 rounded-xl border border-amber-200/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                    <span>🧪 Tester la réception de ce mail</span>
+                  </label>
+                  <span className="text-[10px] text-amber-700 font-medium">Expéditeur: contact@chaletcosynest.fr</span>
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    type="email"
+                    placeholder="Saisissez votre adresse e-mail de test..."
+                    value={testEmailInput}
+                    onChange={(e) => setTestEmailInput(e.target.value)}
+                    className="text-xs rounded-xl bg-white border-amber-300 focus:ring-amber-500"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleSendTestEmail}
+                    disabled={sendingTest || !testEmailInput}
+                    className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm"
+                  >
+                    {sendingTest ? 'Envoi...' : 'Envoyer un mail de test'}
+                  </Button>
+                </div>
+                <p className="text-[10px] text-amber-800 leading-tight">
+                  💡 Envoyez-vous un e-mail de test immédiat pour vérifier le rendu et la réception dans votre propre boîte mail (pensez aussi à vérifier votre dossier <strong>Spams / Indésirables</strong>).
+                </p>
               </div>
             </div>
 
