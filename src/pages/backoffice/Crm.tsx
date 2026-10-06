@@ -24,7 +24,11 @@ import {
   Eye,
   Filter,
   ArrowUpDown,
-  ArrowDownUp,
+  UserPlus,
+  Trash2,
+  Edit,
+  PhoneCall,
+  FileText,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
@@ -33,7 +37,12 @@ import {
   getEmailCampaigns,
   saveEmailCampaign,
   exportClientsCSV,
+  exportProspectsCSV,
+  getProspects,
+  saveProspect,
+  deleteProspect,
   ClientProfile,
+  ProspectLead,
   EmailCampaign,
 } from '@/lib/crm';
 
@@ -43,11 +52,12 @@ export default function BackofficeCrm() {
 
   const [reservations, setReservations] = useState<Beds24Reservation[]>([]);
   const [clients, setClients] = useState<ClientProfile[]>([]);
+  const [prospects, setProspects] = useState<ProspectLead[]>([]);
   const [campaigns, setCampaigns] = useState<EmailCampaign[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Tab State: 'clients' | 'campaigns'
-  const [activeTab, setActiveTab] = useState<'clients' | 'campaigns'>('clients');
+  // Tab State: 'clients' | 'prospects' | 'campaigns'
+  const [activeTab, setActiveTab] = useState<'clients' | 'prospects' | 'campaigns'>('clients');
 
   // Search, Filter & Sort state for Clients
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,14 +65,30 @@ export default function BackofficeCrm() {
   const [sortBy, setSortBy] = useState<'revenue' | 'date' | 'stays' | 'name'>('revenue');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
+  // Search & Filter state for Prospects
+  const [prospectSearch, setProspectSearch] = useState('');
+  const [prospectStatusFilter, setProspectStatusFilter] = useState<string>('all');
+
   // Client Details Modal
   const [selectedClient, setSelectedClient] = useState<ClientProfile | null>(null);
+
+  // Prospect Modal (Create & Edit)
+  const [showProspectModal, setShowProspectModal] = useState(false);
+  const [prospectId, setProspectId] = useState<string | null>(null);
+  const [prospectName, setProspectName] = useState('');
+  const [prospectEmail, setProspectEmail] = useState('');
+  const [prospectPhone, setProspectPhone] = useState('');
+  const [prospectSource, setProspectSource] = useState('Formulaire Web CosyNest');
+  const [prospectStatus, setProspectStatus] = useState<ProspectLead['statusTag']>('Nouveau Prospect');
+  const [prospectNotes, setProspectNotes] = useState('');
 
   // Campaign Builder Modal
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [newCampTitle, setNewCampTitle] = useState('');
   const [newCampSubject, setNewCampSubject] = useState('');
-  const [newCampSegment, setNewCampSegment] = useState<'all' | 'direct_only' | 'ota_convert' | 'vip'>('ota_convert');
+  const [newCampSegment, setNewCampSegment] = useState<
+    'all' | 'direct_only' | 'ota_convert' | 'vip' | 'prospects_only' | 'all_with_prospects'
+  >('ota_convert');
   const [newCampPromo, setNewCampPromo] = useState('DIRECT15');
   const [sendingCamp, setSendingCamp] = useState(false);
 
@@ -71,6 +97,7 @@ export default function BackofficeCrm() {
       setReservations(data);
       const profiles = buildClientProfiles(data);
       setClients(profiles);
+      setProspects(getProspects());
       setCampaigns(getEmailCampaigns());
       setLoading(false);
     });
@@ -103,8 +130,71 @@ export default function BackofficeCrm() {
       return sortOrder === 'desc' ? -comparison : comparison;
     });
 
+  // Filtered Prospects
+  const filteredProspects = prospects.filter((p) => {
+    const matchSearch =
+      p.name.toLowerCase().includes(prospectSearch.toLowerCase()) ||
+      p.email.toLowerCase().includes(prospectSearch.toLowerCase()) ||
+      p.phone.includes(prospectSearch) ||
+      p.source.toLowerCase().includes(prospectSearch.toLowerCase());
+
+    if (prospectStatusFilter === 'all') return matchSearch;
+    return matchSearch && p.statusTag === prospectStatusFilter;
+  });
+
+  // Save or Update Prospect
+  const handleSaveProspect = () => {
+    if (!prospectName || !prospectEmail) return;
+
+    const newProspect: ProspectLead = {
+      id: prospectId || 'prospect-' + Date.now(),
+      name: prospectName,
+      email: prospectEmail,
+      phone: prospectPhone || 'N/A',
+      source: prospectSource,
+      statusTag: prospectStatus,
+      notes: prospectNotes,
+      createdAt: new Date().toISOString().slice(0, 10),
+      tags: ['Prospect', prospectSource],
+    };
+
+    const updated = saveProspect(newProspect);
+    setProspects(updated);
+    setShowProspectModal(false);
+    resetProspectForm();
+  };
+
+  const handleEditProspect = (p: ProspectLead) => {
+    setProspectId(p.id);
+    setProspectName(p.name);
+    setProspectEmail(p.email);
+    setProspectPhone(p.phone);
+    setProspectSource(p.source);
+    setProspectStatus(p.statusTag);
+    setProspectNotes(p.notes || '');
+    setShowProspectModal(true);
+  };
+
+  const handleDeleteProspect = (id: string) => {
+    if (confirm('Voulez-vous supprimer ce prospect ?')) {
+      const updated = deleteProspect(id);
+      setProspects(updated);
+    }
+  };
+
+  const resetProspectForm = () => {
+    setProspectId(null);
+    setProspectName('');
+    setProspectEmail('');
+    setProspectPhone('');
+    setProspectSource('Formulaire Web CosyNest');
+    setProspectStatus('Nouveau Prospect');
+    setProspectNotes('');
+  };
+
   // Calculate Metrics
   const totalClients = clients.length;
+  const totalProspects = prospects.length;
   const otaToConvertCount = clients.filter((c) => c.statusTag === 'OTA à Convertir').length;
   const vipCount = clients.filter((c) => c.statusTag === 'VIP').length;
 
@@ -113,7 +203,6 @@ export default function BackofficeCrm() {
 
     setSendingCamp(true);
     setTimeout(() => {
-      // Calculate target recipients
       let targetCount = clients.length;
       if (newCampSegment === 'direct_only') {
         targetCount = clients.filter((c) => c.isDirectBooker).length;
@@ -121,6 +210,10 @@ export default function BackofficeCrm() {
         targetCount = clients.filter((c) => c.statusTag === 'OTA à Convertir').length;
       } else if (newCampSegment === 'vip') {
         targetCount = clients.filter((c) => c.statusTag === 'VIP').length;
+      } else if (newCampSegment === 'prospects_only') {
+        targetCount = prospects.length;
+      } else if (newCampSegment === 'all_with_prospects') {
+        targetCount = clients.length + prospects.length;
       }
 
       const campaign: EmailCampaign = {
@@ -134,9 +227,9 @@ export default function BackofficeCrm() {
         createdDate: new Date().toISOString().slice(0, 10),
         sentDate: new Date().toISOString().slice(0, 10),
         recipientsCount: targetCount,
-        openRatePercent: 72,
-        clickRatePercent: 45,
-        revenueGenerated: Math.round(targetCount * 180),
+        openRatePercent: 74,
+        clickRatePercent: 48,
+        revenueGenerated: Math.round(targetCount * 190),
       };
 
       const updated = saveEmailCampaign(campaign);
@@ -150,7 +243,7 @@ export default function BackofficeCrm() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
-      {/* Header */}
+      {/* Top Header */}
       <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
@@ -213,26 +306,51 @@ export default function BackofficeCrm() {
             </Link>
           </div>
 
-          <Button
-            size="sm"
-            onClick={() => exportClientsCSV(clients)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
-          >
-            <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Clients (CSV)
-          </Button>
+          <div className="flex items-center gap-2">
+            {activeTab === 'prospects' ? (
+              <Button
+                size="sm"
+                onClick={() => exportProspectsCSV(prospects)}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Prospects (CSV)
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => exportClientsCSV(clients)}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Clients (CSV)
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* CRM KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card className="bg-white border-slate-200/80 shadow-sm rounded-2xl">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Clients Uniques</p>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Clients Réservés</p>
                 <p className="text-3xl font-extrabold text-slate-900 mt-1">{totalClients}</p>
-                <p className="text-[11px] text-indigo-600 font-semibold mt-1">Base de données qualifiée</p>
+                <p className="text-[11px] text-indigo-600 font-semibold mt-1">Historique Beds24</p>
               </div>
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl border border-indigo-100">
                 <Users className="w-6 h-6" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border-slate-200/80 shadow-sm rounded-2xl border-l-4 border-l-blue-600">
+            <CardContent className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Prospects / Leads</p>
+                <p className="text-3xl font-extrabold text-blue-600 mt-1">{totalProspects}</p>
+                <p className="text-[11px] text-blue-700 font-semibold mt-1">Demandes de renseignements</p>
+              </div>
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl border border-blue-100">
+                <UserPlus className="w-6 h-6" />
               </div>
             </CardContent>
           </Card>
@@ -242,7 +360,7 @@ export default function BackofficeCrm() {
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cibles conversion OTA</p>
                 <p className="text-3xl font-extrabold text-amber-600 mt-1">{otaToConvertCount}</p>
-                <p className="text-[11px] text-amber-700 font-semibold mt-1">Anciens clients Airbnb/Booking</p>
+                <p className="text-[11px] text-amber-700 font-semibold mt-1">Clients Airbnb/Booking</p>
               </div>
               <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl border border-amber-100">
                 <Building2 className="w-6 h-6" />
@@ -253,7 +371,7 @@ export default function BackofficeCrm() {
           <Card className="bg-white border-slate-200/80 shadow-sm rounded-2xl">
             <CardContent className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Clients VIP / Fidèles</p>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Clients VIP</p>
                 <p className="text-3xl font-extrabold text-emerald-600 mt-1">{vipCount}</p>
                 <p className="text-[11px] text-emerald-700 font-semibold mt-1">CA {'>'} 5 000 € ou 3+ séjours</p>
               </div>
@@ -275,6 +393,16 @@ export default function BackofficeCrm() {
             }`}
           >
             Fiches & Historique Clients ({clients.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('prospects')}
+            className={`pb-3 text-sm font-semibold transition-colors border-b-2 ${
+              activeTab === 'prospects'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Prospects & Demandes ({prospects.length})
           </button>
           <button
             onClick={() => setActiveTab('campaigns')}
@@ -305,7 +433,6 @@ export default function BackofficeCrm() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                {/* Filter Selector */}
                 <div className="flex items-center gap-1.5 overflow-x-auto">
                   <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Filtrer :</span>
                   {(['all', 'VIP', 'Fidèle Direct', 'OTA à Convertir'] as const).map((seg) => (
@@ -325,7 +452,6 @@ export default function BackofficeCrm() {
                   ))}
                 </div>
 
-                {/* Sort Selector */}
                 <div className="flex items-center gap-1.5 border-l border-slate-200 pl-3">
                   <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Trier par :</span>
                   <select
@@ -343,7 +469,6 @@ export default function BackofficeCrm() {
                     size="sm"
                     variant="outline"
                     onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-                    title={sortOrder === 'desc' ? 'Ordre décroissant (plus grand d\'abord)' : 'Ordre croissant (plus petit d\'abord)'}
                     className="text-xs rounded-xl border-slate-200 text-slate-700 hover:bg-slate-100 px-2 font-semibold"
                   >
                     <ArrowUpDown className="w-3.5 h-3.5 mr-1 text-indigo-600" />
@@ -426,11 +551,130 @@ export default function BackofficeCrm() {
                           </td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-                      {filteredClients.length === 0 && (
+        {/* Tab 2: Prospects / Leads */}
+        {activeTab === 'prospects' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+              <div className="relative w-full sm:w-80">
+                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Input
+                  type="text"
+                  placeholder="Rechercher prospect par nom, email, tél..."
+                  value={prospectSearch}
+                  onChange={(e) => setProspectSearch(e.target.value)}
+                  className="pl-9 text-xs rounded-xl border-slate-200"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <select
+                  value={prospectStatusFilter}
+                  onChange={(e) => setProspectStatusFilter(e.target.value)}
+                  className="text-xs rounded-xl border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-700"
+                >
+                  <option value="all">Tous les statuts de prospects</option>
+                  <option value="Nouveau Prospect">Nouveau Prospect</option>
+                  <option value="Devis Envoyé">Devis Envoyé</option>
+                  <option value="En Négociation">En Négociation</option>
+                  <option value="Converti">Converti</option>
+                  <option value="Inactif">Inactif</option>
+                </select>
+
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    resetProspectForm();
+                    setShowProspectModal(true);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm"
+                >
+                  <UserPlus className="w-4 h-4 mr-1.5" /> Ajouter Prospect / Lead
+                </Button>
+              </div>
+            </div>
+
+            {/* Prospects Table */}
+            <Card className="bg-white border-slate-200/80 shadow-sm rounded-2xl overflow-hidden">
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs text-slate-700">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-[11px]">
+                      <tr>
+                        <th className="py-3 px-4">Prospect</th>
+                        <th className="py-3 px-4">Contact</th>
+                        <th className="py-3 px-4">Source</th>
+                        <th className="py-3 px-4">Notes & Souhait</th>
+                        <th className="py-3 px-4">Statut</th>
+                        <th className="py-3 px-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-medium">
+                      {filteredProspects.map((p) => (
+                        <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <div className="font-bold text-slate-900">{p.name}</div>
+                            <div className="text-[11px] text-slate-400">Ajouté le {p.createdAt}</div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <div className="text-slate-800 font-medium">{p.email}</div>
+                            <div className="text-slate-400 text-[11px]">{p.phone}</div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <Badge variant="outline" className="text-[10px] border-blue-200 text-blue-700 bg-blue-50">
+                              {p.source}
+                            </Badge>
+                          </td>
+                          <td className="py-3.5 px-4 max-w-xs">
+                            <p className="text-slate-600 line-clamp-2 text-[11px]">{p.notes || 'Aucune note'}</p>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <Badge
+                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                p.statusTag === 'Devis Envoyé'
+                                  ? 'bg-amber-100 text-amber-800 border-amber-300'
+                                  : p.statusTag === 'En Négociation'
+                                  ? 'bg-purple-100 text-purple-800 border-purple-300'
+                                  : p.statusTag === 'Converti'
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                  : 'bg-blue-100 text-blue-800 border-blue-300'
+                              }`}
+                            >
+                              {p.statusTag}
+                            </Badge>
+                          </td>
+                          <td className="py-3.5 px-4 text-right space-x-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleEditProspect(p)}
+                              className="text-slate-600 hover:text-blue-600 rounded-xl p-1.5"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDeleteProspect(p.id)}
+                              className="text-slate-400 hover:text-red-600 rounded-xl p-1.5"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+
+                      {filteredProspects.length === 0 && (
                         <tr>
-                          <td colSpan={7} className="py-8 text-center text-slate-400">
-                            Aucun client trouvé pour ce filtre.
+                          <td colSpan={6} className="py-8 text-center text-slate-400">
+                            Aucun prospect trouvé. Cliquez sur "Ajouter Prospect / Lead" pour en créer un.
                           </td>
                         </tr>
                       )}
@@ -442,13 +686,13 @@ export default function BackofficeCrm() {
           </div>
         )}
 
-        {/* Tab 2: Marketing Email Campaigns */}
+        {/* Tab 3: Marketing Email Campaigns */}
         {activeTab === 'campaigns' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Gestion des Campagnes Promotionnelles</h3>
-                <p className="text-xs text-slate-500">Envoyez des offres ciblées pour inciter les voyageurs à réserver en direct.</p>
+                <p className="text-xs text-slate-500">Envoyez des e-mails depuis contact@chaletcosynest.fr aux clients et prospects.</p>
               </div>
 
               <Button
@@ -535,7 +779,6 @@ export default function BackofficeCrm() {
             </div>
 
             <div className="p-6 space-y-6 overflow-y-auto flex-1">
-              {/* Client Summary Metrics */}
               <div className="grid grid-cols-3 gap-3 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
                 <div>
                   <p className="text-[11px] font-semibold text-slate-500">Séjours au Chalet</p>
@@ -553,7 +796,6 @@ export default function BackofficeCrm() {
                 </div>
               </div>
 
-              {/* Chronological Booking History */}
               <div>
                 <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
                   Historique Chronologique des Réservations ({selectedClient.bookings.length})
@@ -598,6 +840,109 @@ export default function BackofficeCrm() {
         </div>
       )}
 
+      {/* Modal: Creation / Edition Prospect */}
+      {showProspectModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-blue-600 text-white">
+              <div>
+                <h3 className="text-base font-bold">
+                  {prospectId ? 'Modifier le Prospect / Lead' : 'Nouveau Prospect / Lead'}
+                </h3>
+                <p className="text-xs text-blue-100">Enregistrez un contact intéressé pour vos campagnes emails</p>
+              </div>
+              <Button size="sm" variant="ghost" onClick={() => setShowProspectModal(false)} className="text-white hover:bg-blue-700 rounded-xl">
+                ✕
+              </Button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Nom Complet du Prospect *</label>
+                <Input
+                  placeholder="ex: Jean et Marie Dupont"
+                  value={prospectName}
+                  onChange={(e) => setProspectName(e.target.value)}
+                  className="text-xs rounded-xl"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">E-mail *</label>
+                  <Input
+                    placeholder="jean.dupont@example.com"
+                    value={prospectEmail}
+                    onChange={(e) => setProspectEmail(e.target.value)}
+                    className="text-xs rounded-xl"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Téléphone</label>
+                  <Input
+                    placeholder="+33 6 12 34 56 78"
+                    value={prospectPhone}
+                    onChange={(e) => setProspectPhone(e.target.value)}
+                    className="text-xs rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Source du Prospect</label>
+                  <Input
+                    placeholder="ex: Formulaire Web, Appel, Instagram..."
+                    value={prospectSource}
+                    onChange={(e) => setProspectSource(e.target.value)}
+                    className="text-xs rounded-xl"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Statut du Prospect</label>
+                  <select
+                    value={prospectStatus}
+                    onChange={(e) => setProspectStatus(e.target.value as any)}
+                    className="w-full text-xs rounded-xl border border-slate-200 p-2.5 bg-white font-medium text-slate-800"
+                  >
+                    <option value="Nouveau Prospect">Nouveau Prospect</option>
+                    <option value="Devis Envoyé">Devis Envoyé</option>
+                    <option value="En Négociation">En Négociation</option>
+                    <option value="Converti">Converti</option>
+                    <option value="Inactif">Inactif</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Notes & Souhaits du prospect</label>
+                <textarea
+                  placeholder="ex: Souhaite louer 1 semaine en Janvier pour 8 personnes avec option Sauna."
+                  value={prospectNotes}
+                  onChange={(e) => setProspectNotes(e.target.value)}
+                  rows={3}
+                  className="w-full text-xs rounded-xl border border-slate-200 p-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
+              <Button size="sm" variant="outline" onClick={() => setShowProspectModal(false)} className="rounded-xl text-xs">
+                Annuler
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSaveProspect}
+                disabled={!prospectName || !prospectEmail}
+                className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold"
+              >
+                Enregistrer le Prospect
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal: Creation de Campagne Email */}
       {showCampaignModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -605,7 +950,7 @@ export default function BackofficeCrm() {
             <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-indigo-600 text-white">
               <div>
                 <h3 className="text-base font-bold">Créer une Campagne E-mail</h3>
-                <p className="text-xs text-indigo-100">Envoyez une promotion personnalisée à vos clients</p>
+                <p className="text-xs text-indigo-100">Expéditeur automatique : contact@chaletcosynest.fr</p>
               </div>
               <Button size="sm" variant="ghost" onClick={() => setShowCampaignModal(false)} className="text-white hover:bg-indigo-700 rounded-xl">
                 ✕
@@ -616,7 +961,7 @@ export default function BackofficeCrm() {
               <div>
                 <label className="text-xs font-semibold text-slate-700 block mb-1">Titre interne de la campagne</label>
                 <Input
-                  placeholder="ex: Relance Automne - Offre Spéciale Sauna"
+                  placeholder="ex: Relance Prospects & Clients - Saison Hiver"
                   value={newCampTitle}
                   onChange={(e) => setNewCampTitle(e.target.value)}
                   className="text-xs rounded-xl"
@@ -626,7 +971,7 @@ export default function BackofficeCrm() {
               <div>
                 <label className="text-xs font-semibold text-slate-700 block mb-1">Objet de l'e-mail (recu par le client)</label>
                 <Input
-                  placeholder="ex: 🎁 Votre remise exclusive de -15% au Chalet CosyNest"
+                  placeholder="ex: 🎁 Votre privilège au Chalet CosyNest : -15% sur votre séjour"
                   value={newCampSubject}
                   onChange={(e) => setNewCampSubject(e.target.value)}
                   className="text-xs rounded-xl"
@@ -634,14 +979,16 @@ export default function BackofficeCrm() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Segment Cible des Clients</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Segment Cible des Destinataires</label>
                 <select
                   value={newCampSegment}
                   onChange={(e) => setNewCampSegment(e.target.value as any)}
                   className="w-full text-xs rounded-xl border border-slate-200 p-2.5 bg-white font-medium text-slate-800"
                 >
-                  <option value="ota_convert">Convertir OTA → Direct (Anciens clients Airbnb/Booking)</option>
-                  <option value="all">Tous les clients enregistrés ({clients.length})</option>
+                  <option value="prospects_only">📩 Prospects & Leads uniquement ({prospects.length})</option>
+                  <option value="all_with_prospects">🌟 Base Complète (Clients + Prospects : {clients.length + prospects.length})</option>
+                  <option value="ota_convert">Convertir OTA → Direct (Anciens Airbnb/Booking)</option>
+                  <option value="all">Tous les Clients enregistrés ({clients.length})</option>
                   <option value="direct_only">Clients ayant déjà réservé en Direct</option>
                   <option value="vip">Clients VIP uniquement (CA {'>'} 5 000 €)</option>
                 </select>
@@ -659,14 +1006,14 @@ export default function BackofficeCrm() {
 
               {/* Email Template Preview Box */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-                <p className="text-[11px] font-bold text-slate-500 uppercase">Aperçu dynamique du mail</p>
+                <p className="text-[11px] font-bold text-slate-500 uppercase">Aperçu du mail envoyé depuis contact@chaletcosynest.fr</p>
                 <div className="bg-white p-4 rounded-lg border border-slate-200 text-xs space-y-2">
-                  <p className="font-semibold text-slate-900">Bonjour {"{{nom_client}}"},</p>
+                  <p className="font-semibold text-slate-900">Bonjour {"{{nom_destinataire}}"},</p>
                   <p className="text-slate-600">
-                    Nous espérons que vous gardez un excellent souvenir de votre séjour au Chalet CosyNest !
+                    Nous espérons que vous préparez votre prochain séjour au Chalet CosyNest !
                   </p>
                   <p className="text-slate-600">
-                    Pour votre prochain séjour, profitez d'un privilège exclusif de <strong>-15%</strong> en réservant directement sur notre site avec le code promo :
+                    Bénéficiez d'une réduction privilège de <strong>-15%</strong> en réservant directement sur notre site avec le code promo :
                   </p>
                   <div className="p-2.5 bg-indigo-50 border border-indigo-200 text-center font-mono font-extrabold text-indigo-700 rounded-lg text-sm">
                     {newCampPromo || 'VOTRE_CODE'}

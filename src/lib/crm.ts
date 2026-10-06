@@ -27,11 +27,23 @@ export interface ClientProfile {
   tags: string[];
 }
 
+export interface ProspectLead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  source: string; // ex: 'Formulaire Web', 'Téléphone', 'Instagram', 'Recommandation'
+  statusTag: 'Nouveau Prospect' | 'Devis Envoyé' | 'En Négociation' | 'Converti' | 'Inactif';
+  notes?: string;
+  createdAt: string;
+  tags: string[];
+}
+
 export interface EmailCampaign {
   id: string;
   title: string;
   subject: string;
-  targetSegment: 'all' | 'direct_only' | 'ota_convert' | 'vip';
+  targetSegment: 'all' | 'direct_only' | 'ota_convert' | 'vip' | 'prospects_only' | 'all_with_prospects';
   templateId: 'promo_15_direct' | 'season_reopening' | 'custom_offer';
   customBody?: string;
   promoCode?: string;
@@ -44,8 +56,34 @@ export interface EmailCampaign {
   revenueGenerated?: number;
 }
 
-// Memory & LocalStorage Cache for Email Campaigns
+// Keys for localStorage
 const CAMPAIGNS_KEY = 'cosynest_crm_campaigns';
+const PROSPECTS_KEY = 'cosynest_crm_prospects';
+
+const INITIAL_PROSPECTS: ProspectLead[] = [
+  {
+    id: 'prospect-101',
+    name: 'Marc & Valérie Laurent',
+    email: 'marc.laurent@example.com',
+    phone: '+33 6 45 89 12 34',
+    source: 'Formulaire Web CosyNest',
+    statusTag: 'Devis Envoyé',
+    notes: 'Intéressé par 1 semaine en février 2027 pour 10 personnes. Souhaite des infos sur le Sauna.',
+    createdAt: '2026-09-28',
+    tags: ['Prospect', 'Hiver 2027'],
+  },
+  {
+    id: 'prospect-102',
+    name: 'Camille Bertrand',
+    email: 'c.bertrand@example.com',
+    phone: '+33 6 11 22 33 44',
+    source: 'Recommandation Client',
+    statusTag: 'Nouveau Prospect',
+    notes: 'Demande de tarif pour un séminaire d\'entreprise (8 personnes).',
+    createdAt: '2026-10-02',
+    tags: ['Prospect', 'Séminaire'],
+  },
+];
 
 const INITIAL_CAMPAIGNS: EmailCampaign[] = [
   {
@@ -154,6 +192,58 @@ export function buildClientProfiles(reservations: Beds24Reservation[]): ClientPr
 }
 
 /**
+ * Récupère les prospects / leads enregistrés
+ */
+export function getProspects(): ProspectLead[] {
+  try {
+    const stored = localStorage.getItem(PROSPECTS_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Erreur lecture prospects CRM', e);
+  }
+  return INITIAL_PROSPECTS;
+}
+
+/**
+ * Enregistre ou met à jour un prospect / lead
+ */
+export function saveProspect(prospect: ProspectLead): ProspectLead[] {
+  const current = getProspects();
+  const idx = current.findIndex((p) => p.id === prospect.id);
+
+  let updated: ProspectLead[];
+  if (idx >= 0) {
+    updated = [...current];
+    updated[idx] = prospect;
+  } else {
+    updated = [prospect, ...current];
+  }
+
+  try {
+    localStorage.setItem(PROSPECTS_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error('Erreur sauvegarde prospect', e);
+  }
+  return updated;
+}
+
+/**
+ * Supprime un prospect / lead
+ */
+export function deleteProspect(id: string): ProspectLead[] {
+  const current = getProspects();
+  const updated = current.filter((p) => p.id !== id);
+  try {
+    localStorage.setItem(PROSPECTS_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error('Erreur suppression prospect', e);
+  }
+  return updated;
+}
+
+/**
  * Récupère les campagnes e-mails enregistrées
  */
 export function getEmailCampaigns(): EmailCampaign[] {
@@ -192,7 +282,7 @@ export function saveEmailCampaign(campaign: EmailCampaign): EmailCampaign[] {
 }
 
 /**
- * Génère le CSV d'exportation pour les clients cibles
+ * Génère le CSV d'exportation pour les clients ou prospects
  */
 export function exportClientsCSV(clients: ClientProfile[]): void {
   const headers = ['Nom', 'Email', 'Telephone', 'Nombre_Sejours', 'CA_Total_EUR', 'Dernier_Sejour', 'Statut_Client', 'Canaux_Utilises'];
@@ -212,6 +302,28 @@ export function exportClientsCSV(clients: ClientProfile[]): void {
   const link = document.createElement('a');
   link.setAttribute('href', encodedUri);
   link.setAttribute('download', `cosynest_clients_crm_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+export function exportProspectsCSV(prospects: ProspectLead[]): void {
+  const headers = ['Nom', 'Email', 'Telephone', 'Source', 'Statut_Prospect', 'Notes', 'Date_Creation'];
+  const rows = prospects.map((p) => [
+    `"${p.name.replace(/"/g, '""')}"`,
+    `"${p.email.replace(/"/g, '""')}"`,
+    `"${p.phone.replace(/"/g, '""')}"`,
+    `"${p.source.replace(/"/g, '""')}"`,
+    `"${p.statusTag}"`,
+    `"${(p.notes || '').replace(/"/g, '""')}"`,
+    p.createdAt,
+  ]);
+
+  const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(';'), ...rows.map((r) => r.join(';'))].join('\n');
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `cosynest_prospects_leads_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
