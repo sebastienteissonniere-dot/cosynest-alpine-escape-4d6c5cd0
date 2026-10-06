@@ -133,11 +133,12 @@ try {
       `subject` VARCHAR(255) NOT NULL,
       `target_segment` VARCHAR(50) NOT NULL,
       `promo_code` VARCHAR(50) NULL,
-      `status` VARCHAR(50) DEFAULT 'sent',
+      `custom_body` TEXT NULL,
+      `status` VARCHAR(50) DEFAULT 'draft',
       `created_date` DATE NOT NULL,
       `recipients_count` INT DEFAULT 0,
-      `open_rate_percent` INT DEFAULT 100,
-      `click_rate_percent` INT DEFAULT 50,
+      `open_rate_percent` INT DEFAULT 0,
+      `click_rate_percent` INT DEFAULT 0,
       `revenue_generated` DECIMAL(10,2) DEFAULT 0
     );");
 

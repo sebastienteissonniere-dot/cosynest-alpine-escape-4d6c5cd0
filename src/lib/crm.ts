@@ -319,6 +319,55 @@ export function getEmailCampaignsLocal(): EmailCampaign[] {
   return INITIAL_CAMPAIGNS;
 }
 
+export async function saveCampaignToDb(campaign: EmailCampaign): Promise<EmailCampaign[]> {
+  const localList = saveEmailCampaign(campaign);
+
+  try {
+    await fetch('/api/crm.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'save_campaign',
+        campaign: campaign,
+      }),
+    });
+    return await fetchCampaignsFromDb();
+  } catch (e) {
+    console.error('Erreur sauvegarde campagne BDD:', e);
+  }
+  return localList;
+}
+
+export async function deleteCampaignFromDb(id: string): Promise<EmailCampaign[]> {
+  deleteCampaignLocal(id);
+
+  try {
+    await fetch('/api/crm.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'delete_campaign',
+        id: id,
+      }),
+    });
+    return await fetchCampaignsFromDb();
+  } catch (e) {
+    console.error('Erreur suppression campagne BDD:', e);
+  }
+  return getEmailCampaignsLocal();
+}
+
+function deleteCampaignLocal(id: string): EmailCampaign[] {
+  const current = getEmailCampaignsLocal();
+  const updated = current.filter((c) => c.id !== id);
+  try {
+    localStorage.setItem(CAMPAIGNS_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error('Erreur suppression campagne local', e);
+  }
+  return updated;
+}
+
 export function saveEmailCampaign(campaign: EmailCampaign): EmailCampaign[] {
   const current = getEmailCampaignsLocal();
   const existingIdx = current.findIndex((c) => c.id === campaign.id);

@@ -29,6 +29,7 @@ import {
   Edit,
   PhoneCall,
   FileText,
+  Copy,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
@@ -37,6 +38,8 @@ import {
   getEmailCampaignsLocal,
   fetchCampaignsFromDb,
   saveEmailCampaign,
+  saveCampaignToDb,
+  deleteCampaignFromDb,
   exportClientsCSV,
   exportProspectsCSV,
   fetchProspectsFromDb,
@@ -87,6 +90,7 @@ export default function BackofficeCrm() {
 
   // Campaign Builder Modal
   const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const [editingCampaignId, setEditingCampaignId] = useState<string | null>(null);
   const [newCampTitle, setNewCampTitle] = useState('');
   const [newCampSubject, setNewCampSubject] = useState('');
   const [newCampBody, setNewCampBody] = useState<string>(
@@ -226,6 +230,77 @@ export default function BackofficeCrm() {
   const otaToConvertCount = (clients || []).filter((c) => c && c.statusTag === 'OTA à Convertir').length;
   const vipCount = (clients || []).filter((c) => c && c.statusTag === 'VIP').length;
 
+  const resetCampaignForm = () => {
+    setEditingCampaignId(null);
+    setNewCampTitle('');
+    setNewCampSubject('');
+    setNewCampPromo('DIRECT15');
+    setNewCampSegment('ota_convert');
+    setNewCampBody(
+      "Bonjour {{nom}},\n\nNous espérons que vous préparez votre prochain séjour au Chalet CosyNest !\n\nBénéficiez d'une réduction privilège de **-15% sur votre séjour en direct** sur notre site internet avec le code promo {{code_promo}}."
+    );
+  };
+
+  const handleEditCampaign = (camp: EmailCampaign) => {
+    setEditingCampaignId(camp.id);
+    setNewCampTitle(camp.title || '');
+    setNewCampSubject(camp.subject || '');
+    setNewCampPromo(camp.promoCode || '');
+    setNewCampSegment(camp.targetSegment || 'all');
+    setNewCampBody(
+      camp.customBody ||
+      "Bonjour {{nom}},\n\nNous espérons que vous préparez votre prochain séjour au Chalet CosyNest !\n\nBénéficiez d'une réduction privilège de **-15% sur votre séjour en direct** sur notre site internet avec le code promo {{code_promo}}."
+    );
+    setShowCampaignModal(true);
+  };
+
+  const handleDuplicateCampaign = (camp: EmailCampaign) => {
+    setEditingCampaignId(null);
+    setNewCampTitle(`Copie - ${camp.title || 'Campagne'}`);
+    setNewCampSubject(camp.subject || '');
+    setNewCampPromo(camp.promoCode || '');
+    setNewCampSegment(camp.targetSegment || 'all');
+    setNewCampBody(
+      camp.customBody ||
+      "Bonjour {{nom}},\n\nNous espérons que vous préparez votre prochain séjour au Chalet CosyNest !\n\nBénéficiez d'une réduction privilège de **-15% sur votre séjour en direct** sur notre site internet avec le code promo {{code_promo}}."
+    );
+    setShowCampaignModal(true);
+  };
+
+  const handleSaveDraftCampaign = async () => {
+    if (!newCampTitle) return;
+
+    const campaign: EmailCampaign = {
+      id: editingCampaignId || 'camp-' + Date.now(),
+      title: newCampTitle,
+      subject: newCampSubject || 'Offre Chalet CosyNest',
+      targetSegment: newCampSegment,
+      templateId: 'promo_15_direct',
+      customBody: newCampBody,
+      promoCode: newCampPromo,
+      status: 'draft',
+      createdDate: new Date().toISOString().slice(0, 10),
+      sentDate: new Date().toISOString().slice(0, 10),
+      recipientsCount: 0,
+      openRatePercent: 0,
+      clickRatePercent: 0,
+      revenueGenerated: 0,
+    };
+
+    const updated = await saveCampaignToDb(campaign);
+    setCampaigns(updated);
+    setShowCampaignModal(false);
+    resetCampaignForm();
+    alert(`📝 Campagne "${newCampTitle}" enregistrée en brouillon avec succès !`);
+  };
+
+  const handleDeleteCampaign = async (id: string) => {
+    if (confirm('Voulez-vous supprimer cette campagne ?')) {
+      const updated = await deleteCampaignFromDb(id);
+      setCampaigns(updated);
+    }
+  };
+
   const handleCreateCampaign = async () => {
     if (!newCampTitle || !newCampSubject) return;
 
@@ -280,6 +355,7 @@ export default function BackofficeCrm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'dispatch_campaign',
+          id: editingCampaignId || 'camp-' + Date.now(),
           title: newCampTitle,
           subject: newCampSubject,
           promoCode: newCampPromo,
@@ -299,11 +375,12 @@ export default function BackofficeCrm() {
 
     // 3. Enregistrer la campagne dans le suivi CRM
     const campaign: EmailCampaign = {
-      id: 'camp-' + Date.now(),
+      id: editingCampaignId || 'camp-' + Date.now(),
       title: newCampTitle,
       subject: newCampSubject,
       targetSegment: newCampSegment,
       templateId: 'promo_15_direct',
+      customBody: newCampBody,
       promoCode: newCampPromo,
       status: 'sent',
       createdDate: new Date().toISOString().slice(0, 10),
@@ -314,15 +391,13 @@ export default function BackofficeCrm() {
       revenueGenerated: 0,
     };
 
-    const updated = saveEmailCampaign(campaign);
+    const updated = await saveCampaignToDb(campaign);
     setCampaigns(updated);
     setSendingCamp(false);
     setShowCampaignModal(false);
+    resetCampaignForm();
 
     alert(`✅ Campagne "${newCampTitle}" envoyée avec succès !${apiResultMessage}`);
-
-    setNewCampTitle('');
-    setNewCampSubject('');
   };
 
   return (
@@ -737,7 +812,10 @@ export default function BackofficeCrm() {
 
               <Button
                 size="sm"
-                onClick={() => setShowCampaignModal(true)}
+                onClick={() => {
+                  resetCampaignForm();
+                  setShowCampaignModal(true);
+                }}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-1.5" /> Nouvelle Campagne E-mail
@@ -745,58 +823,105 @@ export default function BackofficeCrm() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {campaigns.map((camp) => (
-                <Card key={camp.id} className="bg-white border-slate-200/80 shadow-sm rounded-2xl overflow-hidden">
-                  <CardHeader className="p-5 pb-3 border-b border-slate-100 flex flex-row items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          className={`text-[10px] uppercase font-bold rounded-md ${
-                            camp.status === 'sent'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : camp.status === 'scheduled'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-slate-100 text-slate-700'
-                          }`}
-                        >
-                          {camp.status === 'sent' ? 'Envoyée' : camp.status === 'scheduled' ? 'Planifiée' : 'Brouillon'}
-                        </Badge>
-                        <span className="text-[11px] text-slate-400">{camp.createdDate}</span>
-                      </div>
-                      <CardTitle className="text-base font-bold text-slate-900 mt-2">{camp.title}</CardTitle>
-                    </div>
-
-                    <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-5 space-y-3">
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-                      <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider text-[10px]">Objet du mail :</p>
-                      <p className="text-xs font-semibold text-slate-800 mt-0.5">{camp.subject}</p>
-                      {camp.promoCode && (
-                        <div className="mt-2 inline-flex items-center gap-1 bg-indigo-100 text-indigo-900 text-xs px-2 py-0.5 rounded-lg font-mono font-bold">
-                          Code Promo : {camp.promoCode}
+              {(campaigns || []).map((camp) => (
+                <Card key={camp.id} className="bg-white border-slate-200/80 shadow-sm rounded-2xl overflow-hidden flex flex-col justify-between">
+                  <div>
+                    <CardHeader className="p-5 pb-3 border-b border-slate-100 flex flex-row items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            className={`text-[10px] uppercase font-bold rounded-md ${
+                              camp.status === 'sent'
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : camp.status === 'scheduled'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-amber-100 text-amber-800 border-amber-300'
+                            }`}
+                          >
+                            {camp.status === 'sent' ? 'Envoyée' : camp.status === 'scheduled' ? 'Planifiée' : 'Brouillon'}
+                          </Badge>
+                          <span className="text-[11px] text-slate-400">{camp.createdDate}</span>
                         </div>
+                        <CardTitle className="text-base font-bold text-slate-900 mt-2">{camp.title}</CardTitle>
+                      </div>
+
+                      <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <Mail className="w-5 h-5" />
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="p-5 space-y-3">
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider text-[10px]">Objet du mail :</p>
+                        <p className="text-xs font-semibold text-slate-800 mt-0.5">{camp.subject}</p>
+                        {camp.promoCode && (
+                          <div className="mt-2 inline-flex items-center gap-1 bg-indigo-100 text-indigo-900 text-xs px-2 py-0.5 rounded-lg font-mono font-bold">
+                            Code Promo : {camp.promoCode}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 pt-1 text-center">
+                        <div className="bg-slate-50 p-2 rounded-xl">
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase">Destinataires</p>
+                          <p className="text-sm font-bold text-slate-800 mt-0.5">{camp.recipientsCount}</p>
+                        </div>
+                        <div className="bg-emerald-50 p-2 rounded-xl">
+                          <p className="text-[10px] font-semibold text-emerald-600 uppercase">Tx Ouverture</p>
+                          <p className="text-sm font-bold text-emerald-700 mt-0.5">{camp.openRatePercent || 0}%</p>
+                        </div>
+                        <div className="bg-indigo-50 p-2 rounded-xl">
+                          <p className="text-[10px] font-semibold text-indigo-600 uppercase">Tx Clics</p>
+                          <p className="text-sm font-bold text-indigo-700 mt-0.5">{camp.clickRatePercent || 0}%</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </div>
+
+                  {/* Card Bottom Actions Bar */}
+                  <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleEditCampaign(camp)}
+                        className="text-xs text-slate-600 hover:text-indigo-600 rounded-xl px-2.5 py-1"
+                        title="Modifier la campagne"
+                      >
+                        <Edit className="w-3.5 h-3.5 mr-1" /> Modifier
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDuplicateCampaign(camp)}
+                        className="text-xs text-slate-600 hover:text-indigo-600 rounded-xl px-2.5 py-1"
+                        title="Dupliquer la campagne"
+                      >
+                        <Copy className="w-3.5 h-3.5 mr-1" /> Dupliquer
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDeleteCampaign(camp.id)}
+                        className="text-xs text-slate-400 hover:text-red-600 rounded-xl px-2 py-1"
+                        title="Supprimer la campagne"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                      {camp.status !== 'sent' && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleEditCampaign(camp)}
+                          className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-3 py-1 font-semibold shadow-sm"
+                        >
+                          <Send className="w-3.5 h-3.5 mr-1" /> Envoyer
+                        </Button>
                       )}
                     </div>
-
-                    <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                      <div className="bg-slate-50 p-2 rounded-xl">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase">Destinataires</p>
-                        <p className="text-sm font-bold text-slate-800 mt-0.5">{camp.recipientsCount}</p>
-                      </div>
-                      <div className="bg-emerald-50 p-2 rounded-xl">
-                        <p className="text-[10px] font-semibold text-emerald-600 uppercase">Tx Ouverture</p>
-                        <p className="text-sm font-bold text-emerald-700 mt-0.5">{camp.openRatePercent || 0}%</p>
-                      </div>
-                      <div className="bg-indigo-50 p-2 rounded-xl">
-                        <p className="text-[10px] font-semibold text-indigo-600 uppercase">Tx Clics</p>
-                        <p className="text-sm font-bold text-indigo-700 mt-0.5">{camp.clickRatePercent || 0}%</p>
-                      </div>
-                    </div>
-                  </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>
@@ -994,10 +1119,10 @@ export default function BackofficeCrm() {
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl overflow-hidden flex flex-col">
             <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-indigo-600 text-white">
               <div>
-                <h3 className="text-base font-bold">Créer une Campagne E-mail</h3>
+                <h3 className="text-base font-bold">{editingCampaignId ? 'Modifier la Campagne E-mail' : 'Créer une Campagne E-mail'}</h3>
                 <p className="text-xs text-indigo-100">Expéditeur automatique : contact@chaletcosynest.fr</p>
               </div>
-              <Button size="sm" variant="ghost" onClick={() => setShowCampaignModal(false)} className="text-white hover:bg-indigo-700 rounded-xl">
+              <Button size="sm" variant="ghost" onClick={() => { setShowCampaignModal(false); resetCampaignForm(); }} className="text-white hover:bg-indigo-700 rounded-xl">
                 ✕
               </Button>
             </div>
@@ -1138,18 +1263,38 @@ export default function BackofficeCrm() {
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2">
-              <Button size="sm" variant="outline" onClick={() => setShowCampaignModal(false)} className="rounded-xl text-xs">
-                Annuler
-              </Button>
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2">
               <Button
                 size="sm"
-                onClick={handleCreateCampaign}
-                disabled={sendingCamp || !newCampTitle || !newCampSubject}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold"
+                variant="outline"
+                onClick={() => {
+                  setShowCampaignModal(false);
+                  resetCampaignForm();
+                }}
+                className="rounded-xl text-xs border-slate-200 text-slate-600 hover:bg-slate-100"
               >
-                {sendingCamp ? 'Envoi en cours...' : 'Envoyer la Campagne'}
+                Annuler
               </Button>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleSaveDraftCampaign}
+                  disabled={sendingCamp || !newCampTitle}
+                  className="rounded-xl text-xs border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold"
+                >
+                  📝 Enregistrer en Brouillon
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleCreateCampaign}
+                  disabled={sendingCamp || !newCampTitle || !newCampSubject}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold"
+                >
+                  {sendingCamp ? 'Envoi en cours...' : '🚀 Envoyer la Campagne'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

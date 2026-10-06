@@ -30,13 +30,19 @@ try {
       `subject` VARCHAR(255) NOT NULL,
       `target_segment` VARCHAR(50) NOT NULL,
       `promo_code` VARCHAR(50) NULL,
-      `status` VARCHAR(50) DEFAULT 'sent',
+      `custom_body` TEXT NULL,
+      `status` VARCHAR(50) DEFAULT 'draft',
       `created_date` DATE NOT NULL,
       `recipients_count` INT DEFAULT 0,
-      `open_rate_percent` INT DEFAULT 100,
-      `click_rate_percent` INT DEFAULT 50,
+      `open_rate_percent` INT DEFAULT 0,
+      `click_rate_percent` INT DEFAULT 0,
       `revenue_generated` DECIMAL(10,2) DEFAULT 0
     );");
+
+    // Add custom_body column dynamically if missing
+    try {
+        $pdo->exec("ALTER TABLE `email_campaigns` ADD COLUMN `custom_body` TEXT NULL;");
+    } catch (Exception $e) {}
 } catch (Exception $e) {
     // Silent catch
 }
@@ -76,14 +82,15 @@ if ($method === 'GET') {
                 "subject" => $r['subject'],
                 "targetSegment" => $r['target_segment'],
                 "templateId" => "promo_15_direct",
-                "promoCode" => $r['promo_code'],
-                "status" => $r['status'],
+                "promoCode" => $r['promo_code'] ?? '',
+                "customBody" => $r['custom_body'] ?? null,
+                "status" => $r['status'] ?? 'draft',
                 "createdDate" => $r['created_date'],
                 "sentDate" => $r['created_date'],
-                "recipientsCount" => (int)$r['recipients_count'],
-                "openRatePercent" => (int)$r['open_rate_percent'],
-                "clickRatePercent" => (int)$r['click_rate_percent'],
-                "revenueGenerated" => (float)$r['revenue_generated']
+                "recipientsCount" => (int)($r['recipients_count'] ?? 0),
+                "openRatePercent" => (int)($r['open_rate_percent'] ?? 0),
+                "clickRatePercent" => (int)($r['click_rate_percent'] ?? 0),
+                "revenueGenerated" => (float)($r['revenue_generated'] ?? 0)
             ];
         }, $rows);
         echo json_encode(["status" => "success", "data" => $campaigns]);
@@ -144,7 +151,51 @@ if ($method === 'POST') {
         exit();
     }
 
+    if ($action === 'save_campaign') {
+        $campaign = $body['campaign'] ?? null;
+        if (!$campaign || empty($campaign['id']) || empty($campaign['title'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Données campagne invalides"]);
+            exit();
+        }
+
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        $sql = ($driver === 'sqlite') 
+            ? "INSERT OR REPLACE INTO email_campaigns (id, title, subject, target_segment, promo_code, custom_body, status, created_date, recipients_count, open_rate_percent, click_rate_percent, revenue_generated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            : "REPLACE INTO email_campaigns (id, title, subject, target_segment, promo_code, custom_body, status, created_date, recipients_count, open_rate_percent, click_rate_percent, revenue_generated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $campaign['id'],
+            $campaign['title'],
+            $campaign['subject'] ?? '',
+            $campaign['targetSegment'] ?? 'all',
+            $campaign['promoCode'] ?? '',
+            $campaign['customBody'] ?? '',
+            $campaign['status'] ?? 'draft',
+            $campaign['createdDate'] ?? date('Y-m-d'),
+            (int)($campaign['recipientsCount'] ?? 0),
+            (int)($campaign['openRatePercent'] ?? 0),
+            (int)($campaign['clickRatePercent'] ?? 0),
+            (float)($campaign['revenueGenerated'] ?? 0)
+        ]);
+
+        echo json_encode(["status" => "success", "message" => "Campagne enregistrée en BDD", "id" => $campaign['id']]);
+        exit();
+    }
+
+    if ($action === 'delete_campaign') {
+        $id = $body['id'] ?? null;
+        if ($id) {
+            $stmt = $pdo->prepare("DELETE FROM email_campaigns WHERE id = ?");
+            $stmt->execute([$id]);
+        }
+        echo json_encode(["status" => "success", "message" => "Campagne supprimée de la BDD"]);
+        exit();
+    }
+
     if ($action === 'dispatch_campaign') {
+        $campaignId = $body['id'] ?? ('camp-' . time());
         $campaignTitle = $body['title'] ?? 'Offre Chalet CosyNest';
         $recipients = $body['recipients'] ?? [];
         $subject = $body['subject'] ?? '🎁 Offre privilège au Chalet CosyNest';
@@ -247,8 +298,8 @@ if ($method === 'POST') {
         try {
             $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
             $sqlCamp = ($driver === 'sqlite') ? "INSERT OR REPLACE INTO email_campaigns" : "REPLACE INTO email_campaigns";
-            $stmtCamp = $pdo->prepare("$sqlCamp (id, title, subject, target_segment, promo_code, status, created_date, recipients_count, open_rate_percent, click_rate_percent, revenue_generated) VALUES (?, ?, ?, ?, ?, 'sent', ?, ?, 100, 50, 0)");
-            $stmtCamp->execute([$campaignId, $campaignTitle, $subject, $targetSegment, $promoCode, date('Y-m-d'), count($recipients)]);
+            $stmtCamp = $pdo->prepare("$sqlCamp (id, title, subject, target_segment, promo_code, custom_body, status, created_date, recipients_count, open_rate_percent, click_rate_percent, revenue_generated) VALUES (?, ?, ?, ?, ?, ?, 'sent', ?, ?, 100, 50, 0)");
+            $stmtCamp->execute([$campaignId, $campaignTitle, $subject, $targetSegment, $promoCode, $rawCustomBody ?? '', date('Y-m-d'), count($recipients)]);
         } catch (Exception $e) {
             // Ignore BDD save error for campaign
         }
