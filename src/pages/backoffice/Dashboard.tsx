@@ -16,6 +16,7 @@ import {
   AlertCircle,
   ArrowUpRight,
   TrendingUp,
+  Users,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAllReservations, Beds24Reservation } from '@/lib/beds24';
@@ -109,6 +110,11 @@ export default function BackofficeDashboard() {
           <Link to="/backoffice/igloohome-keys">
             <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
               Serrures Igloohome
+            </Button>
+          </Link>
+          <Link to="/backoffice/crm">
+            <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
+              CRM & Campagnes
             </Button>
           </Link>
         </div>

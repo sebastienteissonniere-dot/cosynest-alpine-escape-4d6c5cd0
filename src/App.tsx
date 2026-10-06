@@ -29,6 +29,7 @@ import BackofficeDashboard from "./pages/backoffice/Dashboard";
 import BackofficeReservations from "./pages/backoffice/Reservations";
 import BackofficeInventories from "./pages/backoffice/Inventories";
 import BackofficeIgloohomeKeys from "./pages/backoffice/IgloohomeKeys";
+import BackofficeCrm from "./pages/backoffice/Crm";
 
 // Enregistrement du Service Worker PWA
 registerServiceWorker();
@@ -96,6 +97,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <BackofficeIgloohomeKeys />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/backoffice/crm"
+                element={
+                  <ProtectedRoute>
+                    <BackofficeCrm />
                   </ProtectedRoute>
                 }
               />
