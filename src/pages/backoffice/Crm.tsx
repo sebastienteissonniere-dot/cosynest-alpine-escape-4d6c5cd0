@@ -46,6 +46,7 @@ import {
   ProspectLead,
   EmailCampaign,
 } from '@/lib/crm';
+import { BackofficeHeader } from '@/components/backoffice/BackofficeHeader';
 
 export default function BackofficeCrm() {
   const { user, logout } = useAuth();
@@ -326,89 +327,32 @@ export default function BackofficeCrm() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
-      {/* Top Header */}
-      <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-serif font-bold text-slate-900 tracking-tight">Chalet Cosynest</h1>
-              <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
-                CRM & Marketing Emails
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 font-medium">
-              Connecté : <span className="text-slate-800 font-semibold">{user?.name}</span> ({user?.role})
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link to="/guest/demo" target="_blank">
-              <Button size="sm" variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-semibold rounded-xl">
-                <ExternalLink className="w-3.5 h-3.5 mr-1.5 text-indigo-600" /> Tester Guest App PWA
-              </Button>
-            </Link>
+      {/* Top Header & Navigation Banner */}
+      <BackofficeHeader
+        activeTab="crm"
+        rightElement={
+          activeTab === 'prospects' ? (
             <Button
               size="sm"
-              variant="ghost"
-              onClick={() => {
-                logout();
-                navigate('/backoffice/login');
-              }}
-              className="text-slate-500 hover:text-red-600 hover:bg-red-50 text-xs font-semibold rounded-xl"
+              onClick={() => exportProspectsCSV(prospects)}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
             >
-              <LogOut className="w-4 h-4 mr-1" /> Déconnexion
+              <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Prospects (CSV)
             </Button>
-          </div>
-        </div>
-      </header>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => exportClientsCSV(clients)}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
+            >
+              <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Clients (CSV)
+            </Button>
+          )
+        }
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Navigation Tabs Bar */}
-        <div className="bg-white p-1.5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-1">
-            <Link to="/backoffice/dashboard">
-              <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
-                Dashboard
-              </Button>
-            </Link>
-            <Link to="/backoffice/reservations">
-              <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
-                Réservations Beds24
-              </Button>
-            </Link>
-            <Link to="/backoffice/igloohome-keys">
-              <Button size="sm" variant="ghost" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 text-xs font-medium rounded-xl">
-                Serrures Igloohome
-              </Button>
-            </Link>
-            <Link to="/backoffice/crm">
-              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm">
-                CRM & Campagnes
-              </Button>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {activeTab === 'prospects' ? (
-              <Button
-                size="sm"
-                onClick={() => exportProspectsCSV(prospects)}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
-              >
-                <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Prospects (CSV)
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                onClick={() => exportClientsCSV(clients)}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl shadow-sm"
-              >
-                <Download className="w-3.5 h-3.5 mr-1.5" /> Exporter Clients (CSV)
-              </Button>
-            )}
-          </div>
-        </div>
 
         {/* CRM KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
