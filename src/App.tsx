@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/backoffice/ProtectedRoute";
+import { registerServiceWorker } from "@/pwaRegister";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 import Index from "./pages/Index";
