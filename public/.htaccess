@@ -4,8 +4,9 @@ DirectoryIndex index.html
   RewriteEngine On
   RewriteBase /
 
-  # Permettre l'exécution directe des scripts PHP dans /api/
+  # Permettre l'exécution directe des scripts PHP dans /api/ et servir /assets/ directement
   RewriteRule ^api/ - [L]
+  RewriteRule ^assets/ - [L]
 
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f

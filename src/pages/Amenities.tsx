@@ -22,7 +22,7 @@ import {
   Info,
 } from "lucide-react";
 
-import svrMainImg from "@/assets/svr-topialyse-main.jpg";
+import svrMainImg from "@/assets/svr-topialyse-flacon.jpg";
 import svrTextureImg from "@/assets/svr-topialyse-texture.jpg";
 import svrEcoRefillImg from "@/assets/svr-topialyse-ecorefill.jpg";
 
