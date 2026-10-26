@@ -1,20 +1,21 @@
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, ArrowUpRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Link } from "react-router-dom";
 
 const Services = () => {
   const { t } = useLanguage();
   
   const services = [
-    t("services.items.welcome"),
-    t("services.items.linen"),
-    t("services.items.cleaning"),
-    t("services.items.finalCleaning"),
-    t("services.items.essentials"),
-    t("services.items.products"),
-    t("services.items.concierge"),
-    t("services.items.wifi"),
-    t("services.items.evCharger"),
+    { label: t("services.items.welcome") },
+    { label: t("services.items.linen") },
+    { label: t("services.items.cleaning") },
+    { label: t("services.items.finalCleaning") },
+    { label: t("services.items.essentials") },
+    { label: t("services.items.products"), href: "/produits-accueil" },
+    { label: t("services.items.concierge") },
+    { label: t("services.items.wifi") },
+    { label: t("services.items.evCharger") },
   ];
   return (
     <section id="services" className="py-20 bg-background">
@@ -47,7 +48,17 @@ const Services = () => {
                       </div>
                     </div>
                     <p className="text-foreground font-medium leading-relaxed">
-                      {service}
+                      {service.href ? (
+                        <Link
+                          to={service.href}
+                          className="inline-flex items-center gap-1 hover:text-primary underline decoration-primary/40 underline-offset-4 transition-smooth"
+                        >
+                          {service.label} (SVR Topialyse)
+                          <ArrowUpRight className="h-4 w-4 text-primary" aria-hidden="true" />
+                        </Link>
+                      ) : (
+                        service.label
+                      )}
                     </p>
                   </div>
                 ))}

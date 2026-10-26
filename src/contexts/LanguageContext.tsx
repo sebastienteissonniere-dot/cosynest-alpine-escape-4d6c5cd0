@@ -52,6 +52,7 @@ const translations = {
         presentation: "Présentation",
         gallery: "Galerie Photos",
         plans: "Plans & Architecture",
+        amenities: "Soin Corps & Cheveux (SVR)",
       },
       destination: {
         title: "Destination",
@@ -332,6 +333,7 @@ const translations = {
         presentation: "Presentation",
         gallery: "Photo Gallery",
         plans: "Plans & Architecture",
+        amenities: "Body & Hair Care (SVR)",
       },
       destination: {
         title: "Destination",

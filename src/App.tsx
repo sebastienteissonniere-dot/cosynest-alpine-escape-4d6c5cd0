@@ -21,6 +21,7 @@ import Weather from "./pages/Weather";
 import NotFound from "./pages/NotFound";
 import ComingSoon from "./pages/ComingSoon";
 import MentionsLegales from "./pages/MentionsLegales";
+import Amenities from "./pages/Amenities";
 import CookieConsent from "@/components/CookieConsent";
 
 // PWA & Guest Portal & Backoffice
@@ -59,6 +60,9 @@ const App = () => (
               <Route path="/journal/:slug" element={<BlogPost />} />
               <Route path="/weather" element={<Weather />} />
               <Route path="/reservation" element={<Reservation />} />
+              <Route path="/produits-accueil" element={<Amenities />} />
+              <Route path="/amenities" element={<Amenities />} />
+              <Route path="/topialyse" element={<Amenities />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
 
               {/* Guest App PWA Voyageur */}
