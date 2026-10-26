@@ -74,9 +74,6 @@ const Navigation = () => {
                 <DropdownMenuItem onClick={() => navigate("/plans")}>
                   {t("nav.chalet.plans")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/produits-accueil")}>
-                  {t("nav.chalet.amenities")}
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -163,7 +160,6 @@ const Navigation = () => {
               <button onClick={() => { navigate("/chalet"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.presentation")}</button>
               <button onClick={() => { navigate("/gallery"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.gallery")}</button>
               <button onClick={() => { navigate("/plans"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.plans")}</button>
-              <button onClick={() => { navigate("/produits-accueil"); setIsOpen(false); }} className="block w-full text-left pl-4 py-2 text-foreground hover:text-primary transition-smooth">{t("nav.chalet.amenities")}</button>
             </div>
 
             <button onClick={() => scrollToSection("experience")} className="block w-full text-left py-2 text-foreground hover:text-primary transition-smooth font-medium">{t("nav.experience")}</button>

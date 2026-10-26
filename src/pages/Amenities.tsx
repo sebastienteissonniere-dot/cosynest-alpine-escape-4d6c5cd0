@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,8 +15,8 @@ import {
   ExternalLink,
   Snowflake,
   ShowerHead,
-  ArrowRight,
   Info,
+  Globe,
 } from "lucide-react";
 
 import svrMainImg from "@/assets/svr-topialyse-flacon.jpg";
@@ -27,8 +24,7 @@ import svrTextureImg from "@/assets/svr-topialyse-texture.jpg";
 import svrEcoRefillImg from "@/assets/svr-topialyse-ecorefill.jpg";
 
 const Amenities = () => {
-  const { language } = useLanguage();
-  const navigate = useNavigate();
+  const { language, setLanguage } = useLanguage();
   const isFr = language === "fr";
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -155,13 +151,35 @@ const Amenities = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navigation />
+      {/* Minimal Standalone Header for QR Code Scan */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-border/50 shadow-soft">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div>
+            <span className="text-xl sm:text-2xl font-serif font-bold text-primary">
+              Chalet Cosynest
+            </span>
+            <span className="hidden sm:inline-block ml-3 text-xs uppercase tracking-widest text-muted-foreground border-l border-border pl-3">
+              {isFr ? "Soin d'Accueil Corps & Cheveux" : "Body & Hair Welcome Care"}
+            </span>
+          </div>
 
-      <main className="flex-grow pt-20">
+          <button
+            type="button"
+            onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/70 hover:bg-secondary text-foreground text-sm font-medium transition-smooth"
+            aria-label={isFr ? "Switch to English" : "Passer en français"}
+          >
+            <Globe className="h-4 w-4 text-primary" aria-hidden="true" />
+            <span>{language === "fr" ? "English" : "Français"}</span>
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-grow">
         {/* Hero / Presentation Section */}
-        <section className="py-16 lg:py-24 gradient-hero border-b border-border/50">
+        <section className="py-12 lg:py-20 gradient-hero border-b border-border/50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               {/* Product Visuals */}
               <div className="lg:col-span-5 space-y-4">
                 <div className="relative rounded-2xl overflow-hidden bg-white shadow-luxury border border-border/50 aspect-square">
@@ -175,7 +193,7 @@ const Amenities = () => {
                       Laboratoire SVR
                     </Badge>
                     <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-foreground border border-border/50 px-3 py-1 text-xs">
-                      {isFr ? "Corps & Cheveux" : "Body & Hair"}
+                      {isFr ? "Corps, Cheveux & Visage" : "Body, Hair & Face"}
                     </Badge>
                   </div>
                   <div className="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-2 rounded-lg text-center">
@@ -209,16 +227,16 @@ const Amenities = () => {
                   <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
                   <span className="text-primary font-medium text-sm">
                     {isFr
-                      ? "Soin d'Accueil Offert dans Chaque Salle de Bain & au Spa"
-                      : "Complimentary Care in Every Bathroom & Spa"}
+                      ? "Votre Soin Lavant au Chalet Cosynest"
+                      : "Your Cleansing Care at Chalet Cosynest"}
                   </span>
                 </div>
 
-                <h1 className="text-4xl sm:text-5xl font-serif font-bold text-foreground leading-tight">
+                <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground leading-tight">
                   SVR Topialyse Huile Lavante
                 </h1>
 
-                <p className="text-xl font-serif text-primary font-medium">
+                <p className="text-lg sm:text-xl font-serif text-primary font-medium">
                   {isFr
                     ? "Huile nettoyante micellaire relipidante & anti-irritation — Corps, Cheveux, Visage"
                     : "Lipid-replenishing & anti-irritation micellar cleansing oil — Body, Hair, Face"}
@@ -227,13 +245,13 @@ const Amenities = () => {
                 <div className="space-y-4 text-muted-foreground leading-relaxed text-base sm:text-lg">
                   <p>
                     {isFr
-                      ? "En altitude à Vars 2000, le froid, le vent, les frottements des vêtements de ski et l'eau sensibilisent l'épiderme. Pour prendre soin de votre peau et de vos cheveux tout au long de votre séjour au Chalet Cosynest, nous mettons à votre disposition dans chaque suite et dans l'espace bien-être l'Huile Lavante Topialyse du Laboratoire dermatologique français SVR."
-                      : "At high altitude in Vars 2000, cold air, wind, ski clothing friction, and water can sensitize the skin. To care for your skin and hair throughout your stay at Chalet Cosynest, every suite and the wellness area is equipped with Topialyse Cleansing Oil by French dermatological laboratory SVR."}
+                      ? "En altitude à Vars 2000, le froid, le vent, les frottements des vêtements de ski et l'eau sensibilisent l'épiderme. Pour prendre soin de votre peau et de vos cheveux tout au long de votre séjour, nous avons sélectionné l'Huile Lavante Topialyse du Laboratoire dermatologique français SVR."
+                      : "At high altitude in Vars 2000, cold air, wind, ski clothing friction, and water can sensitize the skin. To care for your skin and hair throughout your stay, we have selected Topialyse Cleansing Oil by French dermatological laboratory SVR."}
                   </p>
                   <p>
                     {isFr
-                      ? "Véritable soin lavant tout-en-un pour toute la famille dès la naissance, cette huile sensorielle riche en actifs relipidants et hydratants nourrit intensément la peau, préserve le film hydrolipidique pendant 24h et nettoie délicatement le corps, le visage et les cheveux sans piquer les yeux."
-                      : "A true all-in-one cleansing care for the whole family from birth, this sensory oil rich in lipid-replenishing and moisturizing actives intensely nourishes the skin, preserves the hydrolipidic film for 24 hours, and gently cleanses body, face, and hair without stinging the eyes."}
+                      ? "Véritable soin lavant tout-en-un pour toute la famille dès la naissance, cette huile sensorielle riche en actifs relipidants et hydratants nourrit intensément la peau, préserve le film hydrolipidique pendant 24h et nettoie délicatement le corps, les cheveux et le visage sans piquer les yeux."
+                      : "A true all-in-one cleansing care for the whole family from birth, this sensory oil rich in lipid-replenishing and moisturizing actives intensely nourishes the skin, preserves the hydrolipidic film for 24 hours, and gently cleanses body, hair, and face without stinging the eyes."}
                   </p>
                 </div>
 
@@ -273,15 +291,7 @@ const Amenities = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 pt-2">
-                  <Button
-                    variant="default"
-                    size="lg"
-                    onClick={() => navigate("/reservation")}
-                  >
-                    {isFr ? "Réserver votre séjour" : "Book your stay"}
-                    <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                  </Button>
+                <div className="pt-2">
                   <Button
                     variant="outline"
                     size="lg"
@@ -292,7 +302,7 @@ const Amenities = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {isFr ? "Fiche officielle Laboratoire SVR" : "Official SVR Lab Product Page"}
+                      {isFr ? "Consulter la fiche officielle Laboratoire SVR" : "View Official SVR Lab Product Page"}
                       <ExternalLink className="ml-2 h-4 w-4" aria-hidden="true" />
                     </a>
                   </Button>
@@ -303,13 +313,13 @@ const Amenities = () => {
         </section>
 
         {/* Multi-Use Section: Body, Hair, Face */}
-        <section className="py-20 bg-background">
+        <section className="py-16 bg-background">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto text-center mb-14">
+            <div className="max-w-3xl mx-auto text-center mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 mb-4">
                 <ShowerHead className="h-4 w-4 text-accent" aria-hidden="true" />
                 <span className="text-accent font-medium text-sm">
-                  {isFr ? "Voyagez Léger" : "Travel Light"}
+                  {isFr ? "Soin Multi-Usages 6-en-1" : "6-in-1 Multi-Purpose Care"}
                 </span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold text-foreground mb-4">
@@ -319,8 +329,8 @@ const Amenities = () => {
               </h2>
               <p className="text-lg text-muted-foreground">
                 {isFr
-                  ? "Inutile d'encombrer vos valises : un seul flacon suffit pour nettoyer en douceur le corps, les cheveux et le visage de toute la famille."
-                  : "No need to pack heavy toiletries: a single bottle gently cleanses body, hair, and face for the whole family."}
+                  ? "Ce flacon nettoie en douceur le corps, les cheveux et le visage de toute la famille."
+                  : "This bottle gently cleanses body, hair, and face for the whole family."}
               </p>
             </div>
 
@@ -347,10 +357,10 @@ const Amenities = () => {
         </section>
 
         {/* Active Ingredients & INCI Section */}
-        <section className="py-20 bg-secondary/30 border-y border-border/50">
+        <section className="py-16 bg-secondary/30 border-y border-border/50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <div className="max-w-3xl mx-auto text-center mb-14">
+              <div className="max-w-3xl mx-auto text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
                   <Heart className="h-4 w-4 text-primary" aria-hidden="true" />
                   <span className="text-primary font-medium text-sm">
@@ -423,12 +433,12 @@ const Amenities = () => {
         </section>
 
         {/* Clinical Efficacy & How to use */}
-        <section className="py-20 bg-background">
+        <section className="py-16 bg-background">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto space-y-16">
+            <div className="max-w-6xl mx-auto space-y-14">
               {/* Clinical Stats */}
               <div>
-                <div className="text-center max-w-3xl mx-auto mb-12">
+                <div className="text-center max-w-3xl mx-auto mb-10">
                   <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 mb-4">
                     <Snowflake className="h-4 w-4 text-accent" aria-hidden="true" />
                     <span className="text-accent font-medium text-sm">
@@ -513,8 +523,8 @@ const Amenities = () => {
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">
                       {isFr
-                        ? "Pour préserver l'environnement alpin de Vars tout en vous offrant des soins dermatologiques d'exception, nous avons banni les mini-flacons individuels jetables."
-                        : "To preserve the alpine environment of Vars while offering exceptional dermatological care, we have eliminated single-use miniature plastic bottles."}
+                        ? "Pour préserver l'environnement alpin de Vars tout en vous offrant des soins dermatologiques d'exception, nous avons privilégié des flacons réemployables plutôt que des mini-flacons individuels jetables."
+                        : "To preserve the alpine environment of Vars while offering exceptional dermatological care, we chose reusable dispensers over single-use miniature plastic bottles."}
                     </p>
                     <ul className="space-y-2.5 text-muted-foreground text-sm sm:text-base">
                       <li className="flex items-start gap-2.5">
@@ -542,7 +552,19 @@ const Amenities = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* Simple Standalone Footer */}
+      <footer className="bg-foreground text-background py-8 text-center text-sm text-background/70">
+        <div className="container mx-auto px-4">
+          <p className="font-serif text-base text-background font-semibold mb-1">
+            Chalet Cosynest • Vars 2000
+          </p>
+          <p>
+            {isFr
+              ? "Nous vous souhaitons un excellent séjour au Chalet Cosynest."
+              : "We wish you a wonderful stay at Chalet Cosynest."}
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cosynest-guest-app-v4';
+const CACHE_NAME = 'cosynest-guest-app-v5';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
