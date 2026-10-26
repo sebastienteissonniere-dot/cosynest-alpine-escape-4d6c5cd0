@@ -35,6 +35,7 @@ import { IgloohomeKeyAccess } from '@/components/guest/IgloohomeKeyAccess';
 import { WhatsAppConcierge } from '@/components/guest/WhatsAppConcierge';
 import chaletRender from '@/assets/chalet-render-2027.jpg';
 import wifiQr from '@/assets/wifi-qr.png';
+import svrFlacon from '@/assets/svr-topialyse-flacon.jpg';
 import { ReviewRedirect } from '@/components/guest/ReviewRedirect';
 
 export default function GuestPortal() {
@@ -221,8 +222,30 @@ export default function GuestPortal() {
               <Input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={language === 'fr' ? 'Rechercher dans le livret (Wi-Fi, Spa, Code...)' : 'Search guidebook (Wi-Fi, Spa, Code...)'}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSearchQuery(val);
+                  if (val.trim().length > 1) {
+                    const q = val.toLowerCase();
+                    if (
+                      q.includes('wifi') ||
+                      q.includes('wi-fi') ||
+                      q.includes('sauna') ||
+                      q.includes('spa') ||
+                      q.includes('svr') ||
+                      q.includes('topialyse') ||
+                      q.includes('shampoing') ||
+                      q.includes('shampoo') ||
+                      q.includes('douche') ||
+                      q.includes('savon') ||
+                      q.includes('huile') ||
+                      q.includes('urgence')
+                    ) {
+                      setActiveTab('manual');
+                    }
+                  }
+                }}
+                placeholder={language === 'fr' ? 'Rechercher dans le livret (Wi-Fi, Spa, Soin SVR, Code...)' : 'Search guidebook (Wi-Fi, Spa, SVR Care, Code...)'}
                 className="bg-amber-50/50 border-amber-900/15 text-xs pl-9 rounded-xl focus:border-[#9B6B43] focus:ring-[#9B6B43]/20 text-amber-950 placeholder:text-amber-900/40"
               />
             </div>
@@ -373,6 +396,102 @@ export default function GuestPortal() {
                 <CardContent className="text-xs space-y-2 text-amber-900/80 pt-3 font-medium">
                   <p>{language === 'fr' ? '• Sauna Nordique : allumer le poêle 30 min avant utilisation via le boîtier mural.' : '• Nordic Sauna: turn on the heater 30 mins before use via the wall controller.'}</p>
                   <p>{language === 'fr' ? '• Salle Fitness : équipée d\'un tapis de course Technogym, d\'haltères et de tapis de yoga à votre disposition.' : '• Fitness Room: equipped with a Technogym treadmill, dumbbells, and yoga mats at your disposal.'}</p>
+                </CardContent>
+              </Card>
+
+              {/* SVR Topialyse Cleansing Oil Card */}
+              <Card className="bg-white border-amber-900/10 text-amber-950 rounded-2xl shadow-xs overflow-hidden">
+                <CardHeader className="py-3 flex flex-row items-center justify-between border-b border-amber-900/10">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#9B6B43]" />
+                    <CardTitle className="text-sm font-serif font-bold text-amber-950">
+                      {language === 'fr'
+                        ? 'Soin Lavant Corps & Cheveux — SVR Topialyse'
+                        : 'Body & Hair Cleansing Care — SVR Topialyse'}
+                    </CardTitle>
+                  </div>
+                  <Badge className="bg-amber-100/80 text-amber-950 border border-amber-300/60 text-[10px] font-serif">
+                    {language === 'fr' ? '6-en-1 • Toute la famille' : '6-in-1 • Whole family'}
+                  </Badge>
+                </CardHeader>
+                <CardContent className="text-xs space-y-3 text-amber-900/85 pt-3">
+                  <div className="flex flex-col sm:flex-row gap-3 items-center bg-amber-50/40 p-3 rounded-xl border border-amber-900/10">
+                    <img
+                      src={svrFlacon}
+                      alt="SVR Topialyse Huile Lavante"
+                      className="w-24 h-24 object-cover rounded-xl border border-amber-900/10 shadow-xs flex-shrink-0 bg-white"
+                    />
+                    <div className="space-y-1.5">
+                      <p className="font-serif font-bold text-amber-950 text-xs">
+                        {language === 'fr'
+                          ? 'Huile lavante micellaire relipidante & anti-irritation'
+                          : 'Lipid-replenishing & anti-irritation micellar cleansing oil'}
+                      </p>
+                      <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                        {language === 'fr'
+                          ? 'Mise à disposition dans chaque salle de bain et au spa pour protéger votre peau du froid alpin et de l\'eau calcaire. Convient aux nourrissons dès la naissance, enfants et adultes.'
+                          : 'Provided in every bathroom and spa to protect your skin from alpine cold and hard water. Suitable for newborns from birth, children, and adults.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-amber-50/50 p-2.5 rounded-xl border border-amber-900/10">
+                      <span className="font-serif font-bold text-[#9B6B43] block text-[11px] mb-0.5">
+                        {language === 'fr' ? 'Multi-Usages (Corps & Cheveux)' : 'Multi-Use (Body & Hair)'}
+                      </span>
+                      <p className="text-[11px] text-amber-900/80 leading-snug">
+                        {language === 'fr'
+                          ? 'Remplace gel douche, bain moussant, shampoing doux (ne pique pas les yeux), nettoyant visage/mains, démaquillant et hygiène intime.'
+                          : 'Replaces shower gel, bubble bath, gentle shampoo (does not sting eyes), face/hand cleanser, makeup remover, and intimate wash.'}
+                      </p>
+                    </div>
+                    <div className="bg-amber-50/50 p-2.5 rounded-xl border border-amber-900/10">
+                      <span className="font-serif font-bold text-[#9B6B43] block text-[11px] mb-0.5">
+                        {language === 'fr' ? 'Haute Tolérance & Actifs' : 'High Tolerance & Actives'}
+                      </span>
+                      <p className="text-[11px] text-amber-900/80 leading-snug">
+                        {language === 'fr'
+                          ? '35% d\'actifs relipidants (huile de coton Omégas 3, 6, 9), Niacinamide apaisante et sucre prébiotique. Sans savon, pH physiologique, hydratation 24h.'
+                          : '35% lipid-replenishing actives (cottonseed oil Omegas 3, 6, 9), soothing Niacinamide & prebiotic sugar. Soap-free, physiological pH, 24h hydration.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-amber-50/30 p-2.5 rounded-xl border border-amber-900/10 space-y-1">
+                    <p className="text-[11px] text-amber-900/80">
+                      <strong className="text-amber-950">{language === 'fr' ? 'Utilisation :' : 'How to use:'}</strong>{' '}
+                      {language === 'fr'
+                        ? 'Appliquer sur peau et cheveux mouillés, faire mousser, rincer puis sécher délicatement sans frotter (3 pressions pour le bain).'
+                        : 'Apply to wet skin and hair, lather, rinse and pat dry gently without rubbing (3 pumps for the bath).'}
+                    </p>
+                    <p className="text-[11px] text-amber-900/80">
+                      <strong className="text-amber-950">{language === 'fr' ? 'Éco-engagement :' : 'Eco-commitment:'}</strong>{' '}
+                      {language === 'fr'
+                        ? '89% d\'origine naturelle, formule biodégradable, flacons 1L rechargés par éco-recharges SVR.'
+                        : '89% natural origin, biodegradable formula, 1L dispensers refilled with SVR eco-refills.'}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <details className="text-[10px] text-amber-900/70">
+                      <summary className="cursor-pointer font-semibold text-[#9B6B43] hover:underline">
+                        {language === 'fr' ? 'Voir la composition INCI' : 'View INCI ingredients'}
+                      </summary>
+                      <p className="mt-1.5 font-mono text-[10px] leading-relaxed bg-amber-50/40 p-2 rounded-lg border border-amber-900/10">
+                        LAB16.16/D.10 — AQUA/WATER/EAU, GLYCERIN, SODIUM C14-16 OLEFIN SULFONATE, SODIUM LAUROAMPHOACETATE, COCO-BETAINE, NIACINAMIDE, CITRIC ACID, SODIUM OLIVAMPHOACETATE, ALPHA-GLUCAN OLIGOSACCHARIDE, PARFUM (FRAGRANCE), SACCHARIDE ISOMERATE, CAPRYLYL/CAPRYL GLUCOSIDE, SODIUM BENZOATE, POTASSIUM SORBATE, POLYGLYCERYL-3 COCOATE, POLYGLYCERYL-10 LAURATE, GOSSYPIUM HERBACEUM (COTTON) SEED OIL, SODIUM CITRATE.
+                      </p>
+                    </details>
+
+                    <a
+                      href="/topialyse"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-serif font-bold text-[#9B6B43] hover:underline flex-shrink-0 ml-2"
+                    >
+                      {language === 'fr' ? 'Fiche complète →' : 'Full details →'}
+                    </a>
+                  </div>
                 </CardContent>
               </Card>
 
