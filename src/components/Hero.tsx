@@ -28,7 +28,7 @@ const Hero = () => {
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt="Cosynest - Chalet de luxe à Vars"
+          alt="CosyNest - Chalet de luxe à Vars"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 gradient-overlay" />

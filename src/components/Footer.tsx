@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-2xl font-serif font-bold mb-4">Cosynest</h3>
+            <h3 className="text-2xl font-serif font-bold mb-4">CosyNest</h3>
             <p className="text-background/80 leading-relaxed">
               {t("footer.description")}
             </p>
@@ -50,7 +50,7 @@ const Footer = () => {
 
         <div className="pt-8 border-t border-background/20 text-center text-background/60 text-sm">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-            <p>© {currentYear} Cosynest SARL. {t("footer.rights")}</p>
+            <p>© {currentYear} CosyNest SARL. {t("footer.rights")}</p>
             <span className="hidden md:inline text-background/40">|</span>
             <a href="/mentions-legales" className="hover:text-background transition-colors">
               {t("legal.title")}

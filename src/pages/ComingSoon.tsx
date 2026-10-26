@@ -12,7 +12,7 @@ const ComingSoon = () => {
       <div className="fixed inset-0 z-0 flex items-center justify-center overflow-hidden">
         <img
           src={chaletRender}
-          alt="Chalet Cosynest - Architecture 2027"
+          alt="Chalet CosyNest - Architecture 2027"
           className="w-full h-full object-cover object-center opacity-85 filter brightness-110 contrast-105 transition-opacity duration-500"
         />
         {/* Subtle Luxury Gradient Overlay for Text Readability */}
@@ -23,7 +23,7 @@ const ComingSoon = () => {
       <div className="relative z-10 text-center max-w-3xl mx-auto w-full my-auto py-8">
         {/* Main Title */}
         <h1 className="text-4xl sm:text-6xl font-serif font-bold text-white mb-4 tracking-tight drop-shadow-lg">
-          Chalet Cosynest
+          Chalet CosyNest
         </h1>
 
         {/* Centered Language Switcher */}

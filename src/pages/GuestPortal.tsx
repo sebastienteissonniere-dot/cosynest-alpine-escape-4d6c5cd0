@@ -152,7 +152,7 @@ export default function GuestPortal() {
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h1 className="text-base font-serif font-bold text-amber-950 tracking-tight">
-              Chalet Cosynest
+              Chalet CosyNest
             </h1>
             <span className="text-[10px] font-bold text-amber-900 bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-amber-300/60 font-serif">
               Digital Guidebook
@@ -193,7 +193,7 @@ export default function GuestPortal() {
               <Badge className="bg-[#9B6B43] text-white border-none text-[10px] font-semibold mb-1">
                 Vars 2000 • Hautes-Alpes
               </Badge>
-              <h2 className="text-xl font-serif font-bold text-white leading-tight">Chalet Cosynest</h2>
+              <h2 className="text-xl font-serif font-bold text-white leading-tight">Chalet CosyNest</h2>
               <p className="text-xs text-amber-100 flex items-center gap-1 font-sans">
                 <MapPin className="w-3 h-3 text-amber-300" /> Vars 05560, France
               </p>

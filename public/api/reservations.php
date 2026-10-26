@@ -121,7 +121,7 @@ function sendWelcomeEmail($guestEmail, $guestName, $bookingId, $checkIn, $checkO
         return false;
     }
 
-    $subject = "Chalet Cosynest - Vos accès et instructions de séjour (Réservation #" . $bookingId . ")";
+    $subject = "Chalet CosyNest - Vos accès et instructions de séjour (Réservation #" . $bookingId . ")";
     $guestUrl = "https://chaletcosynest.fr/guest/" . urlencode($bookingId);
 
     $isDirect = (strtolower($source) === 'direct');
@@ -147,12 +147,12 @@ function sendWelcomeEmail($guestEmail, $guestName, $bookingId, $checkIn, $checkO
     <body>
       <div class="container">
         <div class="header">
-          <h1 class="title">Chalet Cosynest</h1>
+          <h1 class="title">Chalet CosyNest</h1>
           <div class="subtitle">Livret d\'Accueil & Clés Numériques</div>
         </div>
 
         <p>Bonjour <strong>' . htmlspecialchars($guestName) . '</strong>,</p>
-        <p>Nous avons le plaisir de vous confirmer votre réservation pour votre séjour au <strong>Chalet Cosynest</strong> (Vars 2000) du <strong>' . htmlspecialchars($checkIn) . '</strong> au <strong>' . htmlspecialchars($checkOut) . '</strong>.</p>
+        <p>Nous avons le plaisir de vous confirmer votre réservation pour votre séjour au <strong>Chalet CosyNest</strong> (Vars 2000) du <strong>' . htmlspecialchars($checkIn) . '</strong> au <strong>' . htmlspecialchars($checkOut) . '</strong>.</p>
         
         <p style="margin-top: 20px; font-weight: bold;">Afin de préparer au mieux votre arrivée et débloquer vos digicodes d\'accès :</p>';
 
@@ -172,7 +172,7 @@ function sendWelcomeEmail($guestEmail, $guestName, $bookingId, $checkIn, $checkO
         <a href="' . $guestUrl . '" class="btn">Accéder à mon Espace Voyageur PWA</a>
 
         <div class="footer">
-          Chalet Cosynest • Vars 2000, Hautes-Alpes<br>
+          Chalet CosyNest • Vars 2000, Hautes-Alpes<br>
           Service Conciergerie : contact@chaletcosynest.fr
         </div>
       </div>
@@ -181,7 +181,7 @@ function sendWelcomeEmail($guestEmail, $guestName, $bookingId, $checkIn, $checkO
 
     $headers  = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
-    $headers .= "From: Chalet Cosynest <contact@chaletcosynest.fr>" . "\r\n";
+    $headers .= "From: Chalet CosyNest <contact@chaletcosynest.fr>" . "\r\n";
     $headers .= "Return-Path: contact@chaletcosynest.fr" . "\r\n";
 
     $success = @mail($guestEmail, $subject, $htmlContent, $headers, "-fcontact@chaletcosynest.fr");

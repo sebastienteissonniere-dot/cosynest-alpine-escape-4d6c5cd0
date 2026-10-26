@@ -32,8 +32,8 @@ const Amenities = () => {
     {
       src: svrMainImg,
       alt: isFr
-        ? "Flacon pompe SVR Topialyse Huile Lavante 1L mis à disposition au Chalet Cosynest"
-        : "SVR Topialyse Cleansing Oil 1L pump bottle provided at Chalet Cosynest",
+        ? "Flacon pompe SVR Topialyse Huile Lavante 1L mis à disposition au Chalet CosyNest"
+        : "SVR Topialyse Cleansing Oil 1L pump bottle provided at Chalet CosyNest",
       caption: isFr ? "Flacon pompe 1L Rechargeable" : "1L Refillable Pump Bottle",
     },
     {
@@ -46,8 +46,8 @@ const Amenities = () => {
     {
       src: svrEcoRefillImg,
       alt: isFr
-        ? "Éco-recharge SVR Topialyse Huile Lavante utilisée au Chalet Cosynest"
-        : "SVR Topialyse Cleansing Oil eco-refill used at Chalet Cosynest",
+        ? "Éco-recharge SVR Topialyse Huile Lavante utilisée au Chalet CosyNest"
+        : "SVR Topialyse Cleansing Oil eco-refill used at Chalet CosyNest",
       caption: isFr ? "Engagement Éco-Recharge 1L" : "1L Eco-Refill Commitment",
     },
   ];
@@ -156,7 +156,7 @@ const Amenities = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div>
             <span className="text-xl sm:text-2xl font-serif font-bold text-primary">
-              Chalet Cosynest
+              Chalet CosyNest
             </span>
             <span className="hidden sm:inline-block ml-3 text-xs uppercase tracking-widest text-muted-foreground border-l border-border pl-3">
               {isFr ? "Soin d'Accueil Corps & Cheveux" : "Body & Hair Welcome Care"}
@@ -227,8 +227,8 @@ const Amenities = () => {
                   <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
                   <span className="text-primary font-medium text-sm">
                     {isFr
-                      ? "Votre Soin Lavant au Chalet Cosynest"
-                      : "Your Cleansing Care at Chalet Cosynest"}
+                      ? "Votre Soin Lavant au Chalet CosyNest"
+                      : "Your Cleansing Care at Chalet CosyNest"}
                   </span>
                 </div>
 
@@ -556,12 +556,12 @@ const Amenities = () => {
       <footer className="bg-foreground text-background py-8 text-center text-sm text-background/70">
         <div className="container mx-auto px-4">
           <p className="font-serif text-base text-background font-semibold mb-1">
-            Chalet Cosynest • Vars 2000
+            Chalet CosyNest • Vars 2000
           </p>
           <p>
             {isFr
-              ? "Nous vous souhaitons un excellent séjour au Chalet Cosynest."
-              : "We wish you a wonderful stay at Chalet Cosynest."}
+              ? "Nous vous souhaitons un excellent séjour au Chalet CosyNest."
+              : "We wish you a wonderful stay at Chalet CosyNest."}
           </p>
         </div>
       </footer>

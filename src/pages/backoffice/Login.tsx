@@ -52,7 +52,7 @@ export default function BackofficeLogin() {
         {/* Typography Logo Header matching chaletcosynest.fr/dev */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl font-serif font-bold text-amber-950 tracking-tight">
-            Chalet Cosynest
+            Chalet CosyNest
           </h1>
           <p className="text-xs text-amber-900/70 font-serif font-medium">
             Backoffice Propriétaire & Conciergerie (BDD Infomaniak)

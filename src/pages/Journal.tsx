@@ -21,8 +21,8 @@ const Journal = () => {
                     </h1>
                     <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                         {language === 'fr'
-                            ? "Actualités, événements et vie du chalet : restez connectés avec l'univers Cosynest."
-                            : "News, events and chalet life: stay connected with the Cosynest universe."}
+                            ? "Actualités, événements et vie du chalet : restez connectés avec l'univers CosyNest."
+                            : "News, events and chalet life: stay connected with the CosyNest universe."}
                     </p>
                 </div>
 

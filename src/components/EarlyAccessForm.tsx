@@ -32,7 +32,7 @@ export const EarlyAccessForm = ({ variant = "card", className = "" }: EarlyAcces
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          _subject: `[Cosynest 2027] Demande d'alerte réservation début 2027: ${email}`,
+          _subject: `[CosyNest 2027] Demande d'alerte réservation début 2027: ${email}`,
           _template: "table",
           _captcha: "false",
           email: email,
@@ -110,7 +110,7 @@ export const EarlyAccessForm = ({ variant = "card", className = "" }: EarlyAcces
   };
 
   const mailtoLink = `mailto:contact@chaletcosynest.fr?subject=${encodeURIComponent(
-    "[Cosynest 2027] Alerte Ouverture Réservations"
+    "[CosyNest 2027] Alerte Ouverture Réservations"
   )}&body=${encodeURIComponent(
     `Bonjour,\n\nJe souhaite être informé(e) dès l'ouverture des réservations pour début 2027.\n\nMon email: ${email || "contact@chaletcosynest.fr"}`
   )}`;

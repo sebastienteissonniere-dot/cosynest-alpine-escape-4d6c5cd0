@@ -53,7 +53,7 @@ const Navigation = () => {
               onClick={handleLogoClick}
               className="text-2xl font-serif font-bold text-primary hover:opacity-80 transition-smooth"
             >
-              Chalet Cosynest
+              Chalet CosyNest
             </button>
           </div>
 

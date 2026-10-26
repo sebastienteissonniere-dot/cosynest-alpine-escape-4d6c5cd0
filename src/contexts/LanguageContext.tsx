@@ -72,13 +72,13 @@ const translations = {
     hero: {
       title: "Votre refuge de luxe",
       subtitle: "dans les Alpes",
-      description: "Découvrez l'expérience Cosynest à Vars 2000 : le parfait équilibre entre confort absolu et nature préservée",
+      description: "Découvrez l'expérience CosyNest à Vars 2000 : le parfait équilibre entre confort absolu et nature préservée",
       bookStay: "Réserver votre séjour",
       discover: "Découvrir le chalet",
       scrollDown: "Défiler vers le bas",
     },
     experience: {
-      title: "L'Expérience Cosynest",
+      title: "L'Expérience CosyNest",
       subtitle: "Un chalet pensé pour votre confort, où chaque détail compte pour créer des souvenirs inoubliables",
       suites: {
         title: "Suites spacieuses",
@@ -111,13 +111,13 @@ const translations = {
       },
       commitment: {
         title: "Notre engagement qualité",
-        description: "Chez Cosynest, votre satisfaction est notre priorité. Nous sélectionnons avec soin chaque produit et service pour vous offrir une expérience d'exception du début à la fin de votre séjour.",
+        description: "Chez CosyNest, votre satisfaction est notre priorité. Nous sélectionnons avec soin chaque produit et service pour vous offrir une expérience d'exception du début à la fin de votre séjour.",
       },
     },
     chalet: {
-      title: "Le Chalet Cosynest",
-      description1: "Niché au cœur de Vars 2000, station prisée des Alpes du Sud, Cosynest vous accueille dans un écrin de luxe et de modernité. Notre chalet allie design contemporain et chaleur alpine pour créer une atmosphère unique où confort rime avec élégance.",
-      description2: "Que vous soyez passionné de ski ou amateur de randonnées estivales, Cosynest est le point de départ idéal pour explorer les sommets. Profitez d'un cadre exceptionnel où chaque saison révèle sa magie.",
+      title: "Le Chalet CosyNest",
+      description1: "Niché au cœur de Vars 2000, station prisée des Alpes du Sud, CosyNest vous accueille dans un écrin de luxe et de modernité. Notre chalet allie design contemporain et chaleur alpine pour créer une atmosphère unique où confort rime avec élégance.",
+      description2: "Que vous soyez passionné de ski ou amateur de randonnées estivales, CosyNest est le point de départ idéal pour explorer les sommets. Profitez d'un cadre exceptionnel où chaque saison révèle sa magie.",
       location: {
         label: "Localisation",
         value: "Vars 05560, Hautes-Alpes",
@@ -155,7 +155,7 @@ const translations = {
     },
     contact: {
       title: "Réservez votre séjour",
-      subtitle: "Contactez-nous pour planifier vos prochaines vacances de rêve à Cosynest",
+      subtitle: "Contactez-nous pour planifier vos prochaines vacances de rêve à CosyNest",
       email: "Email",
       phone: "Téléphone",
       instagram: "Instagram",
@@ -175,7 +175,7 @@ const translations = {
       errorMessage: "Impossible d'envoyer votre inscription automatique. Cliquez ci-dessous pour envoyer un courriel direct à contact@chaletcosynest.fr",
       sendEmailDirectly: "Envoyer un email directement",
       privacyNote: "Vos données restent strictement confidentielles et ne seront utilisées que pour l'ouverture des réservations.",
-      chaletDescription: "Niché à Vars 2000, le Chalet Cosynest incarne l'alliance parfaite du luxe contemporain et de la chaleur alpine. Conçu pour accueillir jusqu'à 12 personnes avec 4 suites & 1 dortoir avec salles de bains privatives, un espace bien-être avec sauna et salle de sport, ainsi qu'un grand salon chaleureux autour de sa cheminée centrale, c'est le refuge idéal pour des vacances d'exception été comme hiver.",
+      chaletDescription: "Niché à Vars 2000, le Chalet CosyNest incarne l'alliance parfaite du luxe contemporain et de la chaleur alpine. Conçu pour accueillir jusqu'à 12 personnes avec 4 suites & 1 dortoir avec salles de bains privatives, un espace bien-être avec sauna et salle de sport, ainsi qu'un grand salon chaleureux autour de sa cheminée centrale, c'est le refuge idéal pour des vacances d'exception été comme hiver.",
     },
     footer: {
       description: "Votre chalet de luxe à Vars pour des vacances inoubliables dans les Alpes.",
@@ -353,13 +353,13 @@ const translations = {
     hero: {
       title: "Your luxury retreat",
       subtitle: "in the Alps",
-      description: "Discover the Cosynest experience in Vars 2000: the perfect balance between absolute comfort and preserved nature",
+      description: "Discover the CosyNest experience in Vars 2000: the perfect balance between absolute comfort and preserved nature",
       bookStay: "Book your stay",
       discover: "Discover the chalet",
       scrollDown: "Scroll down",
     },
     experience: {
-      title: "The Cosynest Experience",
+      title: "The CosyNest Experience",
       subtitle: "A chalet designed for your comfort, where every detail counts to create unforgettable memories",
       suites: {
         title: "Spacious suites",
@@ -392,13 +392,13 @@ const translations = {
       },
       commitment: {
         title: "Our quality commitment",
-        description: "At Cosynest, your satisfaction is our priority. We carefully select each product and service to offer you an exceptional experience from start to finish of your stay.",
+        description: "At CosyNest, your satisfaction is our priority. We carefully select each product and service to offer you an exceptional experience from start to finish of your stay.",
       },
     },
     chalet: {
-      title: "The Cosynest Chalet",
-      description1: "Nestled in the heart of Vars 2000, a popular resort in the Southern Alps, Cosynest welcomes you in a setting of luxury and modernity. Our chalet combines contemporary design and alpine warmth to create a unique atmosphere where comfort rhymes with elegance.",
-      description2: "Whether you are a ski enthusiast or summer hiker, Cosynest is the ideal starting point to explore the peaks. Enjoy an exceptional setting where each season reveals its magic.",
+      title: "The CosyNest Chalet",
+      description1: "Nestled in the heart of Vars 2000, a popular resort in the Southern Alps, CosyNest welcomes you in a setting of luxury and modernity. Our chalet combines contemporary design and alpine warmth to create a unique atmosphere where comfort rhymes with elegance.",
+      description2: "Whether you are a ski enthusiast or summer hiker, CosyNest is the ideal starting point to explore the peaks. Enjoy an exceptional setting where each season reveals its magic.",
       location: {
         label: "Location",
         value: "Vars 05560, Hautes-Alpes",
@@ -436,7 +436,7 @@ const translations = {
     },
     contact: {
       title: "Book your stay",
-      subtitle: "Contact us to plan your next dream vacation at Cosynest",
+      subtitle: "Contact us to plan your next dream vacation at CosyNest",
       email: "Email",
       phone: "Phone",
       instagram: "Instagram",
@@ -456,7 +456,7 @@ const translations = {
       errorMessage: "Unable to send automatic registration. Click below to send an email directly to contact@chaletcosynest.fr",
       sendEmailDirectly: "Send direct email",
       privacyNote: "Your data remains strictly confidential and will only be used for booking updates.",
-      chaletDescription: "Nestled in Vars 2000, Chalet Cosynest embodies the perfect blend of contemporary luxury and alpine warmth. Designed to accommodate up to 12 guests with 4 suites & 1 dormitory with private bathrooms, a wellness area featuring a sauna and gym, and a grand living room built around a central fireplace, it is the ideal retreat for an exceptional getaway, winter and summer alike.",
+      chaletDescription: "Nestled in Vars 2000, Chalet CosyNest embodies the perfect blend of contemporary luxury and alpine warmth. Designed to accommodate up to 12 guests with 4 suites & 1 dormitory with private bathrooms, a wellness area featuring a sauna and gym, and a grand living room built around a central fireplace, it is the ideal retreat for an exceptional getaway, winter and summer alike.",
     },
     footer: {
       description: "Your luxury chalet in Vars for unforgettable holidays in the Alps.",
